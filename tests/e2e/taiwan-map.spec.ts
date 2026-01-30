@@ -16,7 +16,6 @@ test.describe('Story 1.2: Taiwan Map — P0 Critical', () => {
   // 1.2-E2E-001: SVG Taiwan map renders prominently on dark background
   test('should display SVG Taiwan map prominently on dark background', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded with dark theme
 
@@ -38,7 +37,6 @@ test.describe('Story 1.2: Taiwan Map — P0 Critical', () => {
   // 1.2-E2E-002: 10 location markers visible with correct unlock/lock states
   test('should display all 10 location markers on the map', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded with Taiwan map
 
@@ -51,7 +49,6 @@ test.describe('Story 1.2: Taiwan Map — P0 Critical', () => {
 
   test('should show 3 unlocked locations with full opacity', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded
 
@@ -64,7 +61,6 @@ test.describe('Story 1.2: Taiwan Map — P0 Critical', () => {
 
   test('should show 7 locked locations with dimmed opacity', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded
 
@@ -78,7 +74,6 @@ test.describe('Story 1.2: Taiwan Map — P0 Critical', () => {
   // 1.2-E2E-003: Brand tagline visible in header area
   test('should display brand tagline in header area', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded
 
@@ -93,7 +88,6 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
   // 1.2-E2E-004: Unlocked markers at geographically correct SVG coordinates
   test('should position unlocked markers with valid SVG coordinates', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded with map
 
@@ -112,7 +106,6 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
   // 1.2-E2E-005: Locked markers at correct SVG coordinates
   test('should position locked markers with valid SVG coordinates', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded with map
 
@@ -131,7 +124,6 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
   // 1.2-E2E-006: Click updates selectedLocationId (visual: marker radius changes)
   test('should update selected state when clicking a location marker', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded with map
     const tamsui = getMapElement(page, 'location-dot-tamsui')
@@ -145,7 +137,6 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
 
   test('should deselect previous marker when selecting a new one', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Tamsui is selected
     const tamsui = getMapElement(page, 'location-dot-tamsui')
@@ -165,7 +156,6 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
   // 1.2-E2E-007: Hover shows location name via SVG <title>
   test('should show location name via SVG title element for tooltip', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded with map
 
@@ -185,7 +175,6 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
 
   test('should show locked location names via SVG title element', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded with map
 
@@ -210,7 +199,6 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
   // 1.2-E2E-008: Tailwind CSS v4 functioning correctly
   test('should render Tailwind CSS v4 dark theme utilities', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded
 
@@ -228,7 +216,6 @@ test.describe('Story 1.2: Taiwan Map — P2 Medium', () => {
   // 1.2-E2E-009: SVG viewBox integrity
   test('should have valid SVG viewBox attribute on map', async ({
     page,
-    appPage,
   }) => {
     // GIVEN: Page is loaded
 

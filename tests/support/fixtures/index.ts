@@ -13,11 +13,11 @@ type TestFixtures = {
 }
 
 export const test = base.extend<TestFixtures>({
-  appPage: async ({ page }, use) => {
+  appPage: [async ({ page }, use) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
     await use()
-  },
+  }, { auto: true }],
 })
 
 export { expect }
