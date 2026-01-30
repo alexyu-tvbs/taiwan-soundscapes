@@ -1,6 +1,5 @@
 import { test, expect } from '../support/fixtures'
 import {
-  UNLOCKED_LOCATIONS,
   LOCKED_LOCATIONS,
   getMapElement,
 } from '../support/helpers/test-utils'

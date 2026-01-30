@@ -166,16 +166,16 @@ describe('LocationDot Component — Lock Indicator', () => {
     expect(lockIcon).toBeNull()
   })
 
-  it('should render lock icon as an SVG text element', () => {
+  it('should render lock icon as an SVG group element', () => {
     const { container } = renderDot(lockedLocation)
     const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
-    expect(lockIcon?.tagName.toLowerCase()).toBe('text')
+    expect(lockIcon?.tagName.toLowerCase()).toBe('g')
   })
 
-  it('should position lock icon at location coordinates', () => {
+  it('should position lock icon at location coordinates via transform', () => {
     const { container } = renderDot(lockedLocation)
     const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
-    expect(lockIcon?.getAttribute('x')).toBe('885')
+    expect(lockIcon?.getAttribute('transform')).toBe('translate(885, 1255)')
   })
 
   it('should have pointer-events none on lock icon', () => {

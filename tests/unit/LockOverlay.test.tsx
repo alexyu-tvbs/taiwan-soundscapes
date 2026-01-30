@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, fireEvent } from '@testing-library/react'
 import { LockOverlay } from '../../src/components/LockOverlay'
 import type { Location } from '../../src/types'
@@ -54,6 +54,10 @@ describe('LockOverlay Component — Display', () => {
 })
 
 describe('LockOverlay Component — Dismiss Behavior', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('should call onClose when close button is clicked', () => {
     const onClose = vi.fn()
     const { container } = render(<LockOverlay location={lockedLocation} onClose={onClose} />)
@@ -76,5 +80,32 @@ describe('LockOverlay Component — Dismiss Behavior', () => {
     const panel = container.querySelector('[data-testid="lock-overlay-panel"]')
     fireEvent.click(panel!)
     expect(onClose).not.toHaveBeenCalled()
+  })
+
+  it('should call onClose when Escape key is pressed', () => {
+    const onClose = vi.fn()
+    render(<LockOverlay location={lockedLocation} onClose={onClose} />)
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('LockOverlay Component — Accessibility', () => {
+  it('should have role="dialog" on overlay', () => {
+    const { container } = render(<LockOverlay location={lockedLocation} onClose={vi.fn()} />)
+    const overlay = container.querySelector('[data-testid="lock-overlay"]')
+    expect(overlay?.getAttribute('role')).toBe('dialog')
+  })
+
+  it('should have aria-modal="true" on overlay', () => {
+    const { container } = render(<LockOverlay location={lockedLocation} onClose={vi.fn()} />)
+    const overlay = container.querySelector('[data-testid="lock-overlay"]')
+    expect(overlay?.getAttribute('aria-modal')).toBe('true')
+  })
+
+  it('should focus close button on mount', () => {
+    const { container } = render(<LockOverlay location={lockedLocation} onClose={vi.fn()} />)
+    const closeBtn = container.querySelector('[data-testid="lock-overlay-close"]')
+    expect(document.activeElement).toBe(closeBtn)
   })
 })

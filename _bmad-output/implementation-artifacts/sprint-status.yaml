@@ -53,8 +53,8 @@ development_status:
   epic-2-retrospective: optional
 
   # Epic 3: Unlock System & Gamification Display
-  epic-3: in-progress
-  3-1-locked-location-interaction-and-unlock-condition-display: review
+  epic-3: done
+  3-1-locked-location-interaction-and-unlock-condition-display: done
   epic-3-retrospective: optional
 
   # Epic 4: Visual Polish & Presentation Quality

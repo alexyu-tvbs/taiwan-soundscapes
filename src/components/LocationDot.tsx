@@ -32,19 +32,21 @@ export const LocationDot = ({ location, isSelected, onClick }: LocationDotProps)
         <title>{location.name}</title>
       </circle>
       {!isUnlocked && (
-        <text
+        <g
           data-testid={`lock-icon-${location.id}`}
-          x={location.coordinates.x}
-          y={location.coordinates.y + 1}
-          textAnchor="middle"
-          dominantBaseline="central"
-          fontSize={8}
-          fill="white"
+          transform={`translate(${location.coordinates.x}, ${location.coordinates.y})`}
           opacity={0.6}
           style={{ pointerEvents: 'none' }}
         >
-          🔒
-        </text>
+          <rect x={-2.5} y={-0.5} width={5} height={4} rx={0.7} fill="white" />
+          <path
+            d="M-1.5,-0.5 V-2.5 A1.5,1.5 0 0,1 1.5,-2.5 V-0.5"
+            fill="none"
+            stroke="white"
+            strokeWidth={1}
+            strokeLinecap="round"
+          />
+        </g>
       )}
     </g>
   )

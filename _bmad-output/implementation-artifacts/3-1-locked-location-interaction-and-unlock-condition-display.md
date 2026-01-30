@@ -1,6 +1,6 @@
 # Story 3.1: Locked Location Interaction & Unlock Condition Display
 
-Status: review
+Status: done
 
 ## Story
 
@@ -263,13 +263,22 @@ No issues encountered during implementation.
 
 ### File List
 
-- `src/components/LocationDot.tsx` — MODIFIED (added `<g>` wrapper + lock icon `<text>` for locked locations)
-- `src/components/LockOverlay.tsx` — NEW (lock overlay modal component)
+- `src/components/LocationDot.tsx` — MODIFIED (added `<g>` wrapper + SVG path lock icon for locked locations)
+- `src/components/LockOverlay.tsx` — NEW (lock overlay modal with Escape key dismiss, focus management, ARIA dialog attrs)
+- `src/components/LocationDetail.tsx` — MODIFIED (refactored image error handling: removed useEffect, path-based error tracking)
 - `src/App.tsx` — MODIFIED (added `lockedLocation` state, locked click flow, LockOverlay render)
 - `tests/unit/LocationDot.test.tsx` — MODIFIED (added 6 lock indicator tests)
-- `tests/unit/LockOverlay.test.tsx` — NEW (9 tests for display + dismiss behavior)
+- `tests/unit/LockOverlay.test.tsx` — NEW (13 tests: display, dismiss, Escape key, ARIA, focus management)
 - `tests/unit/App.test.tsx` — MODIFIED (updated locked audio test, added 23 LockOverlay integration + 7-location verification tests)
+- `tests/e2e/lock-overlay.spec.ts` — NEW (14 E2E tests for LockOverlay behavior)
+- `tests/e2e/keyboard-navigation.spec.ts` — NEW (6 keyboard accessibility E2E tests)
+- `tests/e2e/user-journey.spec.ts` — NEW (full user journey E2E test)
+- `tests/e2e/audio-playback.spec.ts` — MODIFIED (E2E coverage expansion)
+- `tests/e2e/scene-photography.spec.ts` — MODIFIED (E2E coverage expansion)
+- `tests/e2e/map-interactions.spec.ts` — MODIFIED (E2E coverage expansion)
+- `package.json` — MODIFIED (Node engine updated to >=24.0.0)
 
 ### Change Log
 
 - 2026-01-30: Implemented Story 3.1 — Locked Location Interaction & Unlock Condition Display. Added lock indicator on map markers, LockOverlay modal component, and App.tsx integration for locked click flow. 127 tests passing, 0 regressions.
+- 2026-01-30: Code review fixes — (M2) Added Escape key dismiss to LockOverlay, (M3) replaced SVG emoji lock icon with cross-browser SVG path, (M4) added auto-focus on close button, (L1) added role="dialog" + aria-modal="true", (M1) updated File List with 8 previously undocumented files, fixed CI lint error (unused import). 131 tests passing, 0 regressions.
