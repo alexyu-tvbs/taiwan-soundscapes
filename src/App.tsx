@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'motion/react'
 import { TaiwanMap } from './components/TaiwanMap'
 import { LocationDetail } from './components/LocationDetail'
 import { SoundscapePlayer } from './components/SoundscapePlayer'
@@ -41,29 +42,51 @@ export const App = () => {
           selectedLocationId={selectedLocationId}
           onSelect={handleSelect}
         />
+        <AnimatePresence>
+          {isUnlockedSelection && selectedLocation && (
+            <motion.div
+              key={selectedLocation.id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <LocationDetail
+                location={selectedLocation}
+                isPlaying={audioPlayer.isPlaying}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+      <AnimatePresence>
         {isUnlockedSelection && selectedLocation && (
-          <LocationDetail
-            location={selectedLocation}
-            isPlaying={audioPlayer.isPlaying}
+          <motion.div
+            key="player"
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <SoundscapePlayer
+              isPlaying={audioPlayer.isPlaying}
+              volume={audioPlayer.volume}
+              locationName={selectedLocation.name}
+              onPlay={() => audioPlayer.resume()}
+              onPause={() => audioPlayer.pause()}
+              onVolumeChange={audioPlayer.setVolume}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {lockedLocation && (
+          <LockOverlay
+            location={lockedLocation}
+            onClose={() => setLockedLocation(null)}
           />
         )}
-      </main>
-      {isUnlockedSelection && selectedLocation && (
-        <SoundscapePlayer
-          isPlaying={audioPlayer.isPlaying}
-          volume={audioPlayer.volume}
-          locationName={selectedLocation.name}
-          onPlay={() => audioPlayer.resume()}
-          onPause={() => audioPlayer.pause()}
-          onVolumeChange={audioPlayer.setVolume}
-        />
-      )}
-      {lockedLocation && (
-        <LockOverlay
-          location={lockedLocation}
-          onClose={() => setLockedLocation(null)}
-        />
-      )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { test, expect } from '../support/fixtures'
-import { getMapElement } from '../support/helpers/test-utils'
+import { getMapElement, waitForDetailTransition } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
 // Full User Journey — Cross-Feature Integration
@@ -60,6 +60,7 @@ test.describe('Full User Journey — P1 High', () => {
     // WHEN: User clicks Alishan
     const alishan = getMapElement(page, 'location-dot-alishan')
     await alishan.click({ force: true })
+    await waitForDetailTransition(page)
 
     // THEN: Panels update to Alishan data
     await expect(detail.locator('h2')).toContainText('阿里山雲海')
@@ -104,6 +105,7 @@ test.describe('Full User Journey — P1 High', () => {
     // WHEN: User clicks Keelung
     const keelung = getMapElement(page, 'location-dot-keelung')
     await keelung.click({ force: true })
+    await waitForDetailTransition(page)
 
     // THEN: All panels update correctly
     await expect(detail.locator('h2')).toContainText('基隆港浪')

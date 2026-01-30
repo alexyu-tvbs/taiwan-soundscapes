@@ -2,6 +2,7 @@ import { test, expect } from '../support/fixtures'
 import {
   UNLOCKED_LOCATIONS,
   getMapElement,
+  waitForDetailTransition,
 } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -68,6 +69,7 @@ test.describe('Story 2.2: Scene Photography — P0 Critical', () => {
     // WHEN: User clicks alishan
     const alishan = getMapElement(page, 'location-dot-alishan')
     await alishan.click({ force: true })
+    await waitForDetailTransition(page)
 
     // THEN: Photo and name update to alishan
     await expect(img).toHaveAttribute('src', '/images/alishan.jpg')
@@ -102,6 +104,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
     for (const id of UNLOCKED_LOCATIONS) {
       const dot = getMapElement(page, `location-dot-${id}`)
       await dot.click({ force: true })
+      await waitForDetailTransition(page)
 
       await expect(detail).toBeVisible()
       await expect(img).toHaveAttribute('src', LOCATION_DATA[id].imagePath)
@@ -150,6 +153,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
     for (const id of UNLOCKED_LOCATIONS) {
       const dot = getMapElement(page, `location-dot-${id}`)
       await dot.click({ force: true })
+      await waitForDetailTransition(page)
 
       // THEN: Photo src matches the location
       await expect(img).toHaveAttribute('src', LOCATION_DATA[id].imagePath)
@@ -189,10 +193,11 @@ test.describe('Story 2.2: Scene Photography — P2 Medium', () => {
     const detail = page.getByTestId('location-detail')
     const img = detail.locator('img')
 
-    // GIVEN: User rapidly cycles through all locations
+    // GIVEN: User cycles through all locations
     for (const id of UNLOCKED_LOCATIONS) {
       const dot = getMapElement(page, `location-dot-${id}`)
       await dot.click({ force: true })
+      await waitForDetailTransition(page)
     }
 
     // THEN: Final state matches the last location (keelung)

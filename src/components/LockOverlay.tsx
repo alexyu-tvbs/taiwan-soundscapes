@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { motion } from 'motion/react'
 import type { Location } from '../types'
 
 interface LockOverlayProps {
@@ -24,16 +25,23 @@ export const LockOverlay = ({ location, onClose }: LockOverlayProps) => {
   }, [onClose])
 
   return (
-    <div
+    <motion.div
       data-testid="lock-overlay"
       role="dialog"
       aria-modal="true"
       className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       onClick={onClose}
     >
-      <div
+      <motion.div
         data-testid="lock-overlay-panel"
         className="bg-slate-800 rounded-2xl p-8 max-w-sm text-center"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.25 }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="text-4xl mb-4">🔒</div>
@@ -48,7 +56,7 @@ export const LockOverlay = ({ location, onClose }: LockOverlayProps) => {
         >
           關閉
         </button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

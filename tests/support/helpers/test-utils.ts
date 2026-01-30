@@ -1,4 +1,4 @@
-import type { Page, Locator } from '@playwright/test'
+import { expect, type Page, type Locator } from '@playwright/test'
 
 /** Location IDs matching src/data/locations.ts */
 export const UNLOCKED_LOCATIONS = ['tamsui', 'alishan', 'keelung'] as const
@@ -25,4 +25,13 @@ export function getAppRoot(page: Page): Locator {
 /** Get an SVG element within the map by data-testid */
 export function getMapElement(page: Page, testId: string): Locator {
   return page.getByTestId(testId)
+}
+
+/**
+ * Wait for AnimatePresence exit animation to complete on location-detail panel.
+ * During transitions, both exiting and entering elements exist simultaneously.
+ * This helper waits until only one location-detail element remains.
+ */
+export async function waitForDetailTransition(page: Page): Promise<void> {
+  await expect(page.getByTestId('location-detail')).toHaveCount(1)
 }

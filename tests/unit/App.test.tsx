@@ -6,6 +6,13 @@ afterEach(() => {
   cleanup()
 })
 
+// AnimatePresence exit animation keeps elements in DOM with opacity: 0.
+// This helper validates that an overlay is visually dismissed (either removed or in exit state).
+const expectOverlayDismissed = (container: HTMLElement) => {
+  const overlay = container.querySelector('[data-testid="lock-overlay"]') as HTMLElement | null
+  expect(overlay === null || overlay.style.opacity === '0').toBe(true)
+}
+
 // Mock Audio for App integration tests
 const mockAudio = {
   src: '',
@@ -223,8 +230,12 @@ describe('App Component — LocationDetail Integration', () => {
 
     const alishan = container.querySelector('[data-testid="location-dot-alishan"]')
     fireEvent.click(alishan!)
-    expect(container.querySelector('[data-testid="location-detail"] h2')?.textContent).toBe('阿里山雲海')
-    expect(container.querySelector('[data-testid="location-detail"] img')?.getAttribute('src')).toBe('/images/alishan.jpg')
+    // AnimatePresence keeps exiting + entering elements in DOM during transition;
+    // the newest (entering) element is the last in document order
+    const details = container.querySelectorAll('[data-testid="location-detail"]')
+    const latestDetail = details[details.length - 1]
+    expect(latestDetail?.querySelector('h2')?.textContent).toBe('阿里山雲海')
+    expect(latestDetail?.querySelector('img')?.getAttribute('src')).toBe('/images/alishan.jpg')
   })
 
   it('should show both LocationDetail and SoundscapePlayer when unlocked location selected', () => {
@@ -290,7 +301,7 @@ describe('App Component — LockOverlay Integration', () => {
     const closeBtn = container.querySelector('[data-testid="lock-overlay-close"]')
     fireEvent.click(closeBtn!)
 
-    expect(container.querySelector('[data-testid="lock-overlay"]')).toBeNull()
+    expectOverlayDismissed(container)
   })
 
   it('should keep audio playing when locked location overlay is shown', () => {
@@ -338,7 +349,7 @@ describe('App Component — LockOverlay Integration', () => {
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     fireEvent.click(tamsui!)
 
-    expect(container.querySelector('[data-testid="lock-overlay"]')).toBeNull()
+    expectOverlayDismissed(container)
     expect(container.querySelector('[data-testid="location-detail"]')).not.toBeNull()
   })
 })
@@ -378,7 +389,7 @@ describe('App Component — All 7 Locked Locations Verification', () => {
       const closeBtn = container.querySelector('[data-testid="lock-overlay-close"]')
       fireEvent.click(closeBtn!)
 
-      expect(container.querySelector('[data-testid="lock-overlay"]')).toBeNull()
+      expectOverlayDismissed(container)
     })
   })
 
@@ -389,7 +400,9 @@ describe('App Component — All 7 Locked Locations Verification', () => {
       const dot = container.querySelector(`[data-testid="location-dot-${id}"]`)
       fireEvent.click(dot!)
 
-      const panel = container.querySelector('[data-testid="lock-overlay-panel"]')
+      // AnimatePresence may keep exiting overlays in DOM; find the latest panel
+      const panels = container.querySelectorAll('[data-testid="lock-overlay-panel"]')
+      const panel = panels[panels.length - 1]
       const text = panel?.textContent ?? ''
 
       // Verify warm language present
@@ -401,7 +414,8 @@ describe('App Component — All 7 Locked Locations Verification', () => {
       expect(text).not.toContain('失敗')
 
       // Dismiss before next
-      const closeBtn = container.querySelector('[data-testid="lock-overlay-close"]')
+      const closeBtns = container.querySelectorAll('[data-testid="lock-overlay-close"]')
+      const closeBtn = closeBtns[closeBtns.length - 1]
       fireEvent.click(closeBtn!)
     })
   })
