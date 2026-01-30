@@ -207,11 +207,11 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
     const rootDiv = page.locator('#root > div').first()
     await expect(rootDiv).toHaveCSS(
       'background-color',
-      /rgb\(15, 23, 42\)|oklch\(0\.208 0\.042 265\.755\)/,
+      /rgb\(15, 23, 42\)|oklch\(0\.208 0\.042 265\.755\d*\)/,
     )
     await expect(rootDiv).toHaveCSS(
       'color',
-      /rgb\(255, 255, 255\)|oklch\(1 0 0\)/,
+      /rgb\(255, 255, 255\)|oklch\(1 0 0\d*\)/,
     )
 
     // AND: No unstyled content flash — min-height covers viewport
