@@ -27,7 +27,7 @@ test.describe('Story 2.2: Scene Photography — P0 Critical', () => {
 
     // WHEN: User clicks tamsui (unlocked)
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     // THEN: LocationDetail appears with photo and name
     await expect(detail).toBeVisible()
@@ -46,7 +46,7 @@ test.describe('Story 2.2: Scene Photography — P0 Critical', () => {
 
     // WHEN: User clicks an unlocked location
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     // THEN: Both panels are visible
     await expect(detail).toBeVisible()
@@ -61,13 +61,13 @@ test.describe('Story 2.2: Scene Photography — P0 Critical', () => {
 
     // GIVEN: Tamsui is selected
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
     await expect(img).toHaveAttribute('src', '/images/tamsui.jpg')
     await expect(detail.locator('h2')).toContainText('淡水河夕陽')
 
     // WHEN: User clicks alishan
     const alishan = getMapElement(page, 'location-dot-alishan')
-    await alishan.click()
+    await alishan.click({ force: true })
 
     // THEN: Photo and name update to alishan
     await expect(img).toHaveAttribute('src', '/images/alishan.jpg')
@@ -101,7 +101,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
 
     for (const id of UNLOCKED_LOCATIONS) {
       const dot = getMapElement(page, `location-dot-${id}`)
-      await dot.click()
+      await dot.click({ force: true })
 
       await expect(detail).toBeVisible()
       await expect(img).toHaveAttribute('src', LOCATION_DATA[id].imagePath)
@@ -115,7 +115,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
     const detail = page.getByTestId('location-detail')
 
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     await expect(detail.locator('p')).toContainText('Tamsui River Sunset')
   })
@@ -127,7 +127,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
 
     // Select unlocked location first
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
     await expect(detail).toBeVisible()
 
     // Click locked location — shows overlay, preserves selection
@@ -149,7 +149,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
     // GIVEN/WHEN/THEN: For each unlocked location, verify BOTH photo AND player match
     for (const id of UNLOCKED_LOCATIONS) {
       const dot = getMapElement(page, `location-dot-${id}`)
-      await dot.click()
+      await dot.click({ force: true })
 
       // THEN: Photo src matches the location
       await expect(img).toHaveAttribute('src', LOCATION_DATA[id].imagePath)
@@ -170,12 +170,12 @@ test.describe('Story 2.2: Scene Photography — P2 Medium', () => {
 
     // GIVEN: Tamsui is selected
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
     await expect(detail).toBeVisible()
     await expect(img).toHaveAttribute('src', '/images/tamsui.jpg')
 
     // WHEN: User clicks tamsui again
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     // THEN: LocationDetail remains visible with correct data
     await expect(detail).toBeVisible()
@@ -192,7 +192,7 @@ test.describe('Story 2.2: Scene Photography — P2 Medium', () => {
     // GIVEN: User rapidly cycles through all locations
     for (const id of UNLOCKED_LOCATIONS) {
       const dot = getMapElement(page, `location-dot-${id}`)
-      await dot.click()
+      await dot.click({ force: true })
     }
 
     // THEN: Final state matches the last location (keelung)

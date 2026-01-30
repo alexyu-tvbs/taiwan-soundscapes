@@ -34,8 +34,8 @@ test.describe('Keyboard Navigation — P2 Medium', () => {
     // WHEN: User presses Enter
     await page.keyboard.press('Enter')
 
-    // THEN: Tamsui is selected (radius changes to 8)
-    await expect(tamsui).toHaveAttribute('r', '8')
+    // THEN: Tamsui is selected (glow-strong filter applied; r oscillates via Motion)
+    await expect(tamsui).toHaveAttribute('filter', 'url(#glow-strong)')
   })
 
   test('[P2] should select location when pressing Space on focused marker', async ({
@@ -48,8 +48,8 @@ test.describe('Keyboard Navigation — P2 Medium', () => {
     // WHEN: User presses Space
     await page.keyboard.press('Space')
 
-    // THEN: Alishan is selected (radius changes to 8)
-    await expect(alishan).toHaveAttribute('r', '8')
+    // THEN: Alishan is selected (glow-strong filter applied; r oscillates via Motion)
+    await expect(alishan).toHaveAttribute('filter', 'url(#glow-strong)')
   })
 
   test('[P2] should show SoundscapePlayer when activating unlocked marker via keyboard', async ({

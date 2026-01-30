@@ -54,11 +54,11 @@ describe('LocationDot Component — Unlocked State', () => {
     expect(circle?.getAttribute('fill')).toBe('#F59E0B')
   })
 
-  it('should not have static opacity attribute for unlocked (animated by Motion)', () => {
+  it('should have animation-initial opacity for unlocked (Motion animates 0.7-1.0)', () => {
     const { container } = renderDot(unlockedLocation)
     const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
-    // Motion manages opacity via animation (0.7-1.0 pulse), no static SVG attribute
-    expect(circle?.getAttribute('opacity')).toBeNull()
+    // Motion sets initial opacity from animate keyframes start value (0.7)
+    expect(circle?.getAttribute('opacity')).toBe('0.7')
   })
 
   it('should have r=6 when not selected', () => {

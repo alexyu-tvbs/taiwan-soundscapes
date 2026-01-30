@@ -20,6 +20,7 @@ export const LocationDot = ({ location, isSelected, onClick }: LocationDotProps)
           r={isSelected ? 8 : 6}
           fill="#F59E0B"
           filter={isSelected ? 'url(#glow-strong)' : 'url(#glow)'}
+          initial={false}
           animate={{
             opacity: [0.7, 1, 0.7],
             r: isSelected ? [8, 10, 8] : [6, 7.5, 6],

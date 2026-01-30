@@ -42,10 +42,10 @@ describe('App Component — Map Integration', () => {
   it('should update selectedLocationId when a location is clicked', () => {
     const { container } = render(<App />)
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
-    expect(tamsui?.getAttribute('r')).toBe('6')
+    expect(tamsui?.getAttribute('filter')).toBe('url(#glow)')
 
     fireEvent.click(tamsui!)
-    expect(tamsui?.getAttribute('r')).toBe('8')
+    expect(tamsui?.getAttribute('filter')).toBe('url(#glow-strong)')
   })
 
   it('should display brand tagline "好眠秘境 — 用耳朵旅行台灣"', () => {
@@ -61,11 +61,11 @@ describe('App Component — Map Integration', () => {
     const alishan = container.querySelector('[data-testid="location-dot-alishan"]')
 
     fireEvent.click(tamsui!)
-    expect(tamsui?.getAttribute('r')).toBe('8')
+    expect(tamsui?.getAttribute('filter')).toBe('url(#glow-strong)')
 
     fireEvent.click(alishan!)
-    expect(alishan?.getAttribute('r')).toBe('8')
-    expect(tamsui?.getAttribute('r')).toBe('6')
+    expect(alishan?.getAttribute('filter')).toBe('url(#glow-strong)')
+    expect(tamsui?.getAttribute('filter')).toBe('url(#glow)')
   })
 })
 

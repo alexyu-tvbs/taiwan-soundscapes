@@ -47,15 +47,15 @@ test.describe('Story 1.2: Taiwan Map — P0 Critical', () => {
     }
   })
 
-  test('should show 3 unlocked locations with full opacity', async ({
+  test('should show 3 unlocked locations with glow filter applied', async ({
     page,
   }) => {
     // GIVEN: Page is loaded
 
-    // THEN: Unlocked markers (tamsui, alishan, keelung) have opacity=1
+    // THEN: Unlocked markers have glow filter (Motion animates opacity 0.7-1.0, no static value)
     for (const id of UNLOCKED_LOCATIONS) {
       const dot = getMapElement(page, `location-dot-${id}`)
-      await expect(dot).toHaveAttribute('opacity', '1')
+      await expect(dot).toHaveAttribute('filter', 'url(#glow)')
     }
   })
 
@@ -128,11 +128,11 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
     // GIVEN: Page is loaded with map
     const tamsui = getMapElement(page, 'location-dot-tamsui')
 
-    // WHEN: User clicks on Tamsui marker
-    await tamsui.click()
+    // WHEN: User clicks on Tamsui marker (force: Motion animation = "not stable")
+    await tamsui.click({ force: true })
 
-    // THEN: Tamsui marker shows selected state (radius increases to 8)
-    await expect(tamsui).toHaveAttribute('r', '8')
+    // THEN: Tamsui marker shows selected state (glow-strong filter applied)
+    await expect(tamsui).toHaveAttribute('filter', 'url(#glow-strong)')
   })
 
   test('should deselect previous marker when selecting a new one', async ({
@@ -142,15 +142,15 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
     const tamsui = getMapElement(page, 'location-dot-tamsui')
     const alishan = getMapElement(page, 'location-dot-alishan')
 
-    await tamsui.click()
-    await expect(tamsui).toHaveAttribute('r', '8')
+    await tamsui.click({ force: true })
+    await expect(tamsui).toHaveAttribute('filter', 'url(#glow-strong)')
 
     // WHEN: User clicks Alishan
-    await alishan.click()
+    await alishan.click({ force: true })
 
-    // THEN: Alishan is selected, Tamsui reverts to default
-    await expect(alishan).toHaveAttribute('r', '8')
-    await expect(tamsui).toHaveAttribute('r', '6')
+    // THEN: Alishan is selected, Tamsui reverts to standard glow
+    await expect(alishan).toHaveAttribute('filter', 'url(#glow-strong)')
+    await expect(tamsui).toHaveAttribute('filter', 'url(#glow)')
   })
 
   // 1.2-E2E-007: Hover shows location name via SVG <title>

@@ -122,7 +122,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
   }) => {
     // GIVEN: Tamsui (unlocked) is selected and playing
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
     const player = page.getByTestId('soundscape-player')
     await expect(player).toBeVisible()
 
@@ -140,7 +140,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
   }) => {
     // GIVEN: Tamsui is selected with detail panel visible
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
     const detail = page.getByTestId('location-detail')
     await expect(detail).toBeVisible()
 
@@ -169,7 +169,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
 
     // AND: User clicks tamsui (unlocked)
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     // THEN: LocationDetail and player appear (overlay stays gone)
     await expect(overlay).toBeHidden()

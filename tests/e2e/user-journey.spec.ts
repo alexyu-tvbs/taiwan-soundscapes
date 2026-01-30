@@ -26,9 +26,9 @@ test.describe('Full User Journey — P1 High', () => {
     await expect(page.getByTestId('location-detail')).toBeHidden()
 
     // ── PHASE 2: Select unlocked location (Tamsui) ──
-    // WHEN: User clicks Tamsui (unlocked)
+    // WHEN: User clicks Tamsui (unlocked; force: Motion animation = "not stable")
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     // THEN: LocationDetail and SoundscapePlayer both appear
     const detail = page.getByTestId('location-detail')
@@ -41,8 +41,8 @@ test.describe('Full User Journey — P1 High', () => {
     await expect(detail.locator('img')).toHaveAttribute('src', '/images/tamsui.jpg')
     await expect(player).toContainText('淡水河夕陽')
 
-    // AND: Marker shows selected state
-    await expect(tamsui).toHaveAttribute('r', '8')
+    // AND: Marker shows selected state (glow-strong filter)
+    await expect(tamsui).toHaveAttribute('filter', 'url(#glow-strong)')
 
     // ── PHASE 3: Toggle play/pause ──
     const playPauseBtn = page.getByTestId('play-pause-btn')
@@ -59,16 +59,16 @@ test.describe('Full User Journey — P1 High', () => {
     // ── PHASE 4: Switch to another unlocked location (Alishan) ──
     // WHEN: User clicks Alishan
     const alishan = getMapElement(page, 'location-dot-alishan')
-    await alishan.click()
+    await alishan.click({ force: true })
 
     // THEN: Panels update to Alishan data
     await expect(detail.locator('h2')).toContainText('阿里山雲海')
     await expect(detail.locator('img')).toHaveAttribute('src', '/images/alishan.jpg')
     await expect(player).toContainText('阿里山雲海')
 
-    // AND: Selection states update
-    await expect(alishan).toHaveAttribute('r', '8')
-    await expect(tamsui).toHaveAttribute('r', '6')
+    // AND: Selection states update (filter changes are deterministic, unlike animated r)
+    await expect(alishan).toHaveAttribute('filter', 'url(#glow-strong)')
+    await expect(tamsui).toHaveAttribute('filter', 'url(#glow)')
 
     // ── PHASE 5: Click locked location (Taroko — mid-map, not covered by fixed player bar) ──
     // WHEN: User clicks Taroko (locked)
@@ -103,13 +103,13 @@ test.describe('Full User Journey — P1 High', () => {
     // ── PHASE 7: Switch to Keelung to verify clean state ──
     // WHEN: User clicks Keelung
     const keelung = getMapElement(page, 'location-dot-keelung')
-    await keelung.click()
+    await keelung.click({ force: true })
 
     // THEN: All panels update correctly
     await expect(detail.locator('h2')).toContainText('基隆港浪')
     await expect(detail.locator('img')).toHaveAttribute('src', '/images/keelung.jpg')
     await expect(player).toContainText('基隆港浪')
-    await expect(keelung).toHaveAttribute('r', '8')
-    await expect(alishan).toHaveAttribute('r', '6')
+    await expect(keelung).toHaveAttribute('filter', 'url(#glow-strong)')
+    await expect(alishan).toHaveAttribute('filter', 'url(#glow)')
   })
 })

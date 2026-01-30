@@ -27,8 +27,9 @@ test.describe('Story 2.1: Audio Playback — P0 Critical', () => {
     await expect(player).toBeHidden()
 
     // WHEN: User clicks an unlocked location (tamsui)
+    // force: Motion animation keeps r/opacity oscillating = Playwright "not stable"
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     // THEN: SoundscapePlayer becomes visible with the location name
     await expect(player).toBeVisible()
@@ -43,11 +44,11 @@ test.describe('Story 2.1: Audio Playback — P0 Critical', () => {
     const alishan = getMapElement(page, 'location-dot-alishan')
     const player = page.getByTestId('soundscape-player')
 
-    await tamsui.click()
+    await tamsui.click({ force: true })
     await expect(player).toContainText('淡水河夕陽')
 
     // WHEN: User clicks a different unlocked location (alishan)
-    await alishan.click()
+    await alishan.click({ force: true })
 
     // THEN: Player updates to show the new location name
     await expect(player).toBeVisible()
@@ -88,7 +89,7 @@ test.describe('Story 2.1: Audio Playback — P1 High', () => {
     const taroko = getMapElement(page, 'location-dot-taroko')
     const player = page.getByTestId('soundscape-player')
 
-    await tamsui.click()
+    await tamsui.click({ force: true })
     await expect(player).toBeVisible()
 
     // WHEN: User clicks Taroko (locked) — shows overlay, preserves selection
@@ -104,7 +105,7 @@ test.describe('Story 2.1: Audio Playback — P1 High', () => {
   }) => {
     // GIVEN: An unlocked location is selected (player visible, initially "playing")
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     const playPauseBtn = page.getByTestId('play-pause-btn')
     await expect(playPauseBtn).toBeVisible()
@@ -130,7 +131,7 @@ test.describe('Story 2.1: Audio Playback — P1 High', () => {
   }) => {
     // GIVEN: An unlocked location is selected
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     // THEN: Volume slider is visible with correct configuration
     const slider = page.getByTestId('volume-slider')
@@ -149,7 +150,7 @@ test.describe('Story 2.1: Audio Playback — P1 High', () => {
     // WHEN/THEN: Clicking each unlocked location shows its name in the player
     for (const id of UNLOCKED_LOCATIONS) {
       const dot = getMapElement(page, `location-dot-${id}`)
-      await dot.click()
+      await dot.click({ force: true })
 
       const player = page.getByTestId('soundscape-player')
       await expect(player).toBeVisible()
@@ -164,7 +165,7 @@ test.describe('Story 2.1: Audio Playback — P2 Medium', () => {
   }) => {
     // GIVEN: An unlocked location is selected
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     // THEN: Player panel has dark theme backdrop
     const player = page.getByTestId('soundscape-player')
@@ -178,7 +179,7 @@ test.describe('Story 2.1: Audio Playback — P2 Medium', () => {
   }) => {
     // GIVEN: Tamsui is selected and playing
     const tamsui = getMapElement(page, 'location-dot-tamsui')
-    await tamsui.click()
+    await tamsui.click({ force: true })
 
     const player = page.getByTestId('soundscape-player')
     await expect(player).toBeVisible()

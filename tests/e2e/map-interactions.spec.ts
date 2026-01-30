@@ -34,14 +34,14 @@ test.describe('Map Interactions — P1 High', () => {
     const tamsui = getMapElement(page, 'location-dot-tamsui')
     const taroko = getMapElement(page, 'location-dot-taroko')
 
-    await tamsui.click()
-    await expect(tamsui).toHaveAttribute('r', '8')
+    await tamsui.click({ force: true })
+    await expect(tamsui).toHaveAttribute('filter', 'url(#glow-strong)')
 
     // WHEN: User clicks Taroko (locked) — shows overlay, preserves selection
     await taroko.click()
 
-    // THEN: Tamsui stays selected (r=8), Taroko stays default (r=6), overlay shown
-    await expect(tamsui).toHaveAttribute('r', '8')
+    // THEN: Tamsui stays selected (glow-strong), Taroko stays locked (r=6), overlay shown
+    await expect(tamsui).toHaveAttribute('filter', 'url(#glow-strong)')
     await expect(taroko).toHaveAttribute('r', '6')
     await expect(page.getByTestId('lock-overlay')).toBeVisible()
   })
@@ -82,14 +82,14 @@ test.describe('Map Interactions — P2 Medium', () => {
     const alishan = getMapElement(page, 'location-dot-alishan')
     const keelung = getMapElement(page, 'location-dot-keelung')
 
-    await tamsui.click()
-    await alishan.click()
-    await keelung.click()
+    await tamsui.click({ force: true })
+    await alishan.click({ force: true })
+    await keelung.click({ force: true })
 
-    // THEN: Only keelung is selected (r=8), others are default (r=6)
-    await expect(keelung).toHaveAttribute('r', '8')
-    await expect(tamsui).toHaveAttribute('r', '6')
-    await expect(alishan).toHaveAttribute('r', '6')
+    // THEN: Only keelung is selected (glow-strong), others revert to standard glow
+    await expect(keelung).toHaveAttribute('filter', 'url(#glow-strong)')
+    await expect(tamsui).toHaveAttribute('filter', 'url(#glow)')
+    await expect(alishan).toHaveAttribute('filter', 'url(#glow)')
   })
 
   test('[P2] should show pointer cursor on all location markers', async ({
