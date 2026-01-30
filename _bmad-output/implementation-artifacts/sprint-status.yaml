@@ -47,14 +47,14 @@ development_status:
   epic-1-retrospective: optional
 
   # Epic 2: Soundscape Exploration & Playback
-  epic-2: backlog
-  2-1-audio-playback-engine-and-player-controls: backlog
-  2-2-scene-photography-and-complete-soundscape-assets: backlog
+  epic-2: in-progress
+  2-1-audio-playback-engine-and-player-controls: ready-for-dev
+  2-2-scene-photography-and-complete-soundscape-assets: ready-for-dev
   epic-2-retrospective: optional
 
   # Epic 3: Unlock System & Gamification Display
-  epic-3: backlog
-  3-1-locked-location-interaction-and-unlock-condition-display: backlog
+  epic-3: in-progress
+  3-1-locked-location-interaction-and-unlock-condition-display: ready-for-dev
   epic-3-retrospective: optional
 
   # Epic 4: Visual Polish & Presentation Quality
