@@ -111,3 +111,40 @@ describe('Location Data Model — P2 Medium', () => {
     }
   })
 })
+
+// ═══════════════════════════════════════════════════════════════
+// Expanded Automation: Data Integrity Constraints
+// Coverage gaps identified by TEA automate workflow
+// ═══════════════════════════════════════════════════════════════
+
+describe('Location Data Integrity — P1 High', () => {
+  it('[P1] should have all unique location IDs', () => {
+    const ids = locations.map((loc) => loc.id)
+    const uniqueIds = new Set(ids)
+    expect(uniqueIds.size).toBe(ids.length)
+  })
+
+  it('[P1] should have all coordinates within SVG viewBox bounds (0-1000, 0-1295)', () => {
+    for (const loc of locations) {
+      expect(loc.coordinates.x).toBeGreaterThanOrEqual(0)
+      expect(loc.coordinates.x).toBeLessThanOrEqual(1000)
+      expect(loc.coordinates.y).toBeGreaterThanOrEqual(0)
+      expect(loc.coordinates.y).toBeLessThanOrEqual(1295)
+    }
+  })
+})
+
+describe('Location Data Integrity — P2 Medium', () => {
+  it('[P2] should have non-empty English names for all locations', () => {
+    for (const loc of locations) {
+      expect(loc.nameEn).toBeTruthy()
+      expect(loc.nameEn.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('[P2] should have unique coordinate pairs for all locations', () => {
+    const coordKeys = locations.map((loc) => `${loc.coordinates.x},${loc.coordinates.y}`)
+    const uniqueCoords = new Set(coordKeys)
+    expect(uniqueCoords.size).toBe(coordKeys.length)
+  })
+})

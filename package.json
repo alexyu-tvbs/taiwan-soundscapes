@@ -16,8 +16,11 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:chromium": "playwright test --project=chromium",
     "test:e2e:webkit": "playwright test --project=webkit",
+    "test:e2e:p0": "playwright test --grep 'P0'",
+    "test:e2e:p1": "playwright test --grep 'P[01]'",
     "test:unit": "vitest run",
-    "test:unit:watch": "vitest"
+    "test:unit:watch": "vitest",
+    "test:all": "vitest run && playwright test --project=chromium"
   },
   "dependencies": {
     "motion": "^12.29.2",
