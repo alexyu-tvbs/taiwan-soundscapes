@@ -1,6 +1,6 @@
 # Story 1.2: Interactive Taiwan Map with Location Markers & Brand Tagline
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -20,24 +20,24 @@ So that I immediately understand this is a geographic sound exploration experien
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Download and convert SimpleMaps Taiwan SVG to React component (AC: #1)
-  - [ ] 1.1 Download Taiwan SVG from SimpleMaps (https://simplemaps.com/resources/svg-tw — 19.1 KB, free)
-  - [ ] 1.2 Create `src/components/TaiwanMap.tsx` — convert SVG markup to inline JSX
-  - [ ] 1.3 Note the SVG `viewBox` dimensions and coordinate system for marker positioning
-  - [ ] 1.4 Style the map: fill with dark/muted color (e.g., `fill="currentColor"` with Tailwind `text-slate-700`), stroke with subtle border
-  - [ ] 1.5 Center the map on the page and size it to fill the viewport height (leaving room for header)
+- [x] Task 1: Download and convert SimpleMaps Taiwan SVG to React component (AC: #1)
+  - [x] 1.1 Download Taiwan SVG from SimpleMaps (https://simplemaps.com/resources/svg-tw — 19.1 KB, free)
+  - [x] 1.2 Create `src/components/TaiwanMap.tsx` — convert SVG markup to inline JSX
+  - [x] 1.3 Note the SVG `viewBox` dimensions and coordinate system for marker positioning
+  - [x] 1.4 Style the map: fill with dark/muted color (e.g., `fill="currentColor"` with Tailwind `text-slate-700`), stroke with subtle border
+  - [x] 1.5 Center the map on the page and size it to fill the viewport height (leaving room for header)
 
-- [ ] Task 2: Create LocationDot component (AC: #2, #4)
-  - [ ] 2.1 Create `src/components/LocationDot.tsx` as an SVG `<circle>` element
-  - [ ] 2.2 Props interface: `LocationDotProps { location: Location; isSelected: boolean; onClick: (id: string) => void }`
-  - [ ] 2.3 Unlocked visual: bright fill color (warm amber/gold, e.g., `#F59E0B`), full opacity
-  - [ ] 2.4 Locked visual: dimmed fill color, reduced opacity (`opacity={0.4}`)
-  - [ ] 2.5 Add `cursor-pointer` behavior and click handler calling `onClick(location.id)`
-  - [ ] 2.6 Hover: show location name via SVG `<title>` element for native browser tooltip
+- [x] Task 2: Create LocationDot component (AC: #2, #4)
+  - [x] 2.1 Create `src/components/LocationDot.tsx` as an SVG `<circle>` element
+  - [x] 2.2 Props interface: `LocationDotProps { location: Location; isSelected: boolean; onClick: (id: string) => void }`
+  - [x] 2.3 Unlocked visual: bright fill color (warm amber/gold, e.g., `#F59E0B`), full opacity
+  - [x] 2.4 Locked visual: dimmed fill color, reduced opacity (`opacity={0.4}`)
+  - [x] 2.5 Add `cursor-pointer` behavior and click handler calling `onClick(location.id)`
+  - [x] 2.6 Hover: show location name via SVG `<title>` element for native browser tooltip
 
-- [ ] Task 3: Determine SVG coordinates for all 10 locations (AC: #2)
-  - [ ] 3.1 Analyze the SimpleMaps SVG viewBox to understand the coordinate system
-  - [ ] 3.2 Map each of the 10 real Taiwan locations to approximate SVG coordinates:
+- [x] Task 3: Determine SVG coordinates for all 10 locations (AC: #2)
+  - [x] 3.1 Analyze the SimpleMaps SVG viewBox to understand the coordinate system
+  - [x] 3.2 Map each of the 10 real Taiwan locations to approximate SVG coordinates:
     - 淡水河夕陽 (Tamsui) — northern coast, near Taipei
     - 阿里山雲海 (Alishan) — central mountain, Chiayi area
     - 基隆港浪 (Keelung) — northeast coast
@@ -48,19 +48,19 @@ So that I immediately understand this is a geographic sound exploration experien
     - 合歡山銀河 (Hehuan Mountain) — central mountain range
     - 台東稻浪 (Taitung) — southeast coast
     - 玉山頂風聲 (Jade Mountain) — central, highest peak
-  - [ ] 3.3 Update `src/data/locations.ts` with actual SVG coordinates (replacing placeholders from Story 1.1)
+  - [x] 3.3 Update `src/data/locations.ts` with actual SVG coordinates (replacing placeholders from Story 1.1)
 
-- [ ] Task 4: Integrate map into App.tsx with state management (AC: #1, #2)
-  - [ ] 4.1 Import `TaiwanMap` into `App.tsx`
-  - [ ] 4.2 Add state: `selectedLocationId` (string | null) in App.tsx
-  - [ ] 4.3 Pass `locations`, `selectedLocationId`, and `onSelect` handler to TaiwanMap
-  - [ ] 4.4 TaiwanMap renders LocationDot for each location from the data array
-  - [ ] 4.5 On click: update `selectedLocationId` state (audio/panel integration deferred to Epic 2)
+- [x] Task 4: Integrate map into App.tsx with state management (AC: #1, #2)
+  - [x] 4.1 Import `TaiwanMap` into `App.tsx`
+  - [x] 4.2 Add state: `selectedLocationId` (string | null) in App.tsx
+  - [x] 4.3 Pass `locations`, `selectedLocationId`, and `onSelect` handler to TaiwanMap
+  - [x] 4.4 TaiwanMap renders LocationDot for each location from the data array
+  - [x] 4.5 On click: update `selectedLocationId` state (audio/panel integration deferred to Epic 2)
 
-- [ ] Task 5: Add brand tagline (AC: #3)
-  - [ ] 5.1 Add header section in `App.tsx` above the map
-  - [ ] 5.2 Display: "好眠秘境 — 用耳朵旅行台灣"
-  - [ ] 5.3 Style: centered, white/light text, appropriate font size for header prominence, consistent with dark theme
+- [x] Task 5: Add brand tagline (AC: #3)
+  - [x] 5.1 Add header section in `App.tsx` above the map
+  - [x] 5.2 Display: "好眠秘境 — 用耳朵旅行台灣"
+  - [x] 5.3 Style: centered, white/light text, appropriate font size for header prominence, consistent with dark theme
 
 ## Dev Notes
 
@@ -231,8 +231,46 @@ src/
 
 ### Agent Model Used
 
+Claude Opus 4.5
+
 ### Debug Log References
+
+- Tailwind CSS v4 E2E test fix: oklch color space format (not rgb) — updated `taiwan-map.spec.ts` to accept both formats
+- SVG source: @svg-maps/taiwan npm package (based on SimpleMaps data), viewBox `0 0 1000 1295`
+- Installed `@testing-library/react`, `happy-dom` for component unit testing (jsdom had ESM compatibility issue)
 
 ### Completion Notes List
 
+- Task 1: Created `TaiwanMap.tsx` with full SimpleMaps SVG inline paths (20 administrative regions), viewBox `0 0 1000 1295`, dark styling with `text-slate-700` fill and `#475569` stroke
+- Task 2: Created `LocationDot.tsx` as SVG `<circle>` with unlocked (#F59E0B, opacity 1) and locked (#64748B, opacity 0.4) visual states, r=6/8 for default/selected, `<title>` tooltip
+- Task 3: Updated all 10 location coordinates in `locations.ts` based on SVG path analysis — mapped to geographically accurate positions within the viewBox coordinate system
+- Task 4: Integrated TaiwanMap into App.tsx with `selectedLocationId` state via `useState`, prop drilling pattern per project-context.md
+- Task 5: Added brand tagline "好眠秘境 — 用耳朵旅行台灣" as centered header with `text-2xl font-bold` styling
+- All unit tests: 32/32 passing (4 test files: locations, TaiwanMap, LocationDot, App)
+- All E2E tests: 17/17 passing (homepage + taiwan-map specs)
+- Build, TypeScript, ESLint: all clean
+
+### Change Log
+
+- 2026-01-30: Implemented Story 1.2 — Interactive Taiwan Map with Location Markers & Brand Tagline
+
 ### File List
+
+**New Files:**
+- `src/components/TaiwanMap.tsx` — SVG Taiwan map inline React component with all administrative region paths
+- `src/components/LocationDot.tsx` — Individual map marker as SVG circle with visual states
+- `tests/unit/TaiwanMap.test.tsx` — Unit tests for TaiwanMap component (4 tests)
+- `tests/unit/LocationDot.test.tsx` — Unit tests for LocationDot component (12 tests)
+- `tests/unit/App.test.tsx` — Unit tests for App integration (5 tests)
+
+**Modified Files:**
+- `src/App.tsx` — Added TaiwanMap integration, selectedLocationId state, brand tagline header
+- `src/data/locations.ts` — Updated all 10 location coordinates from placeholders to actual SVG viewBox coordinates
+- `vite.config.ts` — Added `environment: 'happy-dom'` for component unit testing
+- `tests/e2e/taiwan-map.spec.ts` — Fixed Tailwind CSS v4 oklch color format assertion
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` — Story status: ready-for-dev → in-progress → review
+
+**New Dev Dependencies:**
+- `@testing-library/react` — React component testing
+- `@testing-library/jest-dom` — DOM assertion matchers
+- `happy-dom` — DOM environment for Vitest (replaced jsdom due to ESM issue)

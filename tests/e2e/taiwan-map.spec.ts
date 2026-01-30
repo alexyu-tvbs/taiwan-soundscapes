@@ -202,10 +202,17 @@ test.describe('Story 1.2: Taiwan Map — P1 High', () => {
   }) => {
     // GIVEN: Page is loaded
 
-    // THEN: Dark theme background is rendered (bg-slate-900 = rgb(15, 23, 42))
+    // THEN: Dark theme background is rendered
+    // Tailwind CSS v4 uses oklch color space; bg-slate-900 = oklch(0.208 0.042 265.755)
     const rootDiv = page.locator('#root > div').first()
-    await expect(rootDiv).toHaveCSS('background-color', 'rgb(15, 23, 42)')
-    await expect(rootDiv).toHaveCSS('color', 'rgb(255, 255, 255)')
+    await expect(rootDiv).toHaveCSS(
+      'background-color',
+      /rgb\(15, 23, 42\)|oklch\(0\.208 0\.042 265\.755\)/,
+    )
+    await expect(rootDiv).toHaveCSS(
+      'color',
+      /rgb\(255, 255, 255\)|oklch\(1 0 0\)/,
+    )
 
     // AND: No unstyled content flash — min-height covers viewport
     await expect(rootDiv).toHaveCSS('min-height', /\d+px/)

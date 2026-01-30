@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   test: {
+    environment: 'happy-dom',
     include: ['tests/unit/**/*.test.{ts,tsx}'],
     exclude: ['tests/e2e/**'],
   },
