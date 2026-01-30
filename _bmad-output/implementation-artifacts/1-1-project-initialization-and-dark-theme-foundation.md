@@ -1,6 +1,6 @@
 # Story 1.1: Project Initialization & Dark Theme Foundation
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -18,33 +18,33 @@ So that the development environment is ready and the visual foundation matches t
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Initialize Vite + React + TypeScript project (AC: #1)
-  - [ ] 1.1 Run `npm create vite@latest taiwan-soundscapes -- --template react-ts` in the project root's parent directory, then move contents to project root (or init in place if empty)
-  - [ ] 1.2 Run `npm install`
-  - [ ] 1.3 Run `npm install tailwindcss @tailwindcss/vite`
-  - [ ] 1.4 Run `npm install motion`
-  - [ ] 1.5 Create directory structure: `src/components/`, `src/hooks/`, `src/data/`, `src/types/`
-  - [ ] 1.6 Verify `npm run dev` starts without errors
+- [x] Task 1: Initialize Vite + React + TypeScript project (AC: #1)
+  - [x] 1.1 Run `npm create vite@latest taiwan-soundscapes -- --template react-ts` in the project root's parent directory, then move contents to project root (or init in place if empty)
+  - [x] 1.2 Run `npm install`
+  - [x] 1.3 Run `npm install tailwindcss @tailwindcss/vite`
+  - [x] 1.4 Run `npm install motion`
+  - [x] 1.5 Create directory structure: `src/components/`, `src/hooks/`, `src/data/`, `src/types/`
+  - [x] 1.6 Verify `npm run dev` starts without errors
 
-- [ ] Task 2: Configure Tailwind CSS v4 + Dark Theme (AC: #2)
-  - [ ] 2.1 Add `@tailwindcss/vite` plugin to `vite.config.ts`
-  - [ ] 2.2 Replace `src/index.css` contents with `@import "tailwindcss";`
-  - [ ] 2.3 Set dark background on root element in `App.tsx` using Tailwind: `bg-slate-900 text-white min-h-screen`
-  - [ ] 2.4 Remove all Vite default boilerplate (logos, counter, default styles)
-  - [ ] 2.5 Verify dark theme renders correctly in browser
+- [x] Task 2: Configure Tailwind CSS v4 + Dark Theme (AC: #2)
+  - [x] 2.1 Add `@tailwindcss/vite` plugin to `vite.config.ts`
+  - [x] 2.2 Replace `src/index.css` contents with `@import "tailwindcss";`
+  - [x] 2.3 Set dark background on root element in `App.tsx` using Tailwind: `bg-slate-900 text-white min-h-screen`
+  - [x] 2.4 Remove all Vite default boilerplate (logos, counter, default styles)
+  - [x] 2.5 Verify dark theme renders correctly in browser
 
-- [ ] Task 3: Create TypeScript types (AC: #3)
-  - [ ] 3.1 Create `src/types/index.ts` with `Location` type and `LocationStatus` type
-  - [ ] 3.2 Location type fields: `id: string`, `name: string`, `nameEn: string`, `coordinates: { x: number, y: number }`, `status: LocationStatus`, `audioPath: string`, `imagePath: string`, `unlockCondition: string`
-  - [ ] 3.3 LocationStatus: `'unlocked' | 'locked'`
+- [x] Task 3: Create TypeScript types (AC: #3)
+  - [x] 3.1 Create `src/types/index.ts` with `Location` type and `LocationStatus` type
+  - [x] 3.2 Location type fields: `id: string`, `name: string`, `nameEn: string`, `coordinates: { x: number, y: number }`, `status: LocationStatus`, `audioPath: string`, `imagePath: string`, `unlockCondition: string`
+  - [x] 3.3 LocationStatus: `'unlocked' | 'locked'`
 
-- [ ] Task 4: Create location data constants (AC: #3)
-  - [ ] 4.1 Create `src/data/locations.ts` with typed array of all 10 locations using `as const` assertion
-  - [ ] 4.2 3 unlocked locations: 淡水河夕陽 (tamsui), 阿里山雲海 (alishan), 基隆港浪 (keelung)
-  - [ ] 4.3 7 locked locations: 蘭嶼飛魚季, 太魯閣溪流, 日月潭晨曦, 墾丁星空, 合歡山銀河, 台東稻浪, 玉山頂風聲
-  - [ ] 4.4 Audio paths: `/audio/{id}.mp3`, image paths: `/images/{id}.jpg`
-  - [ ] 4.5 SVG coordinates: Use placeholder values (will be refined in Story 1.2 when the SVG map is integrated)
-  - [ ] 4.6 Unlock conditions: Warm, positive zh-tw language (e.g., "連續好眠 14 天，解鎖這片海洋")
+- [x] Task 4: Create location data constants (AC: #3)
+  - [x] 4.1 Create `src/data/locations.ts` with typed array of all 10 locations using `as const` assertion
+  - [x] 4.2 3 unlocked locations: 淡水河夕陽 (tamsui), 阿里山雲海 (alishan), 基隆港浪 (keelung)
+  - [x] 4.3 7 locked locations: 蘭嶼飛魚季, 太魯閣溪流, 日月潭晨曦, 墾丁星空, 合歡山銀河, 台東稻浪, 玉山頂風聲
+  - [x] 4.4 Audio paths: `/audio/{id}.mp3`, image paths: `/images/{id}.jpg`
+  - [x] 4.5 SVG coordinates: Use placeholder values (will be refined in Story 1.2 when the SVG map is integrated)
+  - [x] 4.6 Unlock conditions: Warm, positive zh-tw language (e.g., "連續好眠 14 天，解鎖這片海洋")
 
 ## Dev Notes
 
@@ -125,6 +125,7 @@ taiwan-soundscapes/
 ├── tsconfig.node.json
 ├── vite.config.ts              # React + @tailwindcss/vite plugins
 ├── .gitignore
+├── .nvmrc                      # Node.js version pinning
 ├── index.html
 ├── src/
 │   ├── main.tsx
@@ -162,9 +163,45 @@ taiwan-soundscapes/
 ## Dev Agent Record
 
 ### Agent Model Used
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
+- Node.js version warning (20.18.3 vs required 20.19+) — does not block build or dev; .nvmrc added for team alignment
 
 ### Completion Notes List
+- Initialized Vite + React + TypeScript project from `create-vite@8.2.0` template `react-ts`
+- Installed `tailwindcss@^4.1.18`, `@tailwindcss/vite@^4.1.18`, `motion@^12.29.2`
+- Configured `vite.config.ts` with `@tailwindcss/vite` plugin per Tailwind v4 spec
+- Replaced `index.css` with `@import "tailwindcss"` only (v4 pattern)
+- Created `App.tsx` with `bg-slate-900 text-white min-h-screen` dark theme root
+- Removed all Vite boilerplate (App.css, assets/, vite.svg)
+- Created `src/types/index.ts` with `Location` interface and `LocationStatus` type
+- Created `src/data/locations.ts` with 10 locations (3 unlocked, 7 locked), `as const` assertion
+- Created directory structure: `src/components/`, `src/hooks/`, `public/audio/`, `public/images/`
+- Added `.nvmrc` (20.19.0) and `engines` field in package.json per user request
+- Fixed package name from `taiwan-soundscapes-init` to `taiwan-soundscapes`
+- All validations passed: `tsc -b` (zero errors), `vite build` (success), `eslint .` (zero errors)
+
+### Change Log
+- 2026-01-30: Story 1.1 implemented — Project initialized with Vite + React + TS, Tailwind v4, Motion, dark theme, types, and location data
 
 ### File List
+- package.json (modified — name, engines added)
+- .nvmrc (new)
+- .gitignore (new)
+- vite.config.ts (modified — added tailwindcss plugin)
+- tsconfig.json (from template)
+- tsconfig.app.json (from template)
+- tsconfig.node.json (from template)
+- eslint.config.js (from template)
+- index.html (from template)
+- src/main.tsx (from template)
+- src/App.tsx (modified — dark theme, boilerplate removed)
+- src/index.css (modified — Tailwind v4 import only)
+- src/vite-env.d.ts (from template)
+- src/types/index.ts (new)
+- src/data/locations.ts (new)
+- src/components/ (new, empty)
+- src/hooks/ (new, empty)
+- public/audio/ (new, empty)
+- public/images/ (new, empty)
