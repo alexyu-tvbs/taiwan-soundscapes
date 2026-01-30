@@ -70,16 +70,7 @@ test.describe('Story 4.2: Audio Responsiveness — P1 High', () => {
     const tamsui = getMapElement(page, 'location-dot-tamsui')
     await tamsui.click({ force: true })
 
-    // THEN: An audio element exists with the correct source
-    const audioSrc = await page.evaluate(() => {
-      const audios = document.querySelectorAll('audio')
-      if (audios.length > 0) return audios[0].src
-      // Check for HTMLAudioElement created via new Audio()
-      // The useAudioPlayer hook stores the element — check if audio is playing
-      return null
-    })
-
-    // Audio may be created programmatically (new Audio()), not in DOM.
+    // THEN: Audio may be created programmatically (new Audio()), not in DOM.
     // Verify via the player UI showing the correct location name instead.
     await expect(page.getByTestId('soundscape-player')).toContainText('淡水河夕陽')
   })
