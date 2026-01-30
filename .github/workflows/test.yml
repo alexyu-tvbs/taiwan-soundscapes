@@ -1,0 +1,171 @@
+# CI/CD Test Pipeline — taiwan-soundscapes
+# Platform: GitHub Actions
+# Generated: 2026-01-30 by TEA (Test Architect)
+#
+# Pipeline stages:
+#   1. lint     — Code quality (ESLint)
+#   2. build    — TypeScript + Vite build verification
+#   3. test-e2e — Parallel E2E tests (4 shards, Playwright)
+#   4. burn-in  — Flaky detection (10 iterations, PR only)
+#
+# Adjust shard count: change matrix.shard array and --shard=N/TOTAL
+
+name: Test Pipeline
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  CI: true
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Stage 1: Code Quality
+  # ──────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+  # ──────────────────────────────────────────────
+  # Stage 2: Build Verification
+  # ──────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+  # ──────────────────────────────────────────────
+  # Stage 3: E2E Tests (Parallel Shards)
+  # ──────────────────────────────────────────────
+  test-e2e:
+    name: 'E2E Tests (Shard ${{ matrix.shard }}/4)'
+    needs: [lint, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Install Playwright system deps (cache hit)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium webkit
+
+      - name: Run E2E tests (shard ${{ matrix.shard }})
+        run: npm run test:e2e -- --shard=${{ matrix.shard }}/4
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-shard-${{ matrix.shard }}
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 30
+
+  # ──────────────────────────────────────────────
+  # Stage 4: Burn-In Loop (PR only)
+  # Runs all tests 10x to detect flaky tests
+  # ──────────────────────────────────────────────
+  burn-in:
+    name: 'Burn-In (Flaky Detection)'
+    if: github.event_name == 'pull_request'
+    needs: [lint, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Install Playwright system deps (cache hit)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium webkit
+
+      - name: Run burn-in loop (10 iterations)
+        run: |
+          for i in {1..10}; do
+            echo "=========================================="
+            echo "Burn-in iteration $i/10"
+            echo "=========================================="
+            npm run test:e2e || exit 1
+          done
+          echo "Burn-in passed: 10/10 iterations successful"
+
+      - name: Upload burn-in failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: burn-in-failures
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 30
