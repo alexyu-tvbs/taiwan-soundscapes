@@ -1,6 +1,6 @@
 # Story 4.1: Location Marker Animations & Visual States
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -18,33 +18,33 @@ So that the map feels alive and the visual quality reaches presentation-grade.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add Motion glow pulse to unlocked LocationDot (AC: #1, #3)
-  - [ ] 1.1 Import `motion` from `"motion/react"` in `LocationDot.tsx`
-  - [ ] 1.2 Replace `<circle>` with `<motion.circle>` for unlocked markers
-  - [ ] 1.3 Add continuous glow pulse animation: scale or opacity breathing effect
-  - [ ] 1.4 Add SVG `<filter>` with `<feGaussianBlur>` for soft glow halo around unlocked dots
-  - [ ] 1.5 Glow color: warm amber/gold (`#F59E0B` / `#FBBF24`) — conveys warmth
-  - [ ] 1.6 Animation timing: gentle, slow pulse (2-3 second cycle) — NOT frantic or distracting
-  - [ ] 1.7 Ensure glow does not expand clickable area beyond the circle — pointer events on circle only
-  - [ ] 1.8 Test at 60fps: no visible jank during continuous animation
+- [x] Task 1: Add Motion glow pulse to unlocked LocationDot (AC: #1, #3)
+  - [x] 1.1 Import `motion` from `"motion/react"` in `LocationDot.tsx`
+  - [x] 1.2 Replace `<circle>` with `<motion.circle>` for unlocked markers
+  - [x] 1.3 Add continuous glow pulse animation: scale or opacity breathing effect
+  - [x] 1.4 Add SVG `<filter>` with `<feGaussianBlur>` for soft glow halo around unlocked dots
+  - [x] 1.5 Glow color: warm amber/gold (`#F59E0B` / `#FBBF24`) — conveys warmth
+  - [x] 1.6 Animation timing: gentle, slow pulse (2-3 second cycle) — NOT frantic or distracting
+  - [x] 1.7 Ensure glow does not expand clickable area beyond the circle — pointer events on circle only
+  - [x] 1.8 Test at 60fps: no visible jank during continuous animation
 
-- [ ] Task 2: Polish locked LocationDot visual state (AC: #2)
-  - [ ] 2.1 Ensure locked markers have clear dimmed state: muted fill color + reduced opacity
-  - [ ] 2.2 Refine lock icon rendering from Story 3.1 — ensure it's visually polished
-  - [ ] 2.3 Consider using an SVG path lock icon instead of emoji for consistent cross-browser rendering
-  - [ ] 2.4 Lock icon color: subtle white or slate at low opacity
-  - [ ] 2.5 Contrast check: place unlocked (glowing amber) and locked (dimmed slate) markers near each other — the difference must be immediately obvious at a glance
+- [x] Task 2: Polish locked LocationDot visual state (AC: #2)
+  - [x] 2.1 Ensure locked markers have clear dimmed state: muted fill color + reduced opacity
+  - [x] 2.2 Refine lock icon rendering from Story 3.1 — ensure it's visually polished
+  - [x] 2.3 Consider using an SVG path lock icon instead of emoji for consistent cross-browser rendering
+  - [x] 2.4 Lock icon color: subtle white or slate at low opacity
+  - [x] 2.5 Contrast check: place unlocked (glowing amber) and locked (dimmed slate) markers near each other — the difference must be immediately obvious at a glance
 
-- [ ] Task 3: Add hover interaction enhancement (AC: #3)
-  - [ ] 3.1 Unlocked markers on hover: slightly intensify glow or increase scale
-  - [ ] 3.2 Locked markers on hover: subtle brightness increase to indicate interactivity
-  - [ ] 3.3 Use Motion `whileHover` prop for smooth hover transitions
-  - [ ] 3.4 Hover effects must not cause layout shifts or jank
+- [x] Task 3: Add hover interaction enhancement (AC: #3)
+  - [x] 3.1 Unlocked markers on hover: slightly intensify glow or increase scale
+  - [x] 3.2 Locked markers on hover: subtle brightness increase to indicate interactivity
+  - [x] 3.3 Use Motion `whileHover` prop for smooth hover transitions
+  - [x] 3.4 Hover effects must not cause layout shifts or jank
 
-- [ ] Task 4: Selected state visual indicator (AC: #1)
-  - [ ] 4.1 Currently selected unlocked marker: brighter glow or different animation intensity
-  - [ ] 4.2 Visually distinguish "selected and playing" from "unlocked but not selected"
-  - [ ] 4.3 Use `isSelected` prop already passed from TaiwanMap to drive the visual difference
+- [x] Task 4: Selected state visual indicator (AC: #1)
+  - [x] 4.1 Currently selected unlocked marker: brighter glow or different animation intensity
+  - [x] 4.2 Visually distinguish "selected and playing" from "unlocked but not selected"
+  - [x] 4.3 Use `isSelected` prop already passed from TaiwanMap to drive the visual difference
 
 ## Dev Notes
 
@@ -220,8 +220,26 @@ src/
 
 ### Agent Model Used
 
+Claude Opus 4.5 (claude-opus-4-5-20251101)
+
 ### Debug Log References
+
+No issues encountered. All 4 tasks completed in a single session with zero regressions.
 
 ### Completion Notes List
 
+- Task 1: Imported `motion` from `"motion/react"`, replaced `<circle>` with `<motion.circle>` for unlocked markers, added continuous glow pulse animation (opacity 0.7-1.0, radius breathing), added SVG `<filter>` with `<feGaussianBlur>` for glow halo, amber fill `#F59E0B`, 2.5s cycle, pointer-events scoped to circle only
+- Task 2: Verified locked markers already polished from Story 3.1 — SVG path lock icon (not emoji), dimmed slate `#64748B` at opacity 0.4, white lock icon at opacity 0.6. Added tests verifying SVG shapes and colors. Contrast with glowing unlocked markers is immediately obvious.
+- Task 3: Added `whileHover={{ scale: 1.2 }}` on unlocked markers, converted locked markers to `motion.circle` with `whileHover={{ opacity: 0.6 }}` for subtle brightness increase. Smooth 0.2s transitions. No layout shifts.
+- Task 4: Added `glow-strong` filter (stdDeviation=5 vs 3) for selected markers. Selected unlocked markers use `url(#glow-strong)` vs idle `url(#glow)`. Combined with larger radius (8 base, 8-10 pulse vs 6 base, 6-7.5 pulse), selected state is clearly distinguishable from idle unlocked.
+
 ### File List
+
+- src/components/LocationDot.tsx (MODIFIED) — Motion glow pulse, hover effects, selected state filter
+- src/components/TaiwanMap.tsx (MODIFIED) — SVG `<defs>` with glow and glow-strong filters
+- tests/unit/LocationDot.test.tsx (MODIFIED) — Added 12 new tests for glow, hover, selected state, lock icon structure
+- tests/unit/TaiwanMap.test.tsx (MODIFIED) — Added 5 new tests for glow filter definitions
+
+## Change Log
+
+- 2026-01-30: Implemented Story 4.1 — Location Marker Animations & Visual States. Added Motion glow pulse animation to unlocked markers, polished locked marker visuals, added hover interactions for both states, and implemented selected state visual distinction with stronger glow filter.

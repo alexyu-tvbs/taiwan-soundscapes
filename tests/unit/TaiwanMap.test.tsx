@@ -37,6 +37,45 @@ describe('TaiwanMap Component — SVG Map Shell', () => {
   })
 })
 
+describe('TaiwanMap Component — Glow Filter', () => {
+  const defaultProps = {
+    locations: [...locations],
+    selectedLocationId: null as string | null,
+    onSelect: () => {},
+  }
+
+  it('should define an SVG glow filter in <defs>', () => {
+    const { container } = render(<TaiwanMap {...defaultProps} />)
+    const filter = container.querySelector('filter#glow')
+    expect(filter).not.toBeNull()
+  })
+
+  it('should use feGaussianBlur in the glow filter', () => {
+    const { container } = render(<TaiwanMap {...defaultProps} />)
+    const blur = container.querySelector('filter#glow feGaussianBlur')
+    expect(blur).not.toBeNull()
+  })
+
+  it('should use feMerge in the glow filter for layering', () => {
+    const { container } = render(<TaiwanMap {...defaultProps} />)
+    const merge = container.querySelector('filter#glow feMerge')
+    expect(merge).not.toBeNull()
+  })
+
+  it('should define a stronger glow filter (glow-strong) for selected markers', () => {
+    const { container } = render(<TaiwanMap {...defaultProps} />)
+    const filter = container.querySelector('filter#glow-strong')
+    expect(filter).not.toBeNull()
+  })
+
+  it('should use larger stdDeviation in glow-strong filter', () => {
+    const { container } = render(<TaiwanMap {...defaultProps} />)
+    const blur = container.querySelector('filter#glow-strong feGaussianBlur')
+    expect(blur).not.toBeNull()
+    expect(Number(blur?.getAttribute('stdDeviation'))).toBeGreaterThan(3)
+  })
+})
+
 describe('TaiwanMap Component — Location Markers', () => {
   const defaultProps = {
     locations: [...locations],

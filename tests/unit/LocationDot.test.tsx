@@ -54,10 +54,11 @@ describe('LocationDot Component — Unlocked State', () => {
     expect(circle?.getAttribute('fill')).toBe('#F59E0B')
   })
 
-  it('should have opacity=1 for unlocked', () => {
+  it('should not have static opacity attribute for unlocked (animated by Motion)', () => {
     const { container } = renderDot(unlockedLocation)
     const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
-    expect(circle?.getAttribute('opacity')).toBe('1')
+    // Motion manages opacity via animation (0.7-1.0 pulse), no static SVG attribute
+    expect(circle?.getAttribute('opacity')).toBeNull()
   })
 
   it('should have r=6 when not selected', () => {
@@ -153,6 +154,77 @@ describe('LocationDot Component — Keyboard Accessibility', () => {
   })
 })
 
+describe('LocationDot Component — Hover Interaction', () => {
+  it('should render locked markers as motion-capable elements for hover effects', () => {
+    const { container } = renderDot(lockedLocation)
+    const circle = container.querySelector('[data-testid="location-dot-lanyu"]')
+    expect(circle).not.toBeNull()
+    expect(circle?.tagName.toLowerCase()).toBe('circle')
+    // Locked marker should still have base opacity for dimmed state
+    expect(circle?.getAttribute('opacity')).toBe('0.4')
+  })
+
+  it('should render both unlocked and locked markers as interactive cursor-pointer elements', () => {
+    const { container: c1 } = renderDot(unlockedLocation)
+    const { container: c2 } = renderDot(lockedLocation)
+    const unlocked = c1.querySelector('[data-testid="location-dot-tamsui"]')
+    const locked = c2.querySelector('[data-testid="location-dot-lanyu"]')
+    // Both should be clickable interactive elements
+    expect(unlocked?.getAttribute('role')).toBe('button')
+    expect(locked?.getAttribute('role')).toBe('button')
+  })
+})
+
+describe('LocationDot Component — Selected State', () => {
+  it('should have larger radius (r=8) when selected', () => {
+    const { container } = renderDot(unlockedLocation, true)
+    const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
+    expect(circle?.getAttribute('r')).toBe('8')
+  })
+
+  it('should have standard radius (r=6) when not selected', () => {
+    const { container } = renderDot(unlockedLocation, false)
+    const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
+    expect(circle?.getAttribute('r')).toBe('6')
+  })
+
+  it('should have glow filter on both selected and non-selected unlocked markers', () => {
+    const { container: c1 } = renderDot(unlockedLocation, true)
+    const { container: c2 } = renderDot(unlockedLocation, false)
+    const selected = c1.querySelector('[data-testid="location-dot-tamsui"]')
+    const idle = c2.querySelector('[data-testid="location-dot-tamsui"]')
+    expect(selected?.getAttribute('filter')).toBe('url(#glow-strong)')
+    expect(idle?.getAttribute('filter')).toBe('url(#glow)')
+  })
+
+  it('should use brighter glow filter for selected markers', () => {
+    const { container } = renderDot(unlockedLocation, true)
+    const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
+    // Selected markers use a stronger glow filter
+    expect(circle?.getAttribute('filter')).toBe('url(#glow-strong)')
+  })
+})
+
+describe('LocationDot Component — Glow Animation', () => {
+  it('should reference glow filter on unlocked markers', () => {
+    const { container } = renderDot(unlockedLocation)
+    const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
+    expect(circle?.getAttribute('filter')).toBe('url(#glow)')
+  })
+
+  it('should NOT reference glow filter on locked markers', () => {
+    const { container } = renderDot(lockedLocation)
+    const circle = container.querySelector('[data-testid="location-dot-lanyu"]')
+    expect(circle?.getAttribute('filter')).toBeNull()
+  })
+
+  it('should use amber fill (#F59E0B) for unlocked markers with glow', () => {
+    const { container } = renderDot(unlockedLocation)
+    const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
+    expect(circle?.getAttribute('fill')).toBe('#F59E0B')
+  })
+})
+
 describe('LocationDot Component — Lock Indicator', () => {
   it('should render a lock icon for locked locations', () => {
     const { container } = renderDot(lockedLocation)
@@ -189,5 +261,31 @@ describe('LocationDot Component — Lock Indicator', () => {
     const { container } = renderDot(lockedLocation)
     const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
     expect(lockIcon?.getAttribute('opacity')).toBe('0.6')
+  })
+
+  it('should use SVG shapes for lock icon (not emoji text)', () => {
+    const { container } = renderDot(lockedLocation)
+    const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
+    const rect = lockIcon?.querySelector('rect')
+    const path = lockIcon?.querySelector('path')
+    expect(rect).not.toBeNull()
+    expect(path).not.toBeNull()
+    // No <text> element — SVG path approach, not emoji
+    const textEl = lockIcon?.querySelector('text')
+    expect(textEl).toBeNull()
+  })
+
+  it('should have white fill on lock body rect', () => {
+    const { container } = renderDot(lockedLocation)
+    const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
+    const rect = lockIcon?.querySelector('rect')
+    expect(rect?.getAttribute('fill')).toBe('white')
+  })
+
+  it('should have white stroke on lock shackle path', () => {
+    const { container } = renderDot(lockedLocation)
+    const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
+    const path = lockIcon?.querySelector('path')
+    expect(path?.getAttribute('stroke')).toBe('white')
   })
 })

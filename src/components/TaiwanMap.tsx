@@ -16,6 +16,23 @@ export const TaiwanMap = ({ locations, selectedLocationId, onSelect }: TaiwanMap
       aria-label="Map of Taiwan"
       className="mx-auto h-[calc(100vh-6rem)] w-auto"
     >
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        <filter id="glow-strong">
+          <feGaussianBlur stdDeviation="5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
       {/* Taiwan administrative region paths from SimpleMaps */}
       <g className="text-slate-700" fill="currentColor" stroke="#475569" strokeWidth="1">
         <path
