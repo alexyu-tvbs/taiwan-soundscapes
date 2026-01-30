@@ -120,7 +120,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
     await expect(detail.locator('p')).toContainText('Tamsui River Sunset')
   })
 
-  test('[P1] should hide LocationDetail when switching from unlocked to locked location', async ({
+  test('[P1] should keep LocationDetail visible when clicking locked location after unlocked', async ({
     page,
   }) => {
     const detail = page.getByTestId('location-detail')
@@ -130,10 +130,13 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
     await tamsui.click()
     await expect(detail).toBeVisible()
 
-    // Switch to locked location
+    // Click locked location — shows overlay, preserves selection
     const taroko = getMapElement(page, 'location-dot-taroko')
     await taroko.click()
-    await expect(detail).toBeHidden()
+
+    // LocationDetail stays visible; LockOverlay shown on top
+    await expect(detail).toBeVisible()
+    await expect(page.getByTestId('lock-overlay')).toBeVisible()
   })
 
   test('[P1] should show matching photo and player name for each unlocked location', async ({

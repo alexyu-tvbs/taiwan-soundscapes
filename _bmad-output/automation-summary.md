@@ -1,103 +1,97 @@
-# Automation Summary — Story 2.1: Audio Playback Engine & Player Controls
+# Automation Summary — Expanded E2E Coverage
 
 **Date:** 2026-01-30
-**Story:** 2.1 — Audio Playback Engine & Player Controls
-**Mode:** BMad-Integrated
-**Coverage Target:** critical-paths
+**Agent:** TEA (Master Test Architect)
+**Mode:** Standalone / Auto-discover
+**Framework:** Playwright (E2E) + Vitest (Unit)
 
 ---
 
-## Coverage Gap Analysis
+## Coverage Analysis
 
-**Existing Coverage Before This Workflow:**
+### Before This Run
 
-| Level | Files | Story 2.1 Tests |
-|-------|-------|-----------------|
-| Unit (Vitest) | 3 files, ~29 tests | Complete — useAudioPlayer (11), SoundscapePlayer (8), App integration (10) |
-| E2E (Playwright) | 3 files, ~20 tests | **None** — all Story 1.2 only |
+| Type | Files | Tests | Coverage |
+|------|-------|-------|----------|
+| E2E | 5 | ~44 | Stories 1.2, 2.1, 2.2, Homepage, Map Interactions |
+| Unit | 8 | 127 | ALL components, hooks, data, App integration |
 
-**Gap Identified:** No E2E tests for Story 2.1 audio playback UI flows.
+### Coverage Gaps Identified
 
-**Decision:** E2E is the only gap. Unit/Component tests already comprehensive. No API tests needed (static SPA, no backend).
+| Gap | Priority | Risk | Resolution |
+|-----|----------|------|------------|
+| E2E: Lock Overlay (Story 3.1) | P0/P1 | High — Story implemented but no E2E browser validation | **lock-overlay.spec.ts** |
+| E2E: Keyboard Navigation | P2 | Medium — Unit tested but no browser verification | **keyboard-navigation.spec.ts** |
+| E2E: Full User Journey | P1 | Medium — Cross-feature flow not validated end-to-end | **user-journey.spec.ts** |
+
+### After This Run
+
+| Type | Files | Tests | Coverage |
+|------|-------|-------|----------|
+| E2E | **8** (+3) | **~64** (+20) | Stories 1.2, 2.1, 2.2, **3.1**, Homepage, Map, **Keyboard**, **Journey** |
+| Unit | 8 | 127 | ALL components, hooks, data, App integration |
 
 ---
 
 ## Tests Created
 
-### E2E Tests — `tests/e2e/audio-playback.spec.ts` (10 tests, 191 lines)
+### 1. `tests/e2e/lock-overlay.spec.ts` (13 tests)
 
-**P0 Critical (2 tests):**
-- `[P0] should show SoundscapePlayer when clicking an unlocked location` (AC #1)
-- `[P0] should update player to new location when switching between unlocked locations` (AC #5)
+Story 3.1: Locked Location Interaction & Unlock Condition Display
 
-**P1 High (6 tests):**
-- `[P1] should not show SoundscapePlayer initially when no location is selected`
-- `[P1] should not show SoundscapePlayer when clicking a locked location`
-- `[P1] should hide SoundscapePlayer when switching from unlocked to locked location`
-- `[P1] should toggle play/pause button aria-label on click` (AC #2, #3)
-- `[P1] should render volume slider with correct attributes` (AC #4)
-- `[P1] should show correct location name for each unlocked location` (AC #1)
+| Priority | Tests | Description |
+|----------|-------|-------------|
+| P0 | 3 | Overlay display, location name/condition, English name |
+| P1 | 8 | Dismiss (close/backdrop), panel click propagation, audio continuity, LocationDetail persistence, post-dismiss unlocked selection, lock emoji, all 7 locked locations data |
+| P2 | 2 | No player without prior selection, warm language validation |
 
-**P2 Medium (2 tests):**
-- `[P2] should render SoundscapePlayer with dark theme styling`
-- `[P2] should keep player visible after pause (player only hides on location change)`
+### 2. `tests/e2e/keyboard-navigation.spec.ts` (6 tests)
 
----
+Keyboard Accessibility E2E Verification
 
-## Acceptance Criteria Coverage
+| Priority | Tests | Description |
+|----------|-------|-------------|
+| P2 | 6 | Tab focus, Enter select, Space select, keyboard SoundscapePlayer, keyboard LockOverlay, aria-label verification |
 
-| AC | Description | Test Coverage |
-|----|-------------|---------------|
-| #1 | Click unlocked → audio plays + player visible | P0 E2E + unit (App.test.tsx) |
-| #2 | Pause button → audio pauses + icon changes | P1 E2E (aria-label toggle) + unit |
-| #3 | Play button → audio resumes | P1 E2E (aria-label toggle) + unit |
-| #4 | Volume slider → real-time volume change | P1 E2E (slider attributes) + unit |
-| #5 | Switch location → stop + play new | P0 E2E + unit (App.test.tsx) |
+### 3. `tests/e2e/user-journey.spec.ts` (1 test)
 
-**Note:** Playwright cannot verify actual audio playback (no Audio API access). E2E tests verify the UI state (player visibility, button aria-label, location name, slider attributes) that reflects audio playback behavior. The actual audio logic is fully covered by unit tests (useAudioPlayer.test.ts).
+Full Cross-Feature Integration Journey
+
+| Priority | Tests | Description |
+|----------|-------|-------------|
+| P1 | 1 | 7-phase journey: Homepage → Select unlocked → Play/Pause → Switch location → Click locked → Dismiss overlay → Verify state restored |
 
 ---
 
 ## Test Execution Results
 
-### Chromium
-- **10 passed** / 0 failed
-- Duration: 15.9s (parallel, 6 workers)
-
-### WebKit
-- **10 passed** / 0 failed
-- Duration: 19.7s (parallel, 6 workers)
-
-**Total: 20/20 passed across both browsers. No healing needed.**
-
----
-
-## Infrastructure
-
-No new infrastructure created — existing fixtures and helpers are sufficient:
-- `tests/support/fixtures/index.ts` — `appPage` auto-fixture (navigate + wait)
-- `tests/support/helpers/test-utils.ts` — `getMapElement()`, location ID constants
-
----
-
-## Test Execution
-
-```bash
-# Run Story 2.1 audio playback tests
-npx playwright test tests/e2e/audio-playback.spec.ts
-
-# Run all E2E tests
-npm run test:e2e
-
-# Run P0 critical tests only
-npm run test:e2e:p0
-
-# Run P0 + P1 tests
-npm run test:e2e:p1
-
-# Run all tests (unit + E2E)
-npm run test:all
 ```
+E2E (new tests):  20/20 PASSED
+E2E (full suite):  60/64 passed, 4 pre-existing failures
+Unit (full suite): 127/127 PASSED
+```
+
+### Pre-Existing Failures (Not Caused by This Run)
+
+These 4 tests have incorrect expectations based on the Story 3.1 implementation:
+
+1. `audio-playback.spec.ts:83` — Expects player to hide when clicking locked (player stays because `selectedLocationId` unchanged)
+2. `map-interactions.spec.ts:16` — Expects locked marker r=8 (locked clicks don't update `selectedLocationId`)
+3. `map-interactions.spec.ts:29` — Expects taroko r=8 after clicking (same reason)
+4. `scene-photography.spec.ts:123` — Expects detail to hide (stays visible because selection unchanged)
+
+**Root cause:** These tests were written when clicking a locked location was expected to change `selectedLocationId`. Story 3.1 changed behavior to show LockOverlay instead, preserving the previous unlocked selection.
+
+**Recommendation:** Update these 4 pre-existing tests to align with the current Story 3.1 behavior.
+
+---
+
+## Design Decisions
+
+1. **Used taroko instead of lanyu** for tests where SoundscapePlayer is visible. Lanyu (y=1255) sits at the SVG bottom, covered by the fixed player bar. Taroko (y=620) is mid-map.
+2. **Overlay dismissal before map interaction** — The LockOverlay is a full-viewport modal (`fixed inset-0 z-50`). Tests requiring map clicks after overlay display must dismiss the overlay first, reflecting real user behavior.
+3. **No API tests** — Pure static SPA with no backend; API testing is not applicable.
+4. **No Playwright Utils** — `tea_use_playwright_utils: false` in config; tests use standard Playwright patterns.
 
 ---
 
@@ -110,9 +104,30 @@ npm run test:all
 - [x] No conditional flow (`if (await element.isVisible())`)
 - [x] No page object classes — tests are direct
 - [x] No shared state between tests
-- [x] Test file under 200 lines (191 lines)
+- [x] All test files under 300 lines
 - [x] All tests deterministic — passed on first run
-- [x] Cross-browser validated (Chromium + WebKit)
+- [x] Test healing applied (2 iterations to fix pointer interception issues)
+
+---
+
+## Test Execution
+
+```bash
+# Run Story 3.1 lock overlay tests
+npx playwright test tests/e2e/lock-overlay.spec.ts
+
+# Run keyboard accessibility tests
+npx playwright test tests/e2e/keyboard-navigation.spec.ts
+
+# Run full user journey test
+npx playwright test tests/e2e/user-journey.spec.ts
+
+# Run all E2E tests
+npm run test:e2e
+
+# Run all tests (unit + E2E)
+npm run test:all
+```
 
 ---
 
@@ -120,28 +135,30 @@ npm run test:all
 
 | Metric | Value |
 |--------|-------|
-| Tests created | 10 E2E |
-| P0 Critical | 2 |
-| P1 High | 6 |
-| P2 Medium | 2 |
-| Browsers tested | Chromium, WebKit |
-| Pass rate | 100% (20/20) |
-| Healing needed | No |
+| Tests created | 20 E2E |
+| P0 Critical | 3 |
+| P1 High | 9 |
+| P2 Medium | 8 |
+| Browser tested | Chromium |
+| Pass rate | 100% (20/20 new) |
+| Healing iterations | 2 |
 | New infrastructure | None |
-| AC coverage | 5/5 (100%) |
+| Pre-existing failures found | 4 (unrelated) |
 
 ---
 
-## Knowledge Base References Applied
+## Not Needed
 
-- Test level selection framework — E2E for user experience, Unit for logic
-- Test quality principles — Deterministic patterns, no hard waits, explicit assertions
-- Fixture architecture — Evaluated existing fixture (adequate for static SPA)
-- Priority classification — P0-P2 tagging for selective execution
+- API Tests (no backend)
+- Data Factories (no dynamic seeding)
+- Component Tests (fully covered by Vitest + RTL)
+- Network mocking (no external API calls)
+
+---
 
 ## Next Steps
 
-1. Review generated tests with team
+1. Fix the 4 pre-existing E2E test failures to align with Story 3.1 behavior
 2. Run full suite in CI pipeline: `npm run test:all`
 3. Monitor for flaky tests in burn-in loop
-4. Integrate with quality gate: `bmad tea *trace`
+4. Integrate with quality gate: `bmad tea trace`

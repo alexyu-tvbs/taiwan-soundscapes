@@ -80,7 +80,7 @@ test.describe('Story 2.1: Audio Playback — P1 High', () => {
     await expect(player).toBeHidden()
   })
 
-  test('[P1] should hide SoundscapePlayer when switching from unlocked to locked location', async ({
+  test('[P1] should keep SoundscapePlayer visible when clicking locked location after unlocked', async ({
     page,
   }) => {
     // GIVEN: Tamsui (unlocked) is selected, player visible
@@ -91,11 +91,12 @@ test.describe('Story 2.1: Audio Playback — P1 High', () => {
     await tamsui.click()
     await expect(player).toBeVisible()
 
-    // WHEN: User clicks Taroko (locked)
+    // WHEN: User clicks Taroko (locked) — shows overlay, preserves selection
     await taroko.click()
 
-    // THEN: Player disappears
-    await expect(player).toBeHidden()
+    // THEN: Player remains visible (audio continues, selection unchanged)
+    await expect(player).toBeVisible()
+    await expect(page.getByTestId('lock-overlay')).toBeVisible()
   })
 
   test('[P1] should toggle play/pause button aria-label on click', async ({

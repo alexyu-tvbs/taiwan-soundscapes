@@ -13,7 +13,7 @@ import {
 // ═══════════════════════════════════════════════════════════════════════
 
 test.describe('Map Interactions — P1 High', () => {
-  test('[P1] should update selection state when clicking a locked marker', async ({
+  test('[P1] should show LockOverlay instead of selecting when clicking a locked marker', async ({
     page,
   }) => {
     // GIVEN: Page is loaded with map
@@ -22,11 +22,12 @@ test.describe('Map Interactions — P1 High', () => {
     const lanyu = getMapElement(page, 'location-dot-lanyu')
     await lanyu.click()
 
-    // THEN: Locked marker shows selected state (radius increases to 8)
-    await expect(lanyu).toHaveAttribute('r', '8')
+    // THEN: Locked marker does NOT change radius (stays r=6) — overlay shown instead
+    await expect(lanyu).toHaveAttribute('r', '6')
+    await expect(page.getByTestId('lock-overlay')).toBeVisible()
   })
 
-  test('[P1] should deselect unlocked marker when selecting a locked marker', async ({
+  test('[P1] should keep unlocked marker selected when clicking a locked marker', async ({
     page,
   }) => {
     // GIVEN: Tamsui (unlocked) is selected
@@ -36,12 +37,13 @@ test.describe('Map Interactions — P1 High', () => {
     await tamsui.click()
     await expect(tamsui).toHaveAttribute('r', '8')
 
-    // WHEN: User clicks Taroko (locked)
+    // WHEN: User clicks Taroko (locked) — shows overlay, preserves selection
     await taroko.click()
 
-    // THEN: Taroko is selected, Tamsui reverts to default
-    await expect(taroko).toHaveAttribute('r', '8')
-    await expect(tamsui).toHaveAttribute('r', '6')
+    // THEN: Tamsui stays selected (r=8), Taroko stays default (r=6), overlay shown
+    await expect(tamsui).toHaveAttribute('r', '8')
+    await expect(taroko).toHaveAttribute('r', '6')
+    await expect(page.getByTestId('lock-overlay')).toBeVisible()
   })
 
   test('[P1] should render unlocked markers with amber fill color', async ({
