@@ -1,6 +1,6 @@
 import type { Location } from '../types'
 
-export const locations: readonly Location[] = [
+export const locations = [
   {
     id: 'tamsui',
     name: '淡水河夕陽',
@@ -101,4 +101,4 @@ export const locations: readonly Location[] = [
     imagePath: '/images/yushan.jpg',
     unlockCondition: '累積好眠 60 晚，攻頂玉山聽風',
   },
-] as const
+] as const satisfies readonly Location[]

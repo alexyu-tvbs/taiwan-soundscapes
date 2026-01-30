@@ -1,6 +1,6 @@
 # Story 1.1: Project Initialization & Dark Theme Foundation
 
-Status: review
+Status: done
 
 ## Story
 
@@ -184,23 +184,24 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Change Log
 - 2026-01-30: Story 1.1 implemented — Project initialized with Vite + React + TS, Tailwind v4, Motion, dark theme, types, and location data
+- 2026-01-30: Code review fixes — Fixed index.html title/favicon/lang, App.tsx export pattern, locations.ts as const satisfies, moved build tools to devDependencies, vitest include pattern
 
 ### File List
-- package.json (modified — name, engines added)
+- package.json (modified — name, engines, moved tailwindcss to devDeps)
 - .nvmrc (new)
 - .gitignore (new)
-- vite.config.ts (modified — added tailwindcss plugin)
+- vite.config.ts (modified — added tailwindcss plugin, vitest include pattern fix)
 - tsconfig.json (from template)
 - tsconfig.app.json (from template)
 - tsconfig.node.json (from template)
 - eslint.config.js (from template)
-- index.html (from template)
-- src/main.tsx (from template)
-- src/App.tsx (modified — dark theme, boilerplate removed)
+- index.html (modified — fixed title, removed broken favicon, lang=zh-TW)
+- src/main.tsx (modified — named import for App)
+- src/App.tsx (modified — dark theme, named export only)
 - src/index.css (modified — Tailwind v4 import only)
 - src/vite-env.d.ts (from template)
 - src/types/index.ts (new)
-- src/data/locations.ts (new)
+- src/data/locations.ts (modified — as const satisfies)
 - src/components/ (new, empty)
 - src/hooks/ (new, empty)
 - public/audio/ (new, empty)

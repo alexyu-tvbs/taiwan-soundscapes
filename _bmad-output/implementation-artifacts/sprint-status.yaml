@@ -42,7 +42,7 @@ story_location: _bmad-output/implementation-artifacts
 development_status:
   # Epic 1: Taiwan Map Interface Foundation
   epic-1: in-progress
-  1-1-project-initialization-and-dark-theme-foundation: review
+  1-1-project-initialization-and-dark-theme-foundation: done
   1-2-interactive-taiwan-map-with-location-markers-and-brand-tagline: ready-for-dev
   epic-1-retrospective: optional
 
