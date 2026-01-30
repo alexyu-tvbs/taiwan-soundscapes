@@ -37,6 +37,7 @@ export const SoundscapePlayer = ({
           max={1}
           step={0.01}
           value={volume}
+          aria-label="Volume"
           onChange={(e) => onVolumeChange(Number(e.target.value))}
           className="w-24 accent-amber-400"
         />

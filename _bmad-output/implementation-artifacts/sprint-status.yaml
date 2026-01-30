@@ -48,7 +48,7 @@ development_status:
 
   # Epic 2: Soundscape Exploration & Playback
   epic-2: in-progress
-  2-1-audio-playback-engine-and-player-controls: review
+  2-1-audio-playback-engine-and-player-controls: done
   2-2-scene-photography-and-complete-soundscape-assets: ready-for-dev
   epic-2-retrospective: optional
 

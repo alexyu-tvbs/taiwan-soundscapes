@@ -169,6 +169,43 @@ describe('useAudioPlayer', () => {
     expect(result.current.isPlaying).toBe(false)
   })
 
+  it('play(src) with same track when already playing should be no-op', () => {
+    const { result } = renderHook(() => useAudioPlayer())
+
+    act(() => {
+      result.current.play('/audio/tamsui.mp3')
+    })
+
+    // Simulate audio is currently playing
+    mockAudio.paused = false
+    mockAudio.play.mockClear()
+
+    act(() => {
+      result.current.play('/audio/tamsui.mp3')
+    })
+
+    // Should NOT call play again — track is already playing
+    expect(mockAudio.play).not.toHaveBeenCalled()
+    expect(result.current.isPlaying).toBe(true)
+  })
+
+  it('should call audio.pause() before switching to a different track', () => {
+    const { result } = renderHook(() => useAudioPlayer())
+
+    act(() => {
+      result.current.play('/audio/tamsui.mp3')
+    })
+
+    mockAudio.pause.mockClear()
+
+    act(() => {
+      result.current.play('/audio/alishan.mp3')
+    })
+
+    expect(mockAudio.pause).toHaveBeenCalled()
+    expect(mockAudio.src).toBe('/audio/alishan.mp3')
+  })
+
   it('should handle audio play errors gracefully (no throw)', () => {
     mockAudio.play.mockRejectedValueOnce(new Error('NotAllowedError'))
 
@@ -183,13 +220,28 @@ describe('useAudioPlayer', () => {
     expect(result.current.currentTrack).toBe('/audio/tamsui.mp3')
   })
 
-  it('should register error event listener for load errors', () => {
-    renderHook(() => useAudioPlayer())
+  it('should reset state when audio error event fires', () => {
+    const { result } = renderHook(() => useAudioPlayer())
 
-    const errorRegistered = mockAudio.addEventListener.mock.calls.some(
+    act(() => {
+      result.current.play('/audio/tamsui.mp3')
+    })
+
+    expect(result.current.isPlaying).toBe(true)
+    expect(result.current.currentTrack).toBe('/audio/tamsui.mp3')
+
+    // Find and trigger the error handler
+    const errorHandler = mockAudio.addEventListener.mock.calls.find(
       (call: [string, () => void]) => call[0] === 'error'
-    )
+    )?.[1]
 
-    expect(errorRegistered).toBe(true)
+    expect(errorHandler).toBeDefined()
+
+    act(() => {
+      errorHandler()
+    })
+
+    expect(result.current.isPlaying).toBe(false)
+    expect(result.current.currentTrack).toBeNull()
   })
 })

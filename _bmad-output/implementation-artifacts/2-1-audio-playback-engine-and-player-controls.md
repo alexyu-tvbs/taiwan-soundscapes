@@ -1,6 +1,6 @@
 # Story 2.1: Audio Playback Engine & Player Controls
 
-Status: review
+Status: done
 
 ## Story
 
@@ -269,6 +269,7 @@ No debug issues encountered.
 ### Change Log
 
 - 2026-01-30: Implemented Story 2.1 — Audio Playback Engine & Player Controls (all 4 tasks)
+- 2026-01-30: Code review fixes — H1: useRef lazy init; H2: same-track no-op guard; H3: explicit pause before track switch; M4: volume slider aria-label; M5: File List updated with E2E test; M6: App pause/resume integration test added; L10: error handler test improved. 71 tests pass.
 
 ### File List
 
@@ -277,6 +278,7 @@ New files:
 - src/components/SoundscapePlayer.tsx
 - tests/unit/useAudioPlayer.test.ts
 - tests/unit/SoundscapePlayer.test.tsx
+- tests/e2e/audio-playback.spec.ts
 - public/audio/tamsui.mp3
 - public/audio/alishan.mp3
 - public/audio/keelung.mp3

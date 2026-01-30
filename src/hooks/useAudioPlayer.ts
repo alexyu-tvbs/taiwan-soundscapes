@@ -1,19 +1,25 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
 
 export const useAudioPlayer = () => {
-  const audioRef = useRef<HTMLAudioElement>(new Audio())
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  if (audioRef.current === null) {
+    audioRef.current = new Audio()
+  }
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTrack, setCurrentTrack] = useState<string | null>(null)
   const [volume, setVolumeState] = useState(1)
 
   const play = useCallback(
     (src: string) => {
-      const audio = audioRef.current
-      if (currentTrack === src && audio.paused) {
-        audio.play().catch(() => console.warn('Audio play failed'))
-        setIsPlaying(true)
+      const audio = audioRef.current!
+      if (currentTrack === src) {
+        if (audio.paused) {
+          audio.play().catch(() => console.warn('Audio play failed'))
+          setIsPlaying(true)
+        }
         return
       }
+      audio.pause()
       audio.src = src
       audio.volume = volume
       audio.play().catch(() => console.warn('Audio play failed'))
@@ -24,22 +30,22 @@ export const useAudioPlayer = () => {
   )
 
   const pause = useCallback(() => {
-    audioRef.current.pause()
+    audioRef.current!.pause()
     setIsPlaying(false)
   }, [])
 
   const resume = useCallback(() => {
-    audioRef.current.play().catch(() => console.warn('Audio resume failed'))
+    audioRef.current!.play().catch(() => console.warn('Audio resume failed'))
     setIsPlaying(true)
   }, [])
 
   const setVolume = useCallback((v: number) => {
-    audioRef.current.volume = v
+    audioRef.current!.volume = v
     setVolumeState(v)
   }, [])
 
   useEffect(() => {
-    const audio = audioRef.current
+    const audio = audioRef.current!
 
     const handleEnded = () => {
       setIsPlaying(false)

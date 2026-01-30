@@ -113,6 +113,28 @@ describe('App Component — Audio Integration', () => {
     expect(player?.textContent).toContain('淡水河夕陽')
   })
 
+  it('should support pause and resume flow through SoundscapePlayer', () => {
+    const { container } = render(<App />)
+
+    // Click unlocked location to start playback
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    const btn = container.querySelector('[data-testid="play-pause-btn"]')
+    expect(btn?.getAttribute('aria-label')).toBe('Pause')
+
+    // Click pause
+    fireEvent.click(btn!)
+    expect(btn?.getAttribute('aria-label')).toBe('Play')
+    expect(mockAudio.pause).toHaveBeenCalled()
+
+    // Click play (resume)
+    mockAudio.play.mockClear()
+    fireEvent.click(btn!)
+    expect(btn?.getAttribute('aria-label')).toBe('Pause')
+    expect(mockAudio.play).toHaveBeenCalled()
+  })
+
   it('should switch audio when clicking a different unlocked location', () => {
     const { container } = render(<App />)
 
