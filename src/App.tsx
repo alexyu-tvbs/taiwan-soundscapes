@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { TaiwanMap } from './components/TaiwanMap'
+import { LocationDetail } from './components/LocationDetail'
 import { SoundscapePlayer } from './components/SoundscapePlayer'
 import { useAudioPlayer } from './hooks/useAudioPlayer'
 import { locations } from './data/locations'
@@ -20,17 +21,25 @@ export const App = () => {
   }
 
   return (
-    <div className="bg-slate-900 text-white min-h-screen">
+    <div className="bg-slate-900 text-white min-h-screen flex flex-col">
       <header className="text-center py-6">
         <h1 data-testid="brand-tagline" className="text-2xl font-bold">
           好眠秘境 — 用耳朵旅行台灣
         </h1>
       </header>
-      <TaiwanMap
-        locations={locations}
-        selectedLocationId={selectedLocationId}
-        onSelect={handleSelect}
-      />
+      <main className="flex-1 flex items-center justify-center gap-8 px-8">
+        <TaiwanMap
+          locations={locations}
+          selectedLocationId={selectedLocationId}
+          onSelect={handleSelect}
+        />
+        {isUnlockedSelection && selectedLocation && (
+          <LocationDetail
+            location={selectedLocation}
+            isPlaying={audioPlayer.isPlaying}
+          />
+        )}
+      </main>
       {isUnlockedSelection && selectedLocation && (
         <SoundscapePlayer
           isPlaying={audioPlayer.isPlaying}

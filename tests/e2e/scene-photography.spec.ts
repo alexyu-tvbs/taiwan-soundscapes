@@ -1,0 +1,138 @@
+import { test, expect } from '../support/fixtures'
+import {
+  UNLOCKED_LOCATIONS,
+  getMapElement,
+} from '../support/helpers/test-utils'
+
+// ═══════════════════════════════════════════════════════════════════════
+// Story 2.2: Scene Photography & Complete Soundscape Assets
+// E2E tests verify LocationDetail panel displays scene photograph and
+// location name when an unlocked location is selected, and that both
+// LocationDetail and SoundscapePlayer appear simultaneously.
+// ═══════════════════════════════════════════════════════════════════════
+
+const LOCATION_DATA: Record<string, { name: string; imagePath: string }> = {
+  tamsui: { name: '淡水河夕陽', imagePath: '/images/tamsui.jpg' },
+  alishan: { name: '阿里山雲海', imagePath: '/images/alishan.jpg' },
+  keelung: { name: '基隆港浪', imagePath: '/images/keelung.jpg' },
+}
+
+test.describe('Story 2.2: Scene Photography — P0 Critical', () => {
+  test('[P0] should display LocationDetail with scene photo when clicking an unlocked location', async ({
+    page,
+  }) => {
+    // GIVEN: Page is loaded, no detail panel visible
+    const detail = page.getByTestId('location-detail')
+    await expect(detail).toBeHidden()
+
+    // WHEN: User clicks tamsui (unlocked)
+    const tamsui = getMapElement(page, 'location-dot-tamsui')
+    await tamsui.click()
+
+    // THEN: LocationDetail appears with photo and name
+    await expect(detail).toBeVisible()
+    const img = detail.locator('img')
+    await expect(img).toBeVisible()
+    await expect(img).toHaveAttribute('src', '/images/tamsui.jpg')
+    await expect(detail.locator('h2')).toContainText('淡水河夕陽')
+  })
+
+  test('[P0] should show both LocationDetail and SoundscapePlayer simultaneously', async ({
+    page,
+  }) => {
+    // GIVEN: Page is loaded
+    const detail = page.getByTestId('location-detail')
+    const player = page.getByTestId('soundscape-player')
+
+    // WHEN: User clicks an unlocked location
+    const tamsui = getMapElement(page, 'location-dot-tamsui')
+    await tamsui.click()
+
+    // THEN: Both panels are visible
+    await expect(detail).toBeVisible()
+    await expect(player).toBeVisible()
+  })
+
+  test('[P0] should update photo and name when switching between unlocked locations', async ({
+    page,
+  }) => {
+    const detail = page.getByTestId('location-detail')
+    const img = detail.locator('img')
+
+    // GIVEN: Tamsui is selected
+    const tamsui = getMapElement(page, 'location-dot-tamsui')
+    await tamsui.click()
+    await expect(img).toHaveAttribute('src', '/images/tamsui.jpg')
+    await expect(detail.locator('h2')).toContainText('淡水河夕陽')
+
+    // WHEN: User clicks alishan
+    const alishan = getMapElement(page, 'location-dot-alishan')
+    await alishan.click()
+
+    // THEN: Photo and name update to alishan
+    await expect(img).toHaveAttribute('src', '/images/alishan.jpg')
+    await expect(detail.locator('h2')).toContainText('阿里山雲海')
+  })
+})
+
+test.describe('Story 2.2: Scene Photography — P1 High', () => {
+  test('[P1] should not show LocationDetail when no location is selected', async ({
+    page,
+  }) => {
+    const detail = page.getByTestId('location-detail')
+    await expect(detail).toBeHidden()
+  })
+
+  test('[P1] should not show LocationDetail when a locked location is clicked', async ({
+    page,
+  }) => {
+    const lanyu = getMapElement(page, 'location-dot-lanyu')
+    await lanyu.click()
+
+    const detail = page.getByTestId('location-detail')
+    await expect(detail).toBeHidden()
+  })
+
+  test('[P1] should display correct photo for each unlocked location', async ({
+    page,
+  }) => {
+    const detail = page.getByTestId('location-detail')
+    const img = detail.locator('img')
+
+    for (const id of UNLOCKED_LOCATIONS) {
+      const dot = getMapElement(page, `location-dot-${id}`)
+      await dot.click()
+
+      await expect(detail).toBeVisible()
+      await expect(img).toHaveAttribute('src', LOCATION_DATA[id].imagePath)
+      await expect(detail.locator('h2')).toContainText(LOCATION_DATA[id].name)
+    }
+  })
+
+  test('[P1] should display English name as subtitle for each unlocked location', async ({
+    page,
+  }) => {
+    const detail = page.getByTestId('location-detail')
+
+    const tamsui = getMapElement(page, 'location-dot-tamsui')
+    await tamsui.click()
+
+    await expect(detail.locator('p')).toContainText('Tamsui River Sunset')
+  })
+
+  test('[P1] should hide LocationDetail when switching from unlocked to locked location', async ({
+    page,
+  }) => {
+    const detail = page.getByTestId('location-detail')
+
+    // Select unlocked location first
+    const tamsui = getMapElement(page, 'location-dot-tamsui')
+    await tamsui.click()
+    await expect(detail).toBeVisible()
+
+    // Switch to locked location
+    const taroko = getMapElement(page, 'location-dot-taroko')
+    await taroko.click()
+    await expect(detail).toBeHidden()
+  })
+})

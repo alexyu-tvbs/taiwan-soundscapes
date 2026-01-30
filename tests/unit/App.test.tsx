@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, fireEvent } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { render, fireEvent, cleanup } from '@testing-library/react'
 import { App } from '../../src/App'
 
 // Mock Audio for App integration tests
@@ -145,5 +145,79 @@ describe('App Component — Audio Integration', () => {
     const alishan = container.querySelector('[data-testid="location-dot-alishan"]')
     fireEvent.click(alishan!)
     expect(mockAudio.src).toBe('/audio/alishan.mp3')
+  })
+})
+
+describe('App Component — LocationDetail Integration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAudio.src = ''
+    mockAudio.volume = 1
+    mockAudio.paused = true
+    mockAudio.play.mockResolvedValue(undefined)
+  })
+
+  afterEach(() => {
+    cleanup()
+  })
+
+  it('should show LocationDetail when an unlocked location is clicked', () => {
+    const { container } = render(<App />)
+    expect(container.querySelector('[data-testid="location-detail"]')).toBeNull()
+
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    expect(container.querySelector('[data-testid="location-detail"]')).not.toBeNull()
+  })
+
+  it('should NOT show LocationDetail when a locked location is clicked', () => {
+    const { container } = render(<App />)
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+
+    expect(container.querySelector('[data-testid="location-detail"]')).toBeNull()
+  })
+
+  it('should display location name in LocationDetail panel', () => {
+    const { container } = render(<App />)
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    const detail = container.querySelector('[data-testid="location-detail"]')
+    expect(detail?.querySelector('h2')?.textContent).toBe('淡水河夕陽')
+  })
+
+  it('should display scene photograph in LocationDetail panel', () => {
+    const { container } = render(<App />)
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    const detail = container.querySelector('[data-testid="location-detail"]')
+    const img = detail?.querySelector('img')
+    expect(img).not.toBeNull()
+    expect(img?.getAttribute('src')).toBe('/images/tamsui.jpg')
+  })
+
+  it('should update LocationDetail when switching between unlocked locations', () => {
+    const { container } = render(<App />)
+
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+    expect(container.querySelector('[data-testid="location-detail"] h2')?.textContent).toBe('淡水河夕陽')
+
+    const alishan = container.querySelector('[data-testid="location-dot-alishan"]')
+    fireEvent.click(alishan!)
+    expect(container.querySelector('[data-testid="location-detail"] h2')?.textContent).toBe('阿里山雲海')
+    expect(container.querySelector('[data-testid="location-detail"] img')?.getAttribute('src')).toBe('/images/alishan.jpg')
+  })
+
+  it('should show both LocationDetail and SoundscapePlayer when unlocked location selected', () => {
+    const { container } = render(<App />)
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    expect(container.querySelector('[data-testid="location-detail"]')).not.toBeNull()
+    expect(container.querySelector('[data-testid="soundscape-player"]')).not.toBeNull()
   })
 })
