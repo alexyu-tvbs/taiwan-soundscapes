@@ -254,9 +254,10 @@ Claude Opus 4.5
 - AnimatePresence `mode="wait"` removed — blocks unit tests in happy-dom (exit animation never completes without real requestAnimationFrame). Default mode (simultaneous exit/enter) works correctly in both test and production.
 - Unit tests updated: `querySelector` → `querySelectorAll[last]` for LocationDetail switching, `expectOverlayDismissed` helper for LockOverlay dismiss checks (element stays in DOM with opacity: 0 during exit animation).
 - E2E tests updated: `waitForDetailTransition()` helper added to wait for AnimatePresence exit to complete before strict-mode assertions on `getByTestId('location-detail')`.
+- **Layout shift fix**: Changed LocationDetail AnimatePresence key from `selectedLocation.id` to stable `"detail-panel"`. With per-location keys, AnimatePresence exit/enter caused two motion.div elements in the flex container simultaneously, pushing the map left (flicker + shift). With a stable key, location switches are instant React re-renders (no exit/enter animation), eliminating the layout shift. Enter/exit animations only fire on initial panel appear/disappear. Also removed `mode="popLayout"` and `layout` prop (no longer needed).
 
 ### Completion Notes List
-- Task 1: AnimatePresence + motion.div wrapper around LocationDetail in App.tsx. key={selectedLocation.id} triggers re-animation on location switch.
+- Task 1: AnimatePresence + motion.div wrapper around LocationDetail in App.tsx. Stable key="detail-panel" — location switches are instant content swaps (no layout shift); enter/exit animations only fire on panel appear/disappear.
 - Task 2: LockOverlay.tsx converted to motion.div (backdrop fade + panel scale). AnimatePresence wrapper in App.tsx.
 - Task 3: SoundscapePlayer wrapped with AnimatePresence + motion.div slide-up in App.tsx.
 - Task 4: Production build 339KB JS (110KB gzip). All assets in dist/. No unnecessary dependencies.

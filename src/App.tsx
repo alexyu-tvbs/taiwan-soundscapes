@@ -45,7 +45,7 @@ export const App = () => {
         <AnimatePresence>
           {isUnlockedSelection && selectedLocation && (
             <motion.div
-              key={selectedLocation.id}
+              key="detail-panel"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}

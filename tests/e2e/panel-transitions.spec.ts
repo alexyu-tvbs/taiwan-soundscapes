@@ -46,7 +46,7 @@ test.describe('Story 4.2: LocationDetail Panel Transition — P1 High', () => {
     await alishan.click({ force: true })
     await waitForDetailTransition(page)
 
-    // THEN: LocationDetail updates to Alishan (re-animated via key change)
+    // THEN: LocationDetail updates to Alishan (content swap, stable key — no re-animation)
     await expect(detail.locator('h2')).toContainText('阿里山雲海')
     const wrapper = detail.locator('..')
     await expect(wrapper).toHaveCSS('opacity', '1')
