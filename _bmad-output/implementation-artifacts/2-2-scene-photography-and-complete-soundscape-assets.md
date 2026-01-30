@@ -1,6 +1,6 @@
 # Story 2.2: Scene Photography & Complete Soundscape Assets
 
-Status: review
+Status: done
 
 ## Story
 
@@ -257,6 +257,36 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 - `src/App.tsx` — Added LocationDetail import, flex layout with main section, conditional rendering
 - `tests/unit/App.test.tsx` — Added 6 LocationDetail integration tests + cleanup
 
+## Senior Developer Review (AI)
+
+**Reviewer:** Amelia (Dev Agent) — Code Review Workflow
+**Date:** 2026-01-30
+**Outcome:** Approved with fixes applied
+
+### Issues Found & Fixed
+
+| ID | Severity | Description | Fix Applied |
+|----|----------|-------------|-------------|
+| M1 | MEDIUM | `keelung.jpg` was 686KB, exceeding 500KB limit | Compressed to 452KB (resized 1600px, quality 70) |
+| M2 | MEDIUM | Direct DOM manipulation in image onError handler bypassed React | Replaced with `useState`-based error tracking |
+| M3 | MEDIUM | No explicit fallback placeholder on image failure (Task 1.7) | Added dark placeholder div with "Image unavailable" text |
+| L1 | LOW | `isPlaying` prop declared but unused | Not fixed — kept per Task 1.2 spec for future use |
+| L2 | LOW | `cleanup()` inconsistent in App.test.tsx | Moved to module-level `afterEach`, removed duplicate |
+| L3 | LOW | Audio continued playing when switching to locked location | Added `audioPlayer.pause()` in `handleSelect` else branch |
+| L4 | LOW | No `isPlaying={true}` test path | Not fixed — irrelevant while prop is unused |
+
+### New Tests Added
+
+- `LocationDetail.test.tsx`: "should show dark placeholder when image fails to load"
+- `LocationDetail.test.tsx`: "should reset image error state when location changes"
+- `App.test.tsx`: "should pause audio when clicking a locked location after playing"
+
+### Test Results After Review
+
+- **89 tests passed** (86 original + 3 new)
+- **0 failures**
+
 ## Change Log
 
+- 2026-01-30: Code review fixes — compressed keelung.jpg, React state-based image error handling with dark fallback placeholder, module-level test cleanup, audio pauses on locked location click, 3 new unit tests
 - 2026-01-30: Implemented Story 2.2 — LocationDetail component, App.tsx layout integration, 3 scene photographs, comprehensive unit + E2E tests

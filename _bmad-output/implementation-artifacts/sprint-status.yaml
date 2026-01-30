@@ -47,9 +47,9 @@ development_status:
   epic-1-retrospective: optional
 
   # Epic 2: Soundscape Exploration & Playback
-  epic-2: in-progress
+  epic-2: done
   2-1-audio-playback-engine-and-player-controls: done
-  2-2-scene-photography-and-complete-soundscape-assets: review
+  2-2-scene-photography-and-complete-soundscape-assets: done
   epic-2-retrospective: optional
 
   # Epic 3: Unlock System & Gamification Display

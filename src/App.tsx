@@ -17,6 +17,8 @@ export const App = () => {
     const loc = locations.find((l) => l.id === id)
     if (loc?.status === 'unlocked') {
       audioPlayer.play(loc.audioPath)
+    } else {
+      audioPlayer.pause()
     }
   }
 

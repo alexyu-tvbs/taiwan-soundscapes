@@ -85,6 +85,22 @@ describe('LocationDetail', () => {
     warnSpy.mockRestore()
   })
 
+  it('should show dark placeholder when image fails to load', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { container } = render(
+      <LocationDetail location={mockLocation} isPlaying={false} />
+    )
+    const img = container.querySelector('img')!
+    fireEvent.error(img)
+
+    // Image should be replaced by placeholder
+    expect(container.querySelector('img')).toBeNull()
+    const placeholder = container.querySelector('[data-testid="image-placeholder"]')
+    expect(placeholder).not.toBeNull()
+    expect(placeholder?.textContent).toContain('Image unavailable')
+    vi.restoreAllMocks()
+  })
+
   it('should still show location name when image fails to load', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     const { container } = render(
@@ -95,6 +111,34 @@ describe('LocationDetail', () => {
 
     const h2 = container.querySelector('h2')
     expect(h2?.textContent).toBe('淡水河夕陽')
+    vi.restoreAllMocks()
+  })
+
+  it('should reset image error state when location changes', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const alishan: Location = {
+      id: 'alishan',
+      name: '阿里山雲海',
+      nameEn: 'Alishan Sea of Clouds',
+      coordinates: { x: 700, y: 840 },
+      status: 'unlocked',
+      audioPath: '/audio/alishan.mp3',
+      imagePath: '/images/alishan.jpg',
+      unlockCondition: '',
+    }
+
+    const { container, rerender } = render(
+      <LocationDetail location={mockLocation} isPlaying={false} />
+    )
+    // Trigger error on first location
+    const img = container.querySelector('img')!
+    fireEvent.error(img)
+    expect(container.querySelector('[data-testid="image-placeholder"]')).not.toBeNull()
+
+    // Switch location — error should reset
+    rerender(<LocationDetail location={alishan} isPlaying={false} />)
+    expect(container.querySelector('img')).not.toBeNull()
+    expect(container.querySelector('[data-testid="image-placeholder"]')).toBeNull()
     vi.restoreAllMocks()
   })
 

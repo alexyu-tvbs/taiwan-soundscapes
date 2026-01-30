@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, fireEvent, cleanup } from '@testing-library/react'
 import { App } from '../../src/App'
 
+afterEach(() => {
+  cleanup()
+})
+
 // Mock Audio for App integration tests
 const mockAudio = {
   src: '',
@@ -146,6 +150,21 @@ describe('App Component — Audio Integration', () => {
     fireEvent.click(alishan!)
     expect(mockAudio.src).toBe('/audio/alishan.mp3')
   })
+
+  it('should pause audio when clicking a locked location after playing', () => {
+    const { container } = render(<App />)
+
+    // Start playing unlocked location
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+    expect(mockAudio.play).toHaveBeenCalled()
+
+    // Click locked location — audio should pause
+    mockAudio.pause.mockClear()
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+    expect(mockAudio.pause).toHaveBeenCalled()
+  })
 })
 
 describe('App Component — LocationDetail Integration', () => {
@@ -155,10 +174,6 @@ describe('App Component — LocationDetail Integration', () => {
     mockAudio.volume = 1
     mockAudio.paused = true
     mockAudio.play.mockResolvedValue(undefined)
-  })
-
-  afterEach(() => {
-    cleanup()
   })
 
   it('should show LocationDetail when an unlocked location is clicked', () => {
