@@ -2,7 +2,7 @@ import type { Location } from '../types'
 import { LocationDot } from './LocationDot'
 
 interface TaiwanMapProps {
-  locations: Location[]
+  locations: readonly Location[]
   selectedLocationId: string | null
   onSelect: (id: string) => void
 }

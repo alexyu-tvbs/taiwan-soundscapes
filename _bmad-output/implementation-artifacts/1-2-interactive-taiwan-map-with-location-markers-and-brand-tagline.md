@@ -1,6 +1,6 @@
 # Story 1.2: Interactive Taiwan Map with Location Markers & Brand Tagline
 
-Status: review
+Status: done
 
 ## Story
 
@@ -246,21 +246,22 @@ Claude Opus 4.5
 - Task 3: Updated all 10 location coordinates in `locations.ts` based on SVG path analysis — mapped to geographically accurate positions within the viewBox coordinate system
 - Task 4: Integrated TaiwanMap into App.tsx with `selectedLocationId` state via `useState`, prop drilling pattern per project-context.md
 - Task 5: Added brand tagline "好眠秘境 — 用耳朵旅行台灣" as centered header with `text-2xl font-bold` styling
-- All unit tests: 32/32 passing (4 test files: locations, TaiwanMap, LocationDot, App)
+- All unit tests: 44/44 passing (4 test files: locations, TaiwanMap, LocationDot, App) — includes expanded automation + code review fixes
 - All E2E tests: 17/17 passing (homepage + taiwan-map specs)
 - Build, TypeScript, ESLint: all clean
 
 ### Change Log
 
 - 2026-01-30: Implemented Story 1.2 — Interactive Taiwan Map with Location Markers & Brand Tagline
+- 2026-01-30: Code review fixes — TaiwanMapProps readonly type, LocationDot keyboard accessibility (tabIndex, role, aria-label, onKeyDown), TaiwanMap unit test coverage for marker rendering, updated test count documentation
 
 ### File List
 
 **New Files:**
 - `src/components/TaiwanMap.tsx` — SVG Taiwan map inline React component with all administrative region paths
 - `src/components/LocationDot.tsx` — Individual map marker as SVG circle with visual states
-- `tests/unit/TaiwanMap.test.tsx` — Unit tests for TaiwanMap component (4 tests)
-- `tests/unit/LocationDot.test.tsx` — Unit tests for LocationDot component (12 tests)
+- `tests/unit/TaiwanMap.test.tsx` — Unit tests for TaiwanMap component (7 tests)
+- `tests/unit/LocationDot.test.tsx` — Unit tests for LocationDot component (17 tests)
 - `tests/unit/App.test.tsx` — Unit tests for App integration (5 tests)
 
 **Modified Files:**

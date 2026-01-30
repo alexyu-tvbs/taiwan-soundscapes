@@ -17,7 +17,16 @@ export const LocationDot = ({ location, isSelected, onClick }: LocationDotProps)
       fill={isUnlocked ? '#F59E0B' : '#64748B'}
       opacity={isUnlocked ? 1 : 0.4}
       onClick={() => onClick(location.id)}
-      style={{ cursor: 'pointer' }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick(location.id)
+        }
+      }}
+      tabIndex={0}
+      role="button"
+      aria-label={location.name}
+      className="cursor-pointer"
     >
       <title>{location.name}</title>
     </circle>

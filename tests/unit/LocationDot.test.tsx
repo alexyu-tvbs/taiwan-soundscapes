@@ -116,3 +116,39 @@ describe('LocationDot Component — Locked State', () => {
     expect(onClick).toHaveBeenCalledWith('lanyu')
   })
 })
+
+describe('LocationDot Component — Keyboard Accessibility', () => {
+  it('should have tabIndex=0 for keyboard focus', () => {
+    const { container } = renderDot(unlockedLocation)
+    const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
+    expect(circle?.getAttribute('tabindex')).toBe('0')
+  })
+
+  it('should have role="button"', () => {
+    const { container } = renderDot(unlockedLocation)
+    const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
+    expect(circle?.getAttribute('role')).toBe('button')
+  })
+
+  it('should have aria-label with location name', () => {
+    const { container } = renderDot(unlockedLocation)
+    const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
+    expect(circle?.getAttribute('aria-label')).toBe('淡水河夕陽')
+  })
+
+  it('should trigger onClick on Enter key', () => {
+    const onClick = vi.fn()
+    const { container } = renderDot(unlockedLocation, false, onClick)
+    const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.keyDown(circle!, { key: 'Enter' })
+    expect(onClick).toHaveBeenCalledWith('tamsui')
+  })
+
+  it('should trigger onClick on Space key', () => {
+    const onClick = vi.fn()
+    const { container } = renderDot(unlockedLocation, false, onClick)
+    const circle = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.keyDown(circle!, { key: ' ' })
+    expect(onClick).toHaveBeenCalledWith('tamsui')
+  })
+})

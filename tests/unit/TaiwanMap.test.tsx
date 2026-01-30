@@ -36,3 +36,33 @@ describe('TaiwanMap Component — SVG Map Shell', () => {
     expect(svg?.getAttribute('aria-label')).toBe('Map of Taiwan')
   })
 })
+
+describe('TaiwanMap Component — Location Markers', () => {
+  const defaultProps = {
+    locations: [...locations],
+    selectedLocationId: null as string | null,
+    onSelect: () => {},
+  }
+
+  it('should render a LocationDot for each location', () => {
+    const { container } = render(<TaiwanMap {...defaultProps} />)
+    const dots = container.querySelectorAll('[data-testid^="location-dot-"]')
+    expect(dots.length).toBe(10)
+  })
+
+  it('should pass isSelected=true to the selected location dot', () => {
+    const { container } = render(
+      <TaiwanMap {...defaultProps} selectedLocationId="tamsui" />,
+    )
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    expect(tamsui?.getAttribute('r')).toBe('8')
+  })
+
+  it('should pass isSelected=false to non-selected location dots', () => {
+    const { container } = render(
+      <TaiwanMap {...defaultProps} selectedLocationId="tamsui" />,
+    )
+    const alishan = container.querySelector('[data-testid="location-dot-alishan"]')
+    expect(alishan?.getAttribute('r')).toBe('6')
+  })
+})

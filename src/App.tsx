@@ -13,7 +13,7 @@ export const App = () => {
         </h1>
       </header>
       <TaiwanMap
-        locations={[...locations]}
+        locations={locations}
         selectedLocationId={selectedLocationId}
         onSelect={setSelectedLocationId}
       />
