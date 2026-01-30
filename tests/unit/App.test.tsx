@@ -1,6 +1,26 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, fireEvent } from '@testing-library/react'
 import { App } from '../../src/App'
+
+// Mock Audio for App integration tests
+const mockAudio = {
+  src: '',
+  volume: 1,
+  paused: true,
+  play: vi.fn().mockResolvedValue(undefined),
+  pause: vi.fn(),
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+}
+
+vi.stubGlobal(
+  'Audio',
+  class {
+    constructor() {
+      return mockAudio
+    }
+  }
+)
 
 describe('App Component — Map Integration', () => {
   it('should render the TaiwanMap SVG', () => {
@@ -42,5 +62,66 @@ describe('App Component — Map Integration', () => {
     fireEvent.click(alishan!)
     expect(alishan?.getAttribute('r')).toBe('8')
     expect(tamsui?.getAttribute('r')).toBe('6')
+  })
+})
+
+describe('App Component — Audio Integration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAudio.src = ''
+    mockAudio.volume = 1
+    mockAudio.paused = true
+    mockAudio.play.mockResolvedValue(undefined)
+  })
+
+  it('should show SoundscapePlayer when an unlocked location is clicked', () => {
+    const { container } = render(<App />)
+    // Initially no player
+    expect(container.querySelector('[data-testid="soundscape-player"]')).toBeNull()
+
+    // Click unlocked location (tamsui)
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    expect(container.querySelector('[data-testid="soundscape-player"]')).not.toBeNull()
+  })
+
+  it('should NOT show SoundscapePlayer when a locked location is clicked', () => {
+    const { container } = render(<App />)
+    // Click locked location (lanyu)
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+
+    expect(container.querySelector('[data-testid="soundscape-player"]')).toBeNull()
+  })
+
+  it('should call audio.play() when an unlocked location is clicked', () => {
+    const { container } = render(<App />)
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    expect(mockAudio.play).toHaveBeenCalled()
+    expect(mockAudio.src).toBe('/audio/tamsui.mp3')
+  })
+
+  it('should display the selected location name in SoundscapePlayer', () => {
+    const { container } = render(<App />)
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    const player = container.querySelector('[data-testid="soundscape-player"]')
+    expect(player?.textContent).toContain('淡水河夕陽')
+  })
+
+  it('should switch audio when clicking a different unlocked location', () => {
+    const { container } = render(<App />)
+
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+    expect(mockAudio.src).toBe('/audio/tamsui.mp3')
+
+    const alishan = container.querySelector('[data-testid="location-dot-alishan"]')
+    fireEvent.click(alishan!)
+    expect(mockAudio.src).toBe('/audio/alishan.mp3')
   })
 })
