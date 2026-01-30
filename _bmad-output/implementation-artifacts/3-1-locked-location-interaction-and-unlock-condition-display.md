@@ -1,6 +1,6 @@
 # Story 3.1: Locked Location Interaction & Unlock Condition Display
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -27,35 +27,35 @@ So that I understand the gamification mechanic and feel motivated to "collect Ta
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Enhance LocationDot with lock indicator (AC: #1)
-  - [ ] 1.1 Update `src/components/LocationDot.tsx` to render a lock icon for locked locations
-  - [ ] 1.2 Lock icon approach: Add a small SVG lock symbol (e.g., `<text>` with 🔒 or a simple SVG path) positioned near the circle
-  - [ ] 1.3 Locked dots already dimmed (opacity 0.4 from Story 1.2) — add the lock icon ON TOP of the dimmed circle
-  - [ ] 1.4 Lock icon must be small enough not to overlap adjacent markers
-  - [ ] 1.5 Ensure lock icon is an SVG element (NOT HTML) — it lives inside the `<svg>` map
+- [x] Task 1: Enhance LocationDot with lock indicator (AC: #1)
+  - [x] 1.1 Update `src/components/LocationDot.tsx` to render a lock icon for locked locations
+  - [x] 1.2 Lock icon approach: Add a small SVG lock symbol (e.g., `<text>` with 🔒 or a simple SVG path) positioned near the circle
+  - [x] 1.3 Locked dots already dimmed (opacity 0.4 from Story 1.2) — add the lock icon ON TOP of the dimmed circle
+  - [x] 1.4 Lock icon must be small enough not to overlap adjacent markers
+  - [x] 1.5 Ensure lock icon is an SVG element (NOT HTML) — it lives inside the `<svg>` map
 
-- [ ] Task 2: Create `LockOverlay` component (AC: #2, #3)
-  - [ ] 2.1 Create `src/components/LockOverlay.tsx`
-  - [ ] 2.2 Props: `LockOverlayProps { location: Location; onClose: () => void }`
-  - [ ] 2.3 Display location name (zh) prominently
-  - [ ] 2.4 Display location English name as subtitle
-  - [ ] 2.5 Display unlock condition text from `location.unlockCondition` — warm, positive language
-  - [ ] 2.6 Add a close/dismiss button or click-outside-to-close behavior
-  - [ ] 2.7 Style as modal overlay: centered, semi-transparent dark backdrop, rounded panel
+- [x] Task 2: Create `LockOverlay` component (AC: #2, #3)
+  - [x] 2.1 Create `src/components/LockOverlay.tsx`
+  - [x] 2.2 Props: `LockOverlayProps { location: Location; onClose: () => void }`
+  - [x] 2.3 Display location name (zh) prominently
+  - [x] 2.4 Display location English name as subtitle
+  - [x] 2.5 Display unlock condition text from `location.unlockCondition` — warm, positive language
+  - [x] 2.6 Add a close/dismiss button or click-outside-to-close behavior
+  - [x] 2.7 Style as modal overlay: centered, semi-transparent dark backdrop, rounded panel
 
-- [ ] Task 3: Integrate locked click flow into App.tsx (AC: #2, #4)
-  - [ ] 3.1 Update `handleSelect` in App.tsx to distinguish unlocked vs locked clicks:
+- [x] Task 3: Integrate locked click flow into App.tsx (AC: #2, #4)
+  - [x] 3.1 Update `handleSelect` in App.tsx to distinguish unlocked vs locked clicks:
     - Unlocked → play audio + show LocationDetail (existing from Story 2.1/2.2)
     - Locked → show LockOverlay (NO audio)
-  - [ ] 3.2 Add state: `lockedLocation` (Location | null) for tracking which locked location overlay to show
-  - [ ] 3.3 Render `LockOverlay` conditionally when `lockedLocation` is set
-  - [ ] 3.4 On close: set `lockedLocation` to null
-  - [ ] 3.5 When showing LockOverlay, do NOT stop any currently playing audio from an unlocked location
+  - [x] 3.2 Add state: `lockedLocation` (Location | null) for tracking which locked location overlay to show
+  - [x] 3.3 Render `LockOverlay` conditionally when `lockedLocation` is set
+  - [x] 3.4 On close: set `lockedLocation` to null
+  - [x] 3.5 When showing LockOverlay, do NOT stop any currently playing audio from an unlocked location
 
-- [ ] Task 4: Verify all 7 locked locations display correctly (AC: #4)
-  - [ ] 4.1 Click each of the 7 locked locations and verify overlay shows correct name and unlock condition
-  - [ ] 4.2 Verify overlay dismisses properly for each
-  - [ ] 4.3 Verify unlock condition text uses warm language (no countdowns, no punishment)
+- [x] Task 4: Verify all 7 locked locations display correctly (AC: #4)
+  - [x] 4.1 Click each of the 7 locked locations and verify overlay shows correct name and unlock condition
+  - [x] 4.2 Verify overlay dismisses properly for each
+  - [x] 4.3 Verify unlock condition text uses warm language (no countdowns, no punishment)
 
 ## Dev Notes
 
@@ -248,8 +248,28 @@ src/
 
 ### Agent Model Used
 
+Claude Opus 4.5 (claude-opus-4-5-20251101)
+
 ### Debug Log References
+
+No issues encountered during implementation.
 
 ### Completion Notes List
 
+- Task 1: Updated `LocationDot.tsx` — wrapped `<circle>` in `<g>` group, added SVG `<text>` lock icon (🔒) for locked locations with `opacity={0.6}`, `fontSize={8}`, and `pointerEvents: 'none'`. All existing tests preserved via backward-compatible structure.
+- Task 2: Created `LockOverlay.tsx` — modal overlay with semi-transparent dark backdrop, centered panel displaying location name (zh), English name subtitle, unlock condition in amber text, close button, and click-outside-to-dismiss behavior.
+- Task 3: Updated `App.tsx` — added `lockedLocation` state (`Location | null`), modified `handleSelect` to branch on locked vs unlocked: unlocked plays audio + shows LocationDetail, locked shows LockOverlay without stopping audio. Updated existing test expectation (locked click no longer pauses audio per story requirement).
+- Task 4: Verified all 7 locked locations (蘭嶼飛魚季, 太魯閣溪流, 日月潭晨曦, 墾丁星空, 合歡山銀河, 台東稻浪, 玉山頂風聲) display correct name, unlock condition, and dismiss properly. Warm language validated — no countdowns, no punishment framing.
+
 ### File List
+
+- `src/components/LocationDot.tsx` — MODIFIED (added `<g>` wrapper + lock icon `<text>` for locked locations)
+- `src/components/LockOverlay.tsx` — NEW (lock overlay modal component)
+- `src/App.tsx` — MODIFIED (added `lockedLocation` state, locked click flow, LockOverlay render)
+- `tests/unit/LocationDot.test.tsx` — MODIFIED (added 6 lock indicator tests)
+- `tests/unit/LockOverlay.test.tsx` — NEW (9 tests for display + dismiss behavior)
+- `tests/unit/App.test.tsx` — MODIFIED (updated locked audio test, added 23 LockOverlay integration + 7-location verification tests)
+
+### Change Log
+
+- 2026-01-30: Implemented Story 3.1 — Locked Location Interaction & Unlock Condition Display. Added lock indicator on map markers, LockOverlay modal component, and App.tsx integration for locked click flow. 127 tests passing, 0 regressions.

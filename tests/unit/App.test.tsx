@@ -151,7 +151,7 @@ describe('App Component — Audio Integration', () => {
     expect(mockAudio.src).toBe('/audio/alishan.mp3')
   })
 
-  it('should pause audio when clicking a locked location after playing', () => {
+  it('should NOT pause audio when clicking a locked location after playing', () => {
     const { container } = render(<App />)
 
     // Start playing unlocked location
@@ -159,11 +159,11 @@ describe('App Component — Audio Integration', () => {
     fireEvent.click(tamsui!)
     expect(mockAudio.play).toHaveBeenCalled()
 
-    // Click locked location — audio should pause
+    // Click locked location — audio should continue playing
     mockAudio.pause.mockClear()
     const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
     fireEvent.click(lanyu!)
-    expect(mockAudio.pause).toHaveBeenCalled()
+    expect(mockAudio.pause).not.toHaveBeenCalled()
   })
 })
 
@@ -234,5 +234,175 @@ describe('App Component — LocationDetail Integration', () => {
 
     expect(container.querySelector('[data-testid="location-detail"]')).not.toBeNull()
     expect(container.querySelector('[data-testid="soundscape-player"]')).not.toBeNull()
+  })
+})
+
+describe('App Component — LockOverlay Integration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAudio.src = ''
+    mockAudio.volume = 1
+    mockAudio.paused = true
+    mockAudio.play.mockResolvedValue(undefined)
+  })
+
+  it('should show LockOverlay when a locked location is clicked', () => {
+    const { container } = render(<App />)
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+
+    expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
+  })
+
+  it('should NOT show LockOverlay when an unlocked location is clicked', () => {
+    const { container } = render(<App />)
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    expect(container.querySelector('[data-testid="lock-overlay"]')).toBeNull()
+  })
+
+  it('should display locked location name in overlay', () => {
+    const { container } = render(<App />)
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+
+    const panel = container.querySelector('[data-testid="lock-overlay-panel"]')
+    expect(panel?.querySelector('h2')?.textContent).toBe('蘭嶼飛魚季')
+  })
+
+  it('should display unlock condition in overlay', () => {
+    const { container } = render(<App />)
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+
+    const panel = container.querySelector('[data-testid="lock-overlay-panel"]')
+    expect(panel?.textContent).toContain('連續好眠 14 天，解鎖這片海洋')
+  })
+
+  it('should dismiss LockOverlay when close button is clicked', () => {
+    const { container } = render(<App />)
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+
+    expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
+
+    const closeBtn = container.querySelector('[data-testid="lock-overlay-close"]')
+    fireEvent.click(closeBtn!)
+
+    expect(container.querySelector('[data-testid="lock-overlay"]')).toBeNull()
+  })
+
+  it('should keep audio playing when locked location overlay is shown', () => {
+    const { container } = render(<App />)
+
+    // Play unlocked location first
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+    expect(mockAudio.play).toHaveBeenCalled()
+
+    // Click locked location — audio should NOT be paused
+    mockAudio.pause.mockClear()
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+
+    expect(mockAudio.pause).not.toHaveBeenCalled()
+    expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
+  })
+
+  it('should keep LocationDetail visible when locked location overlay is shown after unlocked selection', () => {
+    const { container } = render(<App />)
+
+    // Select unlocked location first
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+    expect(container.querySelector('[data-testid="location-detail"]')).not.toBeNull()
+
+    // Click locked location — LocationDetail should remain
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+
+    expect(container.querySelector('[data-testid="location-detail"]')).not.toBeNull()
+    expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
+  })
+
+  it('should clear LockOverlay when clicking an unlocked location', () => {
+    const { container } = render(<App />)
+
+    // Show overlay
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+    expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
+
+    // Click unlocked location
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    expect(container.querySelector('[data-testid="lock-overlay"]')).toBeNull()
+    expect(container.querySelector('[data-testid="location-detail"]')).not.toBeNull()
+  })
+})
+
+describe('App Component — All 7 Locked Locations Verification', () => {
+  const lockedLocations = [
+    { id: 'lanyu', name: '蘭嶼飛魚季', condition: '連續好眠 14 天，解鎖這片海洋' },
+    { id: 'taroko', name: '太魯閣溪流', condition: '好眠 21 天，走進太魯閣的溪谷' },
+    { id: 'sunmoonlake', name: '日月潭晨曦', condition: '累積好眠 30 晚，迎接日月潭的第一道光' },
+    { id: 'kenting', name: '墾丁星空', condition: '連續好眠 7 天，仰望墾丁的星空' },
+    { id: 'hehuan', name: '合歡山銀河', condition: '好眠 45 天，在合歡山遇見銀河' },
+    { id: 'taitung', name: '台東稻浪', condition: '連續好眠 10 天，聆聽稻浪的聲音' },
+    { id: 'yushan', name: '玉山頂風聲', condition: '累積好眠 60 晚，攻頂玉山聽風' },
+  ]
+
+  lockedLocations.forEach(({ id, name, condition }) => {
+    it(`should show overlay with correct name and condition for ${id}`, () => {
+      const { container } = render(<App />)
+      const dot = container.querySelector(`[data-testid="location-dot-${id}"]`)
+      fireEvent.click(dot!)
+
+      const overlay = container.querySelector('[data-testid="lock-overlay"]')
+      expect(overlay).not.toBeNull()
+
+      const panel = container.querySelector('[data-testid="lock-overlay-panel"]')
+      expect(panel?.querySelector('h2')?.textContent).toBe(name)
+      expect(panel?.textContent).toContain(condition)
+    })
+
+    it(`should dismiss overlay for ${id} when close is clicked`, () => {
+      const { container } = render(<App />)
+      const dot = container.querySelector(`[data-testid="location-dot-${id}"]`)
+      fireEvent.click(dot!)
+
+      expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
+
+      const closeBtn = container.querySelector('[data-testid="lock-overlay-close"]')
+      fireEvent.click(closeBtn!)
+
+      expect(container.querySelector('[data-testid="lock-overlay"]')).toBeNull()
+    })
+  })
+
+  it('should use warm positive language without countdowns or punishment framing', () => {
+    const { container } = render(<App />)
+
+    lockedLocations.forEach(({ id, condition }) => {
+      const dot = container.querySelector(`[data-testid="location-dot-${id}"]`)
+      fireEvent.click(dot!)
+
+      const panel = container.querySelector('[data-testid="lock-overlay-panel"]')
+      const text = panel?.textContent ?? ''
+
+      // Verify warm language present
+      expect(text).toContain(condition)
+
+      // Verify no anxiety-inducing patterns
+      expect(text).not.toContain('剩餘')
+      expect(text).not.toContain('你還沒')
+      expect(text).not.toContain('失敗')
+
+      // Dismiss before next
+      const closeBtn = container.querySelector('[data-testid="lock-overlay-close"]')
+      fireEvent.click(closeBtn!)
+    })
   })
 })

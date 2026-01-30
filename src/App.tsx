@@ -2,23 +2,29 @@ import { useState } from 'react'
 import { TaiwanMap } from './components/TaiwanMap'
 import { LocationDetail } from './components/LocationDetail'
 import { SoundscapePlayer } from './components/SoundscapePlayer'
+import { LockOverlay } from './components/LockOverlay'
 import { useAudioPlayer } from './hooks/useAudioPlayer'
 import { locations } from './data/locations'
+import type { Location } from './types'
 
 export const App = () => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null)
+  const [lockedLocation, setLockedLocation] = useState<Location | null>(null)
   const audioPlayer = useAudioPlayer()
 
   const selectedLocation = locations.find((l) => l.id === selectedLocationId) ?? null
   const isUnlockedSelection = selectedLocation?.status === 'unlocked'
 
   const handleSelect = (id: string) => {
-    setSelectedLocationId(id)
     const loc = locations.find((l) => l.id === id)
-    if (loc?.status === 'unlocked') {
+    if (!loc) return
+
+    if (loc.status === 'unlocked') {
+      setSelectedLocationId(id)
+      setLockedLocation(null)
       audioPlayer.play(loc.audioPath)
     } else {
-      audioPlayer.pause()
+      setLockedLocation(loc)
     }
   }
 
@@ -50,6 +56,12 @@ export const App = () => {
           onPlay={() => audioPlayer.resume()}
           onPause={() => audioPlayer.pause()}
           onVolumeChange={audioPlayer.setVolume}
+        />
+      )}
+      {lockedLocation && (
+        <LockOverlay
+          location={lockedLocation}
+          onClose={() => setLockedLocation(null)}
         />
       )}
     </div>

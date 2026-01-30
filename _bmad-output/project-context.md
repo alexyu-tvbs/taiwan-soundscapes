@@ -19,7 +19,7 @@ _Critical rules and patterns for taiwan-soundscapes. Focus on unobvious details.
 
 ## Technology Stack & Versions
 
-- **Runtime:** Node.js 20.19+
+- **Runtime:** Node.js 24+
 - **Framework:** React 19 + TypeScript (strict mode)
 - **Build:** Vite 7.x
 - **Styling:** Tailwind CSS v4 via `@tailwindcss/vite` plugin — NO `tailwind.config.js`, NO `@tailwind` directives

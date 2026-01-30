@@ -152,3 +152,42 @@ describe('LocationDot Component — Keyboard Accessibility', () => {
     expect(onClick).toHaveBeenCalledWith('tamsui')
   })
 })
+
+describe('LocationDot Component — Lock Indicator', () => {
+  it('should render a lock icon for locked locations', () => {
+    const { container } = renderDot(lockedLocation)
+    const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
+    expect(lockIcon).not.toBeNull()
+  })
+
+  it('should NOT render a lock icon for unlocked locations', () => {
+    const { container } = renderDot(unlockedLocation)
+    const lockIcon = container.querySelector('[data-testid="lock-icon-tamsui"]')
+    expect(lockIcon).toBeNull()
+  })
+
+  it('should render lock icon as an SVG text element', () => {
+    const { container } = renderDot(lockedLocation)
+    const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
+    expect(lockIcon?.tagName.toLowerCase()).toBe('text')
+  })
+
+  it('should position lock icon at location coordinates', () => {
+    const { container } = renderDot(lockedLocation)
+    const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
+    expect(lockIcon?.getAttribute('x')).toBe('885')
+  })
+
+  it('should have pointer-events none on lock icon', () => {
+    const { container } = renderDot(lockedLocation)
+    const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
+    expect(lockIcon).not.toBeNull()
+    expect(lockIcon?.style.pointerEvents).toBe('none')
+  })
+
+  it('should render lock icon with reduced opacity', () => {
+    const { container } = renderDot(lockedLocation)
+    const lockIcon = container.querySelector('[data-testid="lock-icon-lanyu"]')
+    expect(lockIcon?.getAttribute('opacity')).toBe('0.6')
+  })
+})

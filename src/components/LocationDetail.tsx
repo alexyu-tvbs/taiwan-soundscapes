@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type { Location } from '../types'
 
 interface LocationDetailProps {
@@ -7,11 +7,8 @@ interface LocationDetailProps {
 }
 
 export const LocationDetail = ({ location }: LocationDetailProps) => {
-  const [imageError, setImageError] = useState(false)
-
-  useEffect(() => {
-    setImageError(false)
-  }, [location.imagePath])
+  const [errorImagePath, setErrorImagePath] = useState<string | null>(null)
+  const imageError = errorImagePath === location.imagePath
 
   return (
     <div
@@ -32,7 +29,7 @@ export const LocationDetail = ({ location }: LocationDetailProps) => {
           className="w-full rounded-lg object-cover aspect-video"
           onError={() => {
             console.warn(`Failed to load image: ${location.imagePath}`)
-            setImageError(true)
+            setErrorImagePath(location.imagePath)
           }}
         />
       )}
