@@ -135,4 +135,66 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
     await taroko.click()
     await expect(detail).toBeHidden()
   })
+
+  test('[P1] should show matching photo and player name for each unlocked location', async ({
+    page,
+  }) => {
+    const detail = page.getByTestId('location-detail')
+    const img = detail.locator('img')
+    const player = page.getByTestId('soundscape-player')
+
+    // GIVEN/WHEN/THEN: For each unlocked location, verify BOTH photo AND player match
+    for (const id of UNLOCKED_LOCATIONS) {
+      const dot = getMapElement(page, `location-dot-${id}`)
+      await dot.click()
+
+      // THEN: Photo src matches the location
+      await expect(img).toHaveAttribute('src', LOCATION_DATA[id].imagePath)
+
+      // AND: SoundscapePlayer shows the same location name
+      await expect(player).toBeVisible()
+      await expect(player).toContainText(LOCATION_DATA[id].name)
+    }
+  })
+})
+
+test.describe('Story 2.2: Scene Photography — P2 Medium', () => {
+  test('[P2] should keep LocationDetail visible when re-clicking the same location', async ({
+    page,
+  }) => {
+    const detail = page.getByTestId('location-detail')
+    const img = detail.locator('img')
+
+    // GIVEN: Tamsui is selected
+    const tamsui = getMapElement(page, 'location-dot-tamsui')
+    await tamsui.click()
+    await expect(detail).toBeVisible()
+    await expect(img).toHaveAttribute('src', '/images/tamsui.jpg')
+
+    // WHEN: User clicks tamsui again
+    await tamsui.click()
+
+    // THEN: LocationDetail remains visible with correct data
+    await expect(detail).toBeVisible()
+    await expect(img).toHaveAttribute('src', '/images/tamsui.jpg')
+    await expect(detail.locator('h2')).toContainText('淡水河夕陽')
+  })
+
+  test('[P2] should converge to correct state after cycling through all locations', async ({
+    page,
+  }) => {
+    const detail = page.getByTestId('location-detail')
+    const img = detail.locator('img')
+
+    // GIVEN: User rapidly cycles through all locations
+    for (const id of UNLOCKED_LOCATIONS) {
+      const dot = getMapElement(page, `location-dot-${id}`)
+      await dot.click()
+    }
+
+    // THEN: Final state matches the last location (keelung)
+    await expect(detail).toBeVisible()
+    await expect(img).toHaveAttribute('src', '/images/keelung.jpg')
+    await expect(detail.locator('h2')).toContainText('基隆港浪')
+  })
 })
