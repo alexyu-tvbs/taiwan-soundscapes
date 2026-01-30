@@ -42,7 +42,7 @@ export const LocationDot = ({ location, isSelected, onClick }: LocationDotProps)
           aria-label={location.name}
           whileHover={{ scale: 1.2 }}
           className="cursor-pointer"
-          style={{ pointerEvents: 'auto' }}
+          style={{ pointerEvents: 'auto', transformBox: 'fill-box', transformOrigin: 'center' }}
         >
           <title>{location.name}</title>
         </motion.circle>
@@ -79,6 +79,7 @@ export const LocationDot = ({ location, isSelected, onClick }: LocationDotProps)
         data-testid={`lock-icon-${location.id}`}
         transform={`translate(${location.coordinates.x}, ${location.coordinates.y})`}
         opacity={0.6}
+        aria-hidden="true"
         style={{ pointerEvents: 'none' }}
       >
         <rect x={-2.5} y={-0.5} width={5} height={4} rx={0.7} fill="white" />

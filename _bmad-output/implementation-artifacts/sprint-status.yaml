@@ -59,6 +59,6 @@ development_status:
 
   # Epic 4: Visual Polish & Presentation Quality
   epic-4: in-progress
-  4-1-location-marker-animations-and-visual-states: review
+  4-1-location-marker-animations-and-visual-states: done
   4-2-transition-polish-and-performance-validation: ready-for-dev
   epic-4-retrospective: optional
