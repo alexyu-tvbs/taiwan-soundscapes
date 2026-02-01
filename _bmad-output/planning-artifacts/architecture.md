@@ -17,6 +17,7 @@ date: '2026-01-30'
 lastStep: 8
 status: 'complete'
 completedAt: '2026-01-30'
+phase2UpdatedAt: '2026-02-01'
 ---
 
 # Architecture Decision Document
@@ -522,8 +523,325 @@ User clicks LocationDot
 
 ---
 
-**Architecture Status:** READY FOR IMPLEMENTATION ✅
-
-**Next Phase:** Begin implementation using the architectural decisions and patterns documented herein.
+**Phase 1 Architecture Status:** READY FOR IMPLEMENTATION ✅
 
 **Document Maintenance:** Update this architecture when major technical decisions are made during implementation.
+
+---
+
+## Phase 2: Sleep Coach Architecture Additions
+
+_Updated: 2026-02-01 — Architectural decisions for Phase 2 (Sleep Coach Concept Validation) based on PRD sections P2-1 through P2-7 and FR21-FR46._
+
+### Phase 2 Context
+
+Phase 2 elevates the prototype from "Taiwan sound map" to "sleep coach concept." All additions remain static frontend — no backend, no data persistence. The existing Phase 1 map experience is preserved and relocated into a tab-based navigation structure.
+
+**New Scope:** 7 new components, 26 new FRs (FR21-FR46), updated NFR coverage (FR1-FR46).
+
+**Constraint:** Page refresh resets all state (onboarding, sleep type, tab position). This is acceptable for a competition prototype.
+
+### Decision 7: Navigation — Pure State Conditional Rendering
+
+**Decision:** No React Router. Tab switching and onboarding flow controlled entirely by React state in App.tsx.
+
+**Rationale:** This is a competition demo prototype with no need for URL-based navigation, browser history, or shareable deep links. Conditional rendering is consistent with the Phase 1 architecture pattern and avoids adding a new dependency.
+
+**Implementation:**
+
+```tsx
+// App.tsx state additions
+const [activeTab, setActiveTab] = useState<Tab>('tonight');
+const [onboardingComplete, setOnboardingComplete] = useState(false);
+const [showProductStory, setShowProductStory] = useState(false);
+```
+
+**Rendering Logic:**
+
+```
+if !onboardingComplete → SleepAssessment (fullscreen, no TabBar)
+if onboardingComplete → TabBar + active tab content
+if showProductStory → ProductStory (fullscreen overlay, above everything)
+```
+
+### Decision 8: State Management — Extended Prop Drilling
+
+**Decision:** All Phase 2 state remains in App.tsx, passed via props. No Context API.
+
+**Rationale:** The component tree remains 2 levels deep maximum. 8 state variables in App.tsx is manageable. Context solves deep prop threading problems that don't exist in this architecture.
+
+**Complete App.tsx State Model (Phase 1 + Phase 2):**
+
+| State | Type | Purpose |
+|---|---|---|
+| `selectedLocationId` | `string \| null` | Currently selected map location (Phase 1) |
+| `lockedLocation` | `Location \| null` | Currently shown locked location overlay (Phase 1) |
+| `audioPlayer.*` | hook return | Audio playback state (Phase 1) |
+| `activeTab` | `Tab` | Current tab: 'tonight' \| 'explore' \| 'journey' (Phase 2) |
+| `onboardingComplete` | `boolean` | Whether questionnaire is finished (Phase 2) |
+| `sleepType` | `SleepType \| null` | Determined sleep type from questionnaire (Phase 2) |
+| `showProductStory` | `boolean` | Product Story overlay visibility (Phase 2) |
+
+### Decision 9: Phase 2 Component Architecture
+
+**7 new components** integrated into the existing flat component structure:
+
+```
+App.tsx (all state owner)
+│
+├── if !onboardingComplete:
+│   └── SleepAssessment
+│       ├── (internal) QuestionScreen × 5
+│       └── SleepTypeResult
+│
+├── if onboardingComplete:
+│   ├── TabBar
+│   │
+│   ├── if activeTab === 'tonight':
+│   │   └── TonightPage
+│   │       └── PrescriptionCard × 2
+│   │
+│   ├── if activeTab === 'explore':
+│   │   ├── CollectionProgress
+│   │   ├── TaiwanMap → LocationDot × 10 (existing)
+│   │   ├── LocationDetail (existing)
+│   │   ├── SoundscapePlayer (existing)
+│   │   └── LockOverlay (existing)
+│   │
+│   └── if activeTab === 'journey':
+│       └── MyJourneyPage
+│
+└── if showProductStory:
+    └── ProductStory (fullscreen overlay)
+```
+
+**Component Props Definitions:**
+
+| Component | Props | Responsibility |
+|---|---|---|
+| `SleepAssessment` | `onComplete(sleepType: SleepType)` | 5-question flow + result page; manages internal question state |
+| `TonightPage` | `sleepType: SleepType, onNavigateToLocation(id: string)` | Prescription homepage with progress bar, cards, coach tip |
+| `PrescriptionCard` | `type: 'breathing' \| 'soundscape', content: PrescriptionCardContent, onTap?()` | Reusable card for breathing exercise or soundscape recommendation |
+| `MyJourneyPage` | `sleepType: SleepType, onOpenProductStory()` | Achievement stats + reinforcement message + progress |
+| `TabBar` | `activeTab: Tab, onTabChange(tab: Tab)` | Bottom tab navigation with active state indicator |
+| `ProductStory` | `onClose()` | Scrollable product vision page |
+| `CollectionProgress` | `unlockedCount: number, totalCount: number, hintText: string` | Collection indicator above map |
+
+**SleepAssessment Internal Architecture:**
+
+SleepAssessment manages its own internal state (currentQuestionIndex, answers) and only communicates the final result to App.tsx via `onComplete`. The question screens and result page are rendered internally — no need for App.tsx to know about question navigation.
+
+### Decision 10: Data Architecture — Sleep Data Model
+
+**New file: `data/sleep.ts`** containing all Phase 2 static data.
+
+**Questionnaire Data:**
+
+```typescript
+interface SleepQuestion {
+  id: string;
+  question: string;
+  options: SleepOption[];
+}
+
+interface SleepOption {
+  label: string;
+  value: string;
+  weight: Partial<Record<SleepType, number>>;
+}
+```
+
+**Sleep Type Definitions:**
+
+```typescript
+type SleepType = 'difficulty' | 'light' | 'anxious';
+
+interface SleepTypeInfo {
+  type: SleepType;
+  name: string;        // 入睡困難型 / 淺眠易醒型 / 焦慮思緒型
+  description: string;
+  approach: string;
+}
+```
+
+**Prescription Content (3 variants):**
+
+```typescript
+interface Prescription {
+  sleepType: SleepType;
+  planName: string;              // e.g. "入睡困難急救包"
+  totalDays: number;
+  currentDay: number;            // hardcoded
+  breathing: {
+    name: string;                // "4-7-8 呼吸法"
+    duration: string;            // "3 分鐘"
+    expert: string;              // "江醫師引導"
+  };
+  soundscapeLocationId: string;  // references locations.ts id
+  coachTip: string;
+}
+```
+
+**My Journey Stats (hardcoded):**
+
+```typescript
+interface JourneyStats {
+  completedSessions: number;
+  longestStreak: number;
+  unlockedSoundscapes: number;
+  reinforcementMessage: string;
+}
+```
+
+**Sleep Type Determination Logic:**
+
+Weighted scoring — each answer option contributes weight points to one or more sleep types. After 5 questions, sum weights per type and select the highest. This is implemented as a single `reduce` over the answers array. Simple, deterministic, and testable.
+
+### Decision 11: Cross-Tab Navigation Flow
+
+**Critical Interaction: Tonight → Explore auto-play (FR35)**
+
+```
+TonightPage: user taps soundscape recommendation card
+  → calls onNavigateToLocation(locationId)
+    → App.tsx executes (synchronously):
+      1. setActiveTab('explore')
+      2. setSelectedLocationId(locationId)
+      3. audioPlayer.play(location.audioPath)
+```
+
+This reuses the existing `handleSelect` logic from Phase 1. The only addition is `setActiveTab('explore')` before triggering selection.
+
+**Product Story Navigation:**
+
+Accessible from two entry points:
+1. Info icon in the app header (always visible when tabs are shown)
+2. Link/button in MyJourneyPage
+
+Both set `showProductStory = true`. ProductStory renders as a fullscreen overlay above all tab content. Close button sets `showProductStory = false`.
+
+### Decision 12: Existing Component Impact Assessment
+
+| Component | Change Required | Details |
+|---|---|---|
+| `App.tsx` | **Major** | New state variables, tab rendering logic, onboarding flow, cross-tab navigation handlers |
+| `SoundscapePlayer.tsx` | **Minor** | Adjust positioning: `bottom-16` (above TabBar) instead of `bottom-0` when TabBar is visible |
+| `types/index.ts` | **Extension** | Add `SleepType`, `Tab`, `SleepQuestion`, `SleepOption`, `Prescription`, `JourneyStats` types |
+| `TaiwanMap.tsx` | **None** | Unchanged — wrapped inside explore tab container |
+| `LocationDot.tsx` | **None** | Unchanged |
+| `LocationDetail.tsx` | **None** | Unchanged |
+| `LockOverlay.tsx` | **None** | Unchanged |
+| `useAudioPlayer.ts` | **None** | Unchanged |
+| `locations.ts` | **None** | Unchanged |
+
+**SoundscapePlayer + TabBar Positioning:**
+
+- TabBar: `fixed bottom-0` (always at screen bottom when visible)
+- SoundscapePlayer: `fixed bottom-16` (sits above TabBar when audio is playing)
+- Z-index: TabBar at `z-40`, SoundscapePlayer at `z-30` — TabBar always on top
+
+### Updated Project Directory Structure
+
+```
+src/
+├── components/
+│   ├── TaiwanMap.tsx            # existing — SVG map
+│   ├── LocationDot.tsx          # existing — map markers
+│   ├── LocationDetail.tsx       # existing — scene photo + name
+│   ├── SoundscapePlayer.tsx     # existing — audio controls (positioning adjusted)
+│   ├── LockOverlay.tsx          # existing — locked location modal
+│   ├── TabBar.tsx               # NEW — bottom tab navigation
+│   ├── SleepAssessment.tsx      # NEW — 5-question onboarding + result page
+│   ├── TonightPage.tsx          # NEW — prescription homepage
+│   ├── PrescriptionCard.tsx     # NEW — breathing/soundscape card
+│   ├── MyJourneyPage.tsx        # NEW — achievements + progress
+│   ├── ProductStory.tsx         # NEW — product vision overlay
+│   └── CollectionProgress.tsx   # NEW — collection indicator
+├── hooks/
+│   └── useAudioPlayer.ts       # existing — unchanged
+├── data/
+│   ├── locations.ts             # existing — unchanged
+│   └── sleep.ts                 # NEW — questions, types, prescriptions, journey stats
+├── types/
+│   └── index.ts                 # extended with Phase 2 types
+├── App.tsx                      # major updates for Phase 2
+├── index.css
+└── main.tsx
+```
+
+### Phase 2 Requirements to Structure Mapping
+
+**Tab Navigation (FR21-FR23):**
+- FR21 (3-tab navigation): `App.tsx` → `TabBar.tsx`
+- FR22 (persistent tab bar with active indicator): `TabBar.tsx`
+- FR23 (tab bar hidden during onboarding): `App.tsx` conditional rendering
+
+**Sleep Assessment Questionnaire (FR24-FR28):**
+- FR24 (5-question assessment on first visit): `SleepAssessment.tsx`
+- FR25 (one question at a time + progress): `SleepAssessment.tsx` internal state
+- FR26 (3-4 multiple-choice options): `SleepAssessment.tsx` + `data/sleep.ts`
+- FR27 (navigate back to previous questions): `SleepAssessment.tsx` internal state
+- FR28 (determine sleep type): `data/sleep.ts` weighted scoring logic
+
+**Sleep Type Result (FR29-FR31):**
+- FR29 (result page with type info + CTA): `SleepAssessment.tsx` (SleepTypeResult internal view)
+- FR30 (3 possible results): `data/sleep.ts` SleepTypeInfo definitions
+- FR31 ("Start My Plan" enters Tonight tab): `SleepAssessment.tsx` → `onComplete` → `App.tsx`
+
+**Tonight Homepage (FR32-FR37):**
+- FR32 (plan progress bar): `TonightPage.tsx`
+- FR33 (breathing exercise card): `PrescriptionCard.tsx` type='breathing'
+- FR34 (soundscape recommendation card): `PrescriptionCard.tsx` type='soundscape'
+- FR35 (tap recommendation → Explore tab + auto-play): `TonightPage.tsx` → `onNavigateToLocation` → `App.tsx`
+- FR36 (coach tip message): `TonightPage.tsx`
+- FR37 (content varies by sleep type): `data/sleep.ts` Prescription variants
+
+**My Journey Page (FR38-FR40):**
+- FR38 (cumulative stats): `MyJourneyPage.tsx` + `data/sleep.ts` JourneyStats
+- FR39 (positive reinforcement message): `MyJourneyPage.tsx` + `data/sleep.ts`
+- FR40 (plan progress): `MyJourneyPage.tsx`
+
+**Map Integration Updates (FR41-FR42):**
+- FR41 (collection progress indicator): `CollectionProgress.tsx`
+- FR42 (unlock hint linking to sleep plan): `CollectionProgress.tsx` hintText prop
+
+**Product Story Page (FR43-FR46):**
+- FR43 (accessible from within app): header info icon + `MyJourneyPage.tsx` link
+- FR44 (product vision content): `ProductStory.tsx`
+- FR45 (scrollable with visual hierarchy): `ProductStory.tsx` Tailwind typography
+- FR46 (return to main app): `ProductStory.tsx` `onClose` prop
+
+### Phase 2 Implementation Patterns
+
+**All Phase 1 patterns remain in effect.** The following additions apply to Phase 2 components:
+
+**Tab Type:**
+```typescript
+type Tab = 'tonight' | 'explore' | 'journey';
+```
+
+**New Component Patterns:**
+- Phase 2 components follow identical patterns: arrow function + named export, PascalCase, separate Props interface
+- `SleepAssessment` is the only component with significant internal state (question index, answers array) — all other new components are presentational
+
+**Animation Patterns for Phase 2:**
+- Tab transitions: `AnimatePresence` with `mode="wait"` for content switching (fade, not slide)
+- Onboarding questions: horizontal slide transition between questions
+- Product Story: slide-up from bottom (fullscreen overlay entrance)
+- All Motion animations follow Phase 1 conventions (motion/react import, animate prop)
+
+**Anti-Patterns (Phase 2 additions):**
+- Do NOT use React Router or any URL-based navigation
+- Do NOT persist onboarding state to localStorage (refresh = reset is intentional)
+- Do NOT add Context for sleep type — pass via props from App.tsx
+- Do NOT make SoundscapePlayer aware of TabBar — handle positioning in App.tsx layout
+
+### Phase 2 Validation
+
+**Decision Compatibility:** All Phase 2 decisions are additive — no Phase 1 decisions are overridden or contradicted. The same tech stack (React 19 + Vite 7 + Tailwind v4 + Motion 12) supports all new components. State management pattern (prop drilling from App.tsx) scales to the expanded component set without breaking the 2-level depth constraint.
+
+**Requirements Coverage:** All 26 new FRs (FR21-FR46) have explicit architectural support with component-level mapping. Updated NFR6-7 coverage (FR1-FR46) is supported by the same browser compatibility approach.
+
+**Implementation Readiness:** All 6 new architectural decisions (7-12) documented with rationale. New component tree, props, data model, and cross-tab flow are fully specified.
+
+**Phase 2 Architecture Status:** READY FOR IMPLEMENTATION ✅
