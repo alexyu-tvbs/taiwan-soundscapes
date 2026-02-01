@@ -565,8 +565,8 @@ describe('App Component — Phase 2 Tab Navigation', () => {
     await completeOnboarding(container)
     // Tonight tab should be active (amber), map should NOT be visible
     expect(container.querySelector('[data-testid="taiwan-map"]')).toBeNull()
-    // Tonight placeholder should be visible
-    expect(container.textContent).toContain('今晚的處方')
+    // TonightPage should be visible
+    expect(container.querySelector('[data-testid="tonight-page"]')).not.toBeNull()
   })
 
   it('should show explore content (map) when explore tab is clicked', async () => {
@@ -576,11 +576,11 @@ describe('App Component — Phase 2 Tab Navigation', () => {
     expect(container.querySelector('[data-testid="taiwan-map"]')).not.toBeNull()
   })
 
-  it('should show tonight placeholder when tonight tab is active', async () => {
+  it('should show TonightPage when tonight tab is active', async () => {
     const { container } = render(<App />)
     await completeOnboarding(container)
-    expect(container.textContent).toContain('今晚的處方')
-    expect(container.textContent).toContain('Coming in Epic 6')
+    expect(container.querySelector('[data-testid="tonight-page"]')).not.toBeNull()
+    expect(container.querySelector('[data-testid="progress-bar"]')).not.toBeNull()
   })
 
   it('should show journey placeholder when journey tab is clicked', async () => {
@@ -596,7 +596,7 @@ describe('App Component — Phase 2 Tab Navigation', () => {
     await completeOnboarding(container)
 
     // Start on tonight
-    expect(container.textContent).toContain('今晚的處方')
+    expect(container.querySelector('[data-testid="tonight-page"]')).not.toBeNull()
 
     // Switch to explore
     await navigateToExplore(container)
@@ -607,8 +607,10 @@ describe('App Component — Phase 2 Tab Navigation', () => {
     expect(container.textContent).toContain('我的旅程')
 
     // Back to tonight
-    await navigateToTab(container, 0, '今晚的處方')
-    expect(container.textContent).toContain('今晚的處方')
+    await navigateToTab(container, 0)
+    await waitFor(() => {
+      expect(container.querySelector('[data-testid="tonight-page"]')).not.toBeNull()
+    })
   })
 
   it('should hide map content when not on explore tab', async () => {
@@ -674,7 +676,7 @@ describe('App Component — SoundscapePlayer Positioning (AC#5)', () => {
     expect(container.querySelector('[data-testid="soundscape-player"]')).not.toBeNull()
 
     // Switch to Tonight tab
-    await navigateToTab(container, 0, '今晚的處方')
+    await navigateToTab(container, 0)
 
     // SoundscapePlayer should no longer be in DOM (conditioned on activeTab === 'explore')
     await waitFor(() => {
@@ -693,7 +695,7 @@ describe('App Component — SoundscapePlayer Positioning (AC#5)', () => {
     expect(container.querySelector('[data-testid="soundscape-player"]')).not.toBeNull()
 
     // Switch away
-    await navigateToTab(container, 0, '今晚的處方')
+    await navigateToTab(container, 0)
     await waitFor(() => {
       expect(container.querySelector('[data-testid="soundscape-player"]')).toBeNull()
     })
@@ -727,7 +729,7 @@ describe('App Component — Audio Pause on Tab Switch', () => {
 
     // Switch to Tonight tab
     mockAudio.pause.mockClear()
-    await navigateToTab(container, 0, '今晚的處方')
+    await navigateToTab(container, 0)
 
     // Audio should be paused
     expect(mockAudio.pause).toHaveBeenCalled()
@@ -766,7 +768,7 @@ describe('App Component — LockOverlay Cleared on Tab Switch (CR#2 M2)', () => 
     expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
 
     // Switch to Tonight tab (handleTabChange clears lockedLocation)
-    await navigateToTab(container, 0, '今晚的處方')
+    await navigateToTab(container, 0)
 
     // LockOverlay should be dismissed
     await waitFor(() => {
@@ -829,17 +831,92 @@ describe('App Component — Onboarding Flow (AC#1, AC#7)', () => {
     expect(container.querySelector('[data-testid="sleep-assessment"]')).toBeNull()
     // TabBar should be visible
     expect(container.querySelector('[data-testid="tab-bar"]')).not.toBeNull()
-    // Tonight tab content should be showing
-    expect(container.textContent).toContain('今晚的處方')
+    // TonightPage should be showing
+    expect(container.querySelector('[data-testid="tonight-page"]')).not.toBeNull()
   })
 
   it('should set activeTab to tonight after onboarding', async () => {
     const { container } = render(<App />)
     await completeOnboarding(container)
 
-    // Tonight tab content visible
-    expect(container.textContent).toContain('今晚的處方')
+    // TonightPage should be visible
+    expect(container.querySelector('[data-testid="tonight-page"]')).not.toBeNull()
     // Map should NOT be visible (not on explore tab)
     expect(container.querySelector('[data-testid="taiwan-map"]')).toBeNull()
+  })
+})
+
+describe('App Component — TonightPage Integration (Story 6.1)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAudio.src = ''
+    mockAudio.volume = 1
+    mockAudio.paused = true
+    mockAudio.play.mockResolvedValue(undefined)
+  })
+
+  it('should render TonightPage on Tonight tab after onboarding', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+    expect(container.querySelector('[data-testid="tonight-page"]')).not.toBeNull()
+  })
+
+  it('should display prescription content based on determined sleep type', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+    // After onboarding with all first options, should show prescription data
+    const page = container.querySelector('[data-testid="tonight-page"]')
+    expect(page).not.toBeNull()
+    // Should have progress bar and prescription cards
+    expect(container.querySelector('[data-testid="progress-bar"]')).not.toBeNull()
+    expect(container.querySelectorAll('[data-testid="prescription-card"]').length).toBe(2)
+    expect(container.querySelector('[data-testid="coach-tip"]')).not.toBeNull()
+  })
+
+  it('should navigate to Explore tab and play audio when soundscape card is tapped (AC#5)', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+
+    // Find the tappable soundscape card on TonightPage
+    const cards = container.querySelectorAll('[data-testid="prescription-card"]')
+    const soundscapeCard = Array.from(cards).find(
+      (card) => card.className.includes('cursor-pointer')
+    )
+    expect(soundscapeCard).not.toBeUndefined()
+
+    // Tap soundscape card
+    await act(async () => {
+      fireEvent.click(soundscapeCard!)
+      await new Promise((r) => setTimeout(r, 0))
+    })
+
+    // Should switch to Explore tab
+    await waitFor(() => {
+      expect(container.querySelector('[data-testid="taiwan-map"]')).not.toBeNull()
+    })
+
+    // Should play audio for the recommended location
+    expect(mockAudio.play).toHaveBeenCalled()
+  })
+
+  it('should show soundscape player after navigating from Tonight tab', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+
+    // Tap soundscape card
+    const cards = container.querySelectorAll('[data-testid="prescription-card"]')
+    const soundscapeCard = Array.from(cards).find(
+      (card) => card.className.includes('cursor-pointer')
+    )
+
+    await act(async () => {
+      fireEvent.click(soundscapeCard!)
+      await new Promise((r) => setTimeout(r, 0))
+    })
+
+    // Should show SoundscapePlayer on Explore tab
+    await waitFor(() => {
+      expect(container.querySelector('[data-testid="soundscape-player"]')).not.toBeNull()
+    })
   })
 })

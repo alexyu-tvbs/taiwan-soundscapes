@@ -1,6 +1,6 @@
 # Story 6.1: Tonight Sleep Prescription Homepage
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -26,35 +26,35 @@ So that I know exactly what breathing exercise and soundscape to use before bed.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create PrescriptionCard component (AC: #3, #4)
-  - [ ] 1.1 Create `src/components/PrescriptionCard.tsx`
-  - [ ] 1.2 Props: `PrescriptionCardProps { type: 'breathing' | 'soundscape'; title: string; subtitle: string; detail: string; onTap?: () => void }`
-  - [ ] 1.3 Breathing card: icon + exercise name + duration + expert, display-only style
-  - [ ] 1.4 Soundscape card: icon + location name + description, tappable style with arrow/chevron indicator
-  - [ ] 1.5 Style: `bg-slate-800 rounded-xl p-4` with subtle border, dark theme consistent
-  - [ ] 1.6 Tappable cards: add `cursor-pointer hover:bg-slate-700/50` transition
+- [x] Task 1: Create PrescriptionCard component (AC: #3, #4)
+  - [x] 1.1 Create `src/components/PrescriptionCard.tsx`
+  - [x] 1.2 Props: `PrescriptionCardProps { type: 'breathing' | 'soundscape'; title: string; subtitle: string; detail: string; onTap?: () => void }`
+  - [x] 1.3 Breathing card: icon + exercise name + duration + expert, display-only style
+  - [x] 1.4 Soundscape card: icon + location name + description, tappable style with arrow/chevron indicator
+  - [x] 1.5 Style: `bg-slate-800 rounded-xl p-4` with subtle border, dark theme consistent
+  - [x] 1.6 Tappable cards: add `cursor-pointer hover:bg-slate-700/50` transition
 
-- [ ] Task 2: Create TonightPage component (AC: #1, #2, #3, #4, #6)
-  - [ ] 2.1 Create `src/components/TonightPage.tsx`
-  - [ ] 2.2 Props: `TonightPageProps { sleepType: SleepType; onNavigateToLocation: (locationId: string) => void }`
-  - [ ] 2.3 Load prescription data from `data/sleep.ts` based on `sleepType`
-  - [ ] 2.4 Progress bar section: plan name, "第 {currentDay} 天 / 共 {totalDays} 天", visual progress bar (percentage fill with amber-400)
-  - [ ] 2.5 Breathing PrescriptionCard: pass breathing data from prescription
-  - [ ] 2.6 Soundscape PrescriptionCard: pass soundscape recommendation, `onTap={() => onNavigateToLocation(prescription.soundscapeLocationId)}`
-  - [ ] 2.7 Coach tip at bottom: `prescription.coachTip` in styled quote/tip box
-  - [ ] 2.8 Layout: vertical stack with gap, scrollable if needed, centered max-width container
+- [x] Task 2: Create TonightPage component (AC: #1, #2, #3, #4, #6)
+  - [x] 2.1 Create `src/components/TonightPage.tsx`
+  - [x] 2.2 Props: `TonightPageProps { sleepType: SleepType; onNavigateToLocation: (locationId: string) => void }`
+  - [x] 2.3 Load prescription data from `data/sleep.ts` based on `sleepType`
+  - [x] 2.4 Progress bar section: plan name, "第 {currentDay} 天 / 共 {totalDays} 天", visual progress bar (percentage fill with amber-400)
+  - [x] 2.5 Breathing PrescriptionCard: pass breathing data from prescription
+  - [x] 2.6 Soundscape PrescriptionCard: pass soundscape recommendation, `onTap={() => onNavigateToLocation(prescription.soundscapeLocationId)}`
+  - [x] 2.7 Coach tip at bottom: `prescription.coachTip` in styled quote/tip box
+  - [x] 2.8 Layout: vertical stack with gap, scrollable if needed, centered max-width container
 
-- [ ] Task 3: Integrate TonightPage into App.tsx (AC: #1, #5)
-  - [ ] 3.1 Replace Tonight placeholder with `<TonightPage sleepType={sleepType!} onNavigateToLocation={handleNavigateToLocation} />`
-  - [ ] 3.2 Implement `handleNavigateToLocation(locationId: string)`:
+- [x] Task 3: Integrate TonightPage into App.tsx (AC: #1, #5)
+  - [x] 3.1 Replace Tonight placeholder with `<TonightPage sleepType={sleepType!} onNavigateToLocation={handleNavigateToLocation} />`
+  - [x] 3.2 Implement `handleNavigateToLocation(locationId: string)`:
     ```
     1. setActiveTab('explore')
     2. setSelectedLocationId(locationId)
     3. Find location in locations array
     4. audioPlayer.play(location.audioPath)
     ```
-  - [ ] 3.3 Reuse existing `handleSelect` logic pattern from Phase 1
-  - [ ] 3.4 Verify tab switch + auto-play works end-to-end
+  - [x] 3.3 Reuse existing `handleSelect` logic pattern from Phase 1
+  - [x] 3.4 Verify tab switch + auto-play works end-to-end
 
 ## Dev Notes
 
@@ -181,8 +181,31 @@ src/
 
 ### Agent Model Used
 
+Claude Opus 4.5 (claude-opus-4-5-20251101)
+
 ### Debug Log References
+
+No issues encountered during implementation.
 
 ### Completion Notes List
 
+- Task 1: Created `PrescriptionCard` component with breathing (display-only) and soundscape (tappable) variants. Uses `type` prop to differentiate icon (🫁 vs 🎵), tappable styling (cursor-pointer, hover), and chevron indicator. 10 unit tests passing.
+- Task 2: Created `TonightPage` component that reads prescription data from `data/sleep.ts`, renders progress bar (bg-amber-400 fill), breathing card, soundscape card, and coach tip. Delegates navigation via `onNavigateToLocation` callback. 14 unit tests passing.
+- Task 3: Integrated `TonightPage` into App.tsx replacing the "Coming in Epic 6" placeholder. Added `handleNavigateToLocation` that executes `setActiveTab('explore')`, `setSelectedLocationId(locationId)`, and `audioPlayer.play(loc.audioPath)`. Updated 8 existing tests referencing old placeholder. 4 new integration tests for cross-tab navigation. All 259 tests passing.
+- All anti-patterns respected: TonightPage does NOT import useAudioPlayer, does NOT directly control audio, delegates via callback to App.tsx.
+
+### Change Log
+
+- 2026-02-01: Implemented Story 6.1 — TonightPage, PrescriptionCard, App.tsx integration with cross-tab navigation
+
 ### File List
+
+**Created:**
+- `src/components/PrescriptionCard.tsx` — Reusable prescription card (breathing/soundscape variants)
+- `src/components/TonightPage.tsx` — Tonight tab main page with progress bar, cards, coach tip
+- `tests/unit/PrescriptionCard.test.tsx` — 10 unit tests
+- `tests/unit/TonightPage.test.tsx` — 14 unit tests
+
+**Modified:**
+- `src/App.tsx` — Imported TonightPage, added handleNavigateToLocation, replaced Tonight placeholder
+- `tests/unit/App.test.tsx` — Updated 8 existing tests, added 4 new integration tests for cross-tab navigation

@@ -6,6 +6,7 @@ import { SoundscapePlayer } from './components/SoundscapePlayer'
 import { LockOverlay } from './components/LockOverlay'
 import { TabBar } from './components/TabBar'
 import { SleepAssessment } from './components/SleepAssessment'
+import { TonightPage } from './components/TonightPage'
 import { useAudioPlayer } from './hooks/useAudioPlayer'
 import { locations } from './data/locations'
 import type { Location, Tab, SleepType } from './types'
@@ -35,8 +36,16 @@ export const App = () => {
     }
   }
 
-  void sleepType // read in Epic 6
   void showProductStory // Epic 8
+
+  const handleNavigateToLocation = (locationId: string) => {
+    setActiveTab('explore')
+    setSelectedLocationId(locationId)
+    const loc = locations.find((l) => l.id === locationId)
+    if (loc) {
+      audioPlayer.play(loc.audioPath)
+    }
+  }
 
   const handleOnboardingComplete = (type: SleepType) => {
     setOnboardingComplete(true)
@@ -82,12 +91,11 @@ export const App = () => {
           transition={{ duration: 0.2 }}
           className={`flex-1 flex flex-col${onboardingComplete ? ' pb-16' : ''}`}
         >
-          {activeTab === 'tonight' && (
-            <main className="flex-1 flex items-center justify-center px-8">
-              <div className="text-center text-slate-400">
-                <p className="text-lg">今晚的處方 — Coming in Epic 6</p>
-              </div>
-            </main>
+          {activeTab === 'tonight' && sleepType && (
+            <TonightPage
+              sleepType={sleepType}
+              onNavigateToLocation={handleNavigateToLocation}
+            />
           )}
           {activeTab === 'explore' && (
             <main className="flex-1 flex items-center justify-center gap-8 px-8">
