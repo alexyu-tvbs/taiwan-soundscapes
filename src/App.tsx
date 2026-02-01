@@ -41,6 +41,7 @@ export const App = () => {
   const handleTabChange = (tab: Tab) => {
     if (activeTab === 'explore' && tab !== 'explore') {
       audioPlayer.pause()
+      setLockedLocation(null)
     }
     setActiveTab(tab)
   }

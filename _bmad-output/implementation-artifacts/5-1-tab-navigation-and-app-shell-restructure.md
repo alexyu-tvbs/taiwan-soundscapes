@@ -339,3 +339,39 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 | E2E tests | 222 pass (111 tests × 2 browsers) |
 | TypeScript | tsc clean (0 errors) |
 | Total tests | 404 pass, 0 fail |
+
+## Code Review Record #2
+
+### Agent Model Used
+
+Claude Opus 4.5 (claude-opus-4-5-20251101)
+
+### Review Date
+
+2026-02-01
+
+### Findings Summary
+
+| ID | Severity | Description | Resolution |
+|----|----------|-------------|------------|
+| M1 | MEDIUM | AC#4 completely untested — no test verifies TabBar hidden when `onboardingComplete = false` | **DEFERRED** — Added `it.todo` in App.test.tsx. Cannot test without mocking internal state or Story 5.2 onboarding flow. Conditional rendering verified by code inspection at `App.tsx:144`. |
+| M2 | MEDIUM | `lockedLocation` not cleared on tab switch — overlay could persist across tabs if z-index coupling breaks | **FIXED** — Added `setLockedLocation(null)` in `handleTabChange` when leaving Explore. +2 unit tests. |
+| M3 | MEDIUM | Product story button is dead click target — sets `showProductStory(true)` but nothing reads value, no visual feedback, state irreversible | **DEFERRED** — By design per story Task 5.2. ProductStory overlay added in Epic 8 which will consume `showProductStory` and add close handler. |
+| L1 | LOW | ARIA tab semantics missing (role=tablist, role=tab, aria-selected) | Deferred — carried from CR#1 |
+| L2 | LOW | Unit test helper `navigateToExplore` uses fragile index-based button selection | Deferred — functional, low risk |
+| L3 | LOW | Architecture doc not updated for TaiwanMap.tsx height change (h-full) | Deferred — documentation gap only |
+| L4 | LOW | `void` expressions for unused state are unconventional | Deferred — carried from CR#1 M3 |
+
+### Files Changed in Review Fixes
+
+| File | Change |
+|------|--------|
+| `src/App.tsx` | Added `setLockedLocation(null)` in `handleTabChange` when leaving Explore tab |
+| `tests/unit/App.test.tsx` | +2 unit tests (LockOverlay cleared on tab switch, overlay persists on same tab), +1 .todo (AC#4) |
+
+### Post-Fix Test Results
+
+| Metric | Value |
+|--------|-------|
+| Unit tests | 184 pass, 1 todo (10 files) |
+| TypeScript | tsc clean (0 errors) |

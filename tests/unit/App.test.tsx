@@ -556,6 +556,11 @@ describe('App Component — Phase 2 Tab Navigation', () => {
     expect(container.querySelector('[data-testid="taiwan-map"]')).toBeNull()
   })
 
+  // AC#4: TabBar hidden when onboardingComplete = false
+  // Cannot test negative case — onboardingComplete is internal state defaulting to true.
+  // Full behavioral test available after Story 5.2 implements onboarding flow.
+  it.todo('should NOT render TabBar when onboardingComplete is false (AC#4 — testable after Story 5.2)')
+
   it('should have three tabs with correct labels', () => {
     const { container } = render(<App />)
     const tabBar = container.querySelector('[data-testid="tab-bar"]')
@@ -668,6 +673,48 @@ describe('App Component — Audio Pause on Tab Switch', () => {
 
     // No audio pause (wasn't on explore)
     expect(mockAudio.pause).not.toHaveBeenCalled()
+  })
+})
+
+describe('App Component — LockOverlay Cleared on Tab Switch (CR#2 M2)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAudio.src = ''
+    mockAudio.volume = 1
+    mockAudio.paused = true
+    mockAudio.play.mockResolvedValue(undefined)
+  })
+
+  it('should dismiss LockOverlay when switching away from Explore tab', async () => {
+    const { container } = render(<App />)
+    await navigateToExplore(container)
+
+    // Show LockOverlay by clicking locked location
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+    expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
+
+    // Switch to Tonight tab (handleTabChange clears lockedLocation)
+    await navigateToTab(container, 0, '今晚的處方')
+
+    // LockOverlay should be dismissed
+    await waitFor(() => {
+      expectOverlayDismissed(container)
+    })
+  })
+
+  it('should NOT dismiss LockOverlay when staying on Explore tab', async () => {
+    const { container } = render(<App />)
+    await navigateToExplore(container)
+
+    // Show LockOverlay
+    const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
+    fireEvent.click(lanyu!)
+    expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
+
+    // Click Explore tab again (no tab change, overlay should persist)
+    await navigateToTab(container, 1)
+    expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
   })
 })
 
