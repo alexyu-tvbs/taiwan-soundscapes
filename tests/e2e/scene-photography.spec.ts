@@ -95,7 +95,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
     page,
   }) => {
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
 
     const detail = page.getByTestId('location-detail')
     await expect(detail).toBeHidden()
@@ -141,7 +141,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
 
     // Click locked location — shows overlay, preserves selection
     const taroko = getMapElement(page, 'location-dot-taroko')
-    await taroko.dispatchEvent('click')
+    await taroko.click({ force: true })
 
     // LocationDetail stays visible; LockOverlay shown on top
     await expect(detail).toBeVisible()

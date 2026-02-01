@@ -252,8 +252,8 @@ test.describe('Story 4.2: Rapid Switch Stability — P2 Medium', () => {
     const taroko = getMapElement(page, 'location-dot-taroko')
     const keelung = getMapElement(page, 'location-dot-keelung')
 
-    // dispatchEvent bypasses browser hit-testing — clicks reach SVG elements
-    // even when LockOverlay (z-50 fixed inset-0) covers the map.
+    // dispatchEvent bypasses browser hit-testing — needed here because the
+    // rapid click sequence fires through LockOverlay (z-50 fixed inset-0) without dismissing it.
     // Sequence: unlocked(tamsui) → locked(lanyu) → unlocked(alishan) → locked(taroko) → unlocked(keelung)
     // Final unlocked click (keelung) clears lockedLocation via handleSelect.
     await tamsui.dispatchEvent('click')

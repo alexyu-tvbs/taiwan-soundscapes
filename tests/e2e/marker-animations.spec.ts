@@ -201,7 +201,7 @@ test.describe('Story 4.1: Animation Interaction Safety — P1 High', () => {
 
     // WHEN: User clicks a locked marker
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
 
     // THEN: Lock overlay appears — animation did not block interaction
     await expect(page.getByTestId('lock-overlay')).toBeVisible()

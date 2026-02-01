@@ -36,7 +36,7 @@ test.describe('Story 3.1: Lock Overlay — P0 Critical', () => {
 
     // WHEN: User clicks a locked location (lanyu)
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
 
     // THEN: LockOverlay appears
     await expect(overlay).toBeVisible()
@@ -49,7 +49,7 @@ test.describe('Story 3.1: Lock Overlay — P0 Critical', () => {
 
     // WHEN: User clicks lanyu (locked)
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
 
     // THEN: Overlay panel shows name and condition
     const panel = page.getByTestId('lock-overlay-panel')
@@ -64,7 +64,7 @@ test.describe('Story 3.1: Lock Overlay — P0 Critical', () => {
 
     // WHEN: User clicks lanyu
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
 
     // THEN: English name shown
     const panel = page.getByTestId('lock-overlay-panel')
@@ -78,7 +78,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
   }) => {
     // GIVEN: Overlay is shown for lanyu
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
     const overlay = page.getByTestId('lock-overlay')
     await expect(overlay).toBeVisible()
 
@@ -95,7 +95,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
   }) => {
     // GIVEN: Overlay is shown for lanyu
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
     const overlay = page.getByTestId('lock-overlay')
     await expect(overlay).toBeVisible()
 
@@ -111,7 +111,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
   }) => {
     // GIVEN: Overlay is shown for lanyu
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
     const overlay = page.getByTestId('lock-overlay')
     await expect(overlay).toBeVisible()
 
@@ -134,7 +134,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
 
     // WHEN: User clicks a locked location (taroko — mid-map, not covered by fixed player bar)
     const taroko = getMapElement(page, 'location-dot-taroko')
-    await taroko.dispatchEvent('click')
+    await taroko.click({ force: true })
 
     // THEN: Overlay is shown AND player remains visible (audio continues)
     await expect(page.getByTestId('lock-overlay')).toBeVisible()
@@ -152,7 +152,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
 
     // WHEN: User clicks a locked location (taroko — mid-map, not covered by fixed player bar)
     const taroko = getMapElement(page, 'location-dot-taroko')
-    await taroko.dispatchEvent('click')
+    await taroko.click({ force: true })
 
     // THEN: Overlay appears AND LocationDetail stays visible
     await expect(page.getByTestId('lock-overlay')).toBeVisible()
@@ -164,7 +164,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
   }) => {
     // GIVEN: Overlay is shown for taroko
     const taroko = getMapElement(page, 'location-dot-taroko')
-    await taroko.dispatchEvent('click')
+    await taroko.click({ force: true })
     const overlay = page.getByTestId('lock-overlay')
     await expect(overlay).toBeVisible()
 
@@ -191,7 +191,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
 
     // WHEN: User clicks a locked location
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
 
     // THEN: Lock emoji is visible in the panel
     const panel = page.getByTestId('lock-overlay-panel')
@@ -206,7 +206,7 @@ test.describe('Story 3.1: Lock Overlay — P1 High', () => {
     // WHEN/THEN: For each locked location, verify overlay shows correct data
     for (const id of LOCKED_LOCATIONS) {
       const dot = getMapElement(page, `location-dot-${id}`)
-      await dot.dispatchEvent('click')
+      await dot.click({ force: true })
 
       const overlay = page.getByTestId('lock-overlay')
       await expect(overlay).toBeVisible()
@@ -231,7 +231,7 @@ test.describe('Story 3.1: Lock Overlay — P2 Medium', () => {
 
     // WHEN: User clicks a locked location first
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
 
     // THEN: Overlay shown but no player
     await expect(page.getByTestId('lock-overlay')).toBeVisible()
@@ -245,7 +245,7 @@ test.describe('Story 3.1: Lock Overlay — P2 Medium', () => {
 
     // WHEN: User clicks a locked location
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
 
     // THEN: Text does NOT contain anxiety-inducing patterns
     const panel = page.getByTestId('lock-overlay-panel')

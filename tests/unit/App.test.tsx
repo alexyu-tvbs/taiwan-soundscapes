@@ -633,6 +633,44 @@ describe('App Component — SoundscapePlayer Positioning (AC#5)', () => {
   })
 })
 
+describe('App Component — Audio Pause on Tab Switch', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAudio.src = ''
+    mockAudio.volume = 1
+    mockAudio.paused = true
+    mockAudio.play.mockResolvedValue(undefined)
+  })
+
+  it('should pause audio when switching away from Explore tab while playing', async () => {
+    const { container } = render(<App />)
+    await navigateToExplore(container)
+
+    // Start playing on Explore tab
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+    expect(mockAudio.play).toHaveBeenCalled()
+
+    // Switch to Tonight tab
+    mockAudio.pause.mockClear()
+    await navigateToTab(container, 0, '今晚的處方')
+
+    // Audio should be paused
+    expect(mockAudio.pause).toHaveBeenCalled()
+  })
+
+  it('should NOT pause audio when switching between non-explore tabs', async () => {
+    const { container } = render(<App />)
+
+    // Start on Tonight tab, switch to Journey
+    mockAudio.pause.mockClear()
+    await navigateToTab(container, 2, '我的旅程')
+
+    // No audio pause (wasn't on explore)
+    expect(mockAudio.pause).not.toHaveBeenCalled()
+  })
+})
+
 describe('App Component — Product Story Info Icon', () => {
   it('should show an info icon button in the header when onboardingComplete', () => {
     const { container } = render(<App />)

@@ -34,11 +34,16 @@ export const App = () => {
     }
   }
 
-  // Suppress unused variable warnings for state setters reserved for future stories
-  void setOnboardingComplete
-  void setSleepType
-  void sleepType
-  void showProductStory
+  // Phase 2 state — setters/values activated in upcoming stories
+  void setOnboardingComplete; void setSleepType; void sleepType // Story 5.2
+  void showProductStory // Epic 8
+
+  const handleTabChange = (tab: Tab) => {
+    if (activeTab === 'explore' && tab !== 'explore') {
+      audioPlayer.pause()
+    }
+    setActiveTab(tab)
+  }
 
   return (
     <div className="bg-slate-900 text-white min-h-screen flex flex-col">
@@ -64,7 +69,7 @@ export const App = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="flex-1 flex flex-col"
+          className={`flex-1 flex flex-col${onboardingComplete ? ' pb-16' : ''}`}
         >
           {activeTab === 'tonight' && (
             <main className="flex-1 flex items-center justify-center px-8">
@@ -137,7 +142,7 @@ export const App = () => {
         )}
       </AnimatePresence>
       {onboardingComplete && (
-        <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+        <TabBar activeTab={activeTab} onTabChange={handleTabChange} />
       )}
     </div>
   )

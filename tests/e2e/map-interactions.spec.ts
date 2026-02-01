@@ -26,7 +26,7 @@ test.describe('Map Interactions — P1 High', () => {
 
     // WHEN: User clicks on a locked marker (lanyu)
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.dispatchEvent('click')
+    await lanyu.click({ force: true })
 
     // THEN: Locked marker does NOT change radius (stays r=6) — overlay shown instead
     await expect(lanyu).toHaveAttribute('r', '6')
@@ -44,7 +44,7 @@ test.describe('Map Interactions — P1 High', () => {
     await expect(tamsui).toHaveAttribute('filter', 'url(#glow-strong)')
 
     // WHEN: User clicks Taroko (locked) — shows overlay, preserves selection
-    await taroko.dispatchEvent('click')
+    await taroko.click({ force: true })
 
     // THEN: Tamsui stays selected (glow-strong), Taroko stays locked (r=6), overlay shown
     await expect(tamsui).toHaveAttribute('filter', 'url(#glow-strong)')

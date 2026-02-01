@@ -14,7 +14,7 @@ export const TaiwanMap = ({ locations, selectedLocationId, onSelect }: TaiwanMap
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 1000 1295"
       aria-label="Map of Taiwan"
-      className="mx-auto h-[calc(100vh-6rem)] w-auto"
+      className="mx-auto h-full w-auto"
     >
       <defs>
         <filter id="glow">

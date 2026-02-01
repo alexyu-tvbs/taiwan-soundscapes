@@ -274,13 +274,13 @@ Story 5-1 changed the default landing tab from the map (Phase 1) to Tonight (Pha
 10. `lock-overlay.spec.ts` — Added navigateToExploreTab beforeEach
 
 **Additional fixes across 6 E2E files (27 call sites):**
-- Locked marker clicks changed from `.click()` / `.click({ force: true })` to `.dispatchEvent('click')` — fixed because the fixed TabBar (z-40, bottom-0) covers bottom map markers (lanyu, kenting), and Playwright's `force: true` bypasses actionability checks but the browser still delivers mouse events to the topmost element (TabBar). `.dispatchEvent('click')` dispatches directly on the DOM element, bypassing browser hit-testing.
+- Locked marker clicks changed from `.click()` / `.click({ force: true })` to `.dispatchEvent('click')` — fixed because the fixed TabBar (z-40, bottom-0) covers bottom map markers (lanyu, kenting). **[CR FIX] Reverted back to `.click({ force: true })` after root cause fixed (pb-16 + h-full).** 5 calls retained in `performance-validation.spec.ts` (rapid-switch test fires through LockOverlay).
 
 ### Known Issues
 
 | Issue | Severity | Details |
 |-------|----------|---------|
-| TabBar covers bottom map markers | Medium | Fixed TabBar (z-40) overlays markers near bottom of map (lanyu, kenting). E2E tests work via `.dispatchEvent('click')` but real users may have difficulty clicking these markers. The explore `<main>` element may need `pb-16` padding. Not fixed here (source change out of TA scope). |
+| ~~TabBar covers bottom map markers~~ | ~~Medium~~ | **FIXED in Code Review** — Added `pb-16` to motion.div + changed SVG to `h-full`. Markers now render above TabBar. |
 | Tailwind v4 oklch colors | Info | Tailwind CSS v4 outputs computed colors in oklch format, not rgb. Tab indicator test uses `border-top-width` assertion instead of color matching for cross-version robustness. |
 
 ### Final Metrics
@@ -293,3 +293,49 @@ Story 5-1 changed the default landing tab from the map (Phase 1) to Tonight (Pha
 | E2E tests | 103 | 111 | +8 |
 | Total tests | 279 | 291 | +12 |
 | Pass rate | 103/103 E2E, 176/176 unit | 111/111 E2E, 180/180 unit | 100% |
+
+## Code Review Record
+
+### Agent Model Used
+
+Claude Opus 4.5 (claude-opus-4-5-20251101)
+
+### Review Date
+
+2026-02-01
+
+### Findings Summary
+
+| ID | Severity | Description | Resolution |
+|----|----------|-------------|------------|
+| H1 | HIGH | TabBar covers bottom map markers (lanyu, kenting) — no pb-16 on content area | **FIXED** — Added conditional `pb-16` to motion.div + changed TaiwanMap SVG from `h-[calc(100vh-6rem)]` to `h-full` |
+| M1 | MEDIUM | Audio continues playing when SoundscapePlayer UI hidden on tab switch | **FIXED** — Added `handleTabChange()` that calls `audioPlayer.pause()` when leaving Explore tab |
+| M2 | MEDIUM | E2E tests mask H1 via `dispatchEvent('click')` (27 call sites, 6 files) | **FIXED** — Reverted to `.click({ force: true })` in 6 files after root cause resolved. 5 calls retained in `performance-validation.spec.ts` (LockOverlay overlap, separate issue) |
+| M3 | MEDIUM | `void` expressions for pre-allocated state (4 lines) | **FIXED** — Consolidated to 2 lines with inline comments |
+| L1 | LOW | No ARIA tab semantics (role=tablist, role=tab, aria-selected) | Deferred — acceptable for prototype, recommend adding in future accessibility pass |
+| L2 | LOW | Potential 8-10px gap between SoundscapePlayer and TabBar | Deferred — visual-only, requires explicit TabBar height (h-16) |
+| L3 | LOW | Type tests only verify compile-time assignment | Deferred — acceptable for Phase 2 type scaffolding |
+
+### Files Changed in Review Fixes
+
+| File | Change |
+|------|--------|
+| `src/App.tsx` | Added `handleTabChange` (pause audio on leave explore), conditional `pb-16` on motion.div, consolidated void expressions |
+| `src/components/TaiwanMap.tsx` | SVG height: `h-[calc(100vh-6rem)]` → `h-full` (parent-relative) |
+| `tests/unit/App.test.tsx` | +2 unit tests: audio pause on tab switch, no pause on non-explore switch |
+| `tests/e2e/map-interactions.spec.ts` | Reverted 2 `dispatchEvent('click')` → `.click({ force: true })` |
+| `tests/e2e/lock-overlay.spec.ts` | Reverted 15 `dispatchEvent('click')` → `.click({ force: true })` |
+| `tests/e2e/marker-animations.spec.ts` | Reverted 1 `dispatchEvent('click')` → `.click({ force: true })` |
+| `tests/e2e/panel-transitions.spec.ts` | Reverted 7 `dispatchEvent('click')` → `.click({ force: true })` |
+| `tests/e2e/scene-photography.spec.ts` | Reverted 2 `dispatchEvent('click')` → `.click({ force: true })` |
+| `tests/e2e/audio-playback.spec.ts` | Reverted 2 `dispatchEvent('click')` → `.click({ force: true })` |
+| `tests/e2e/performance-validation.spec.ts` | Updated comment (5 dispatchEvent calls retained — LockOverlay coverage issue) |
+
+### Post-Fix Test Results
+
+| Metric | Value |
+|--------|-------|
+| Unit tests | 182 pass (10 files) |
+| E2E tests | 222 pass (111 tests × 2 browsers) |
+| TypeScript | tsc clean (0 errors) |
+| Total tests | 404 pass, 0 fail |
