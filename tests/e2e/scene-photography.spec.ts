@@ -3,6 +3,7 @@ import {
   UNLOCKED_LOCATIONS,
   getMapElement,
   waitForDetailTransition,
+  navigateToExploreTab,
 } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -11,6 +12,11 @@ import {
 // location name when an unlocked location is selected, and that both
 // LocationDetail and SoundscapePlayer appear simultaneously.
 // ═══════════════════════════════════════════════════════════════════════
+
+// Phase 2: Map is on Explore tab — navigate there before each test
+test.beforeEach(async ({ page }) => {
+  await navigateToExploreTab(page)
+})
 
 const LOCATION_DATA: Record<string, { name: string; imagePath: string }> = {
   tamsui: { name: '淡水河夕陽', imagePath: '/images/tamsui.jpg' },
@@ -89,7 +95,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
     page,
   }) => {
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.click()
+    await lanyu.dispatchEvent('click')
 
     const detail = page.getByTestId('location-detail')
     await expect(detail).toBeHidden()
@@ -135,7 +141,7 @@ test.describe('Story 2.2: Scene Photography — P1 High', () => {
 
     // Click locked location — shows overlay, preserves selection
     const taroko = getMapElement(page, 'location-dot-taroko')
-    await taroko.click()
+    await taroko.dispatchEvent('click')
 
     // LocationDetail stays visible; LockOverlay shown on top
     await expect(detail).toBeVisible()

@@ -28,6 +28,17 @@ export function getMapElement(page: Page, testId: string): Locator {
 }
 
 /**
+ * Navigate to the Explore tab by clicking it in the TabBar.
+ * Waits for the Taiwan map to become visible (confirms tab switch complete).
+ */
+export async function navigateToExploreTab(page: Page): Promise<void> {
+  const tabBar = page.getByTestId('tab-bar')
+  await expect(tabBar).toBeVisible()
+  await tabBar.getByText('探索').click()
+  await expect(page.getByTestId('taiwan-map')).toBeVisible()
+}
+
+/**
  * Wait for AnimatePresence exit animation to complete on location-detail panel.
  * During transitions, both exiting and entering elements exist simultaneously.
  * This helper waits until only one location-detail element remains.

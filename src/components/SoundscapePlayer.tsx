@@ -18,7 +18,7 @@ export const SoundscapePlayer = ({
   return (
     <div
       data-testid="soundscape-player"
-      className="fixed bottom-0 left-0 right-0 bg-slate-800/90 backdrop-blur p-4"
+      className="bg-slate-800/90 backdrop-blur p-4"
     >
       <div className="flex items-center justify-center gap-4">
         <span className="text-white text-sm">{locationName}</span>

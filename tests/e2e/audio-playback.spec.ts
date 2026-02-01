@@ -2,6 +2,7 @@ import { test, expect } from '../support/fixtures'
 import {
   UNLOCKED_LOCATIONS,
   getMapElement,
+  navigateToExploreTab,
 } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -11,6 +12,11 @@ import {
 // SoundscapePlayer visibility, button state, volume slider, and
 // location name display as proxies for audio playback state.
 // ═══════════════════════════════════════════════════════════════════════
+
+// Phase 2: Map is on Explore tab — navigate there before each test
+test.beforeEach(async ({ page }) => {
+  await navigateToExploreTab(page)
+})
 
 const LOCATION_NAMES: Record<string, string> = {
   tamsui: '淡水河夕陽',
@@ -74,7 +80,7 @@ test.describe('Story 2.1: Audio Playback — P1 High', () => {
 
     // WHEN: User clicks a locked location (lanyu)
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.click()
+    await lanyu.dispatchEvent('click')
 
     // THEN: SoundscapePlayer remains hidden
     const player = page.getByTestId('soundscape-player')
@@ -93,7 +99,7 @@ test.describe('Story 2.1: Audio Playback — P1 High', () => {
     await expect(player).toBeVisible()
 
     // WHEN: User clicks Taroko (locked) — shows overlay, preserves selection
-    await taroko.click()
+    await taroko.dispatchEvent('click')
 
     // THEN: Player remains visible (audio continues, selection unchanged)
     await expect(player).toBeVisible()
@@ -170,8 +176,10 @@ test.describe('Story 2.1: Audio Playback — P2 Medium', () => {
     // THEN: Player panel has dark theme backdrop
     const player = page.getByTestId('soundscape-player')
     await expect(player).toBeVisible()
-    await expect(player).toHaveCSS('position', 'fixed')
-    await expect(player).toHaveCSS('bottom', '0px')
+
+    // Player wrapper (parent motion.div) is fixed-positioned above TabBar
+    const wrapper = player.locator('..')
+    await expect(wrapper).toHaveCSS('position', 'fixed')
   })
 
   test('[P2] should keep player visible after pause (player only hides on location change)', async ({

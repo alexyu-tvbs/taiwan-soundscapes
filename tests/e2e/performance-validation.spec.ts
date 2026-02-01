@@ -3,6 +3,7 @@ import {
   UNLOCKED_LOCATIONS,
   getMapElement,
   waitForDetailTransition,
+  navigateToExploreTab,
 } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -10,6 +11,11 @@ import {
 // E2E automation — page load timing, audio responsiveness,
 // photo load speed, and location-switch stability
 // ═══════════════════════════════════════════════════════════════════════
+
+// Phase 2: Map is on Explore tab — navigate there before each test
+test.beforeEach(async ({ page }) => {
+  await navigateToExploreTab(page)
+})
 
 test.describe('Story 4.2: Page Load Performance — P1 High', () => {
   test('[P1] should render the map within 2 seconds of navigation (NFR1)', async ({
@@ -26,14 +32,14 @@ test.describe('Story 4.2: Page Load Performance — P1 High', () => {
     // THEN: Page load completes within 2000ms (NFR1)
     expect(loadTime).toBeLessThan(2000)
 
-    // AND: Map is visible
+    // AND: Map is visible (on Explore tab via beforeEach)
     await expect(page.getByTestId('taiwan-map')).toBeVisible()
   })
 
   test('[P1] should have all 10 location markers rendered after load', async ({
     page,
   }) => {
-    // GIVEN: Page has loaded (fixture auto-navigates)
+    // GIVEN: Page has loaded and navigated to Explore tab
 
     // THEN: All 10 location dots are attached in the DOM
     const dots = page.locator('[data-testid^="location-dot-"]')

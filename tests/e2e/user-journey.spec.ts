@@ -1,12 +1,17 @@
 import { test, expect } from '../support/fixtures'
-import { getMapElement, waitForDetailTransition } from '../support/helpers/test-utils'
+import { getMapElement, waitForDetailTransition, navigateToExploreTab } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
 // Full User Journey — Cross-Feature Integration
 // E2E test covering the complete user flow through all major features:
-// Homepage → Map → Select Unlocked → Audio + Detail → Switch Location →
-// Click Locked → Overlay → Dismiss → State Restoration
+// Homepage → Explore Tab → Map → Select Unlocked → Audio + Detail →
+// Switch Location → Click Locked → Overlay → Dismiss → State Restoration
 // ═══════════════════════════════════════════════════════════════════════
+
+// Phase 2: Map is on Explore tab — navigate there before each test
+test.beforeEach(async ({ page }) => {
+  await navigateToExploreTab(page)
+})
 
 test.describe('Full User Journey — P1 High', () => {
   test('[P1] should complete full exploration journey across all features', async ({

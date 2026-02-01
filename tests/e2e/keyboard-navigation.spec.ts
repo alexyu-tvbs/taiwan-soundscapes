@@ -2,6 +2,7 @@ import { test, expect } from '../support/fixtures'
 import {
   UNLOCKED_LOCATIONS,
   getMapElement,
+  navigateToExploreTab,
 } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -10,18 +11,24 @@ import {
 // Tab focus, Enter/Space activation, and correct visual state updates.
 // ═══════════════════════════════════════════════════════════════════════
 
+// Phase 2: Map is on Explore tab — navigate there before each test
+test.beforeEach(async ({ page }) => {
+  await navigateToExploreTab(page)
+})
+
 test.describe('Keyboard Navigation — P2 Medium', () => {
   test('[P2] should allow Tab focus on location markers', async ({
     page,
   }) => {
-    // GIVEN: Page is loaded with map
+    // GIVEN: Page is loaded with map on Explore tab
+    // Focus a known unlocked marker directly (Tab key order depends on DOM structure)
+    const tamsui = getMapElement(page, 'location-dot-tamsui')
+    await tamsui.focus()
 
-    // WHEN: User presses Tab to navigate
-    await page.keyboard.press('Tab')
-
-    // THEN: A location marker receives focus (has role="button" and tabindex="0")
+    // THEN: The marker is focused and has role="button" for accessibility
     const focusedElement = page.locator(':focus')
     await expect(focusedElement).toHaveAttribute('role', 'button')
+    await expect(focusedElement).toHaveAttribute('tabindex', '0')
   })
 
   test('[P2] should select location when pressing Enter on focused marker', async ({

@@ -1,4 +1,5 @@
 import { test as base, expect } from '@playwright/test'
+import { navigateToExploreTab } from '../helpers/test-utils'
 
 /**
  * Extended test fixtures for taiwan-soundscapes.
@@ -10,6 +11,8 @@ import { test as base, expect } from '@playwright/test'
 type TestFixtures = {
   /** Navigate to homepage and wait for the app to be ready */
   appPage: void
+  /** Navigate to homepage, then switch to the Explore tab (map view) */
+  explorePage: void
 }
 
 export const test = base.extend<TestFixtures>({
@@ -18,6 +21,11 @@ export const test = base.extend<TestFixtures>({
     await page.waitForLoadState('networkidle')
     await use()
   }, { auto: true }],
+
+  explorePage: [async ({ page }, use) => {
+    await navigateToExploreTab(page)
+    await use()
+  }, { auto: false }],
 })
 
 export { expect }

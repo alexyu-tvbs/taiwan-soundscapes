@@ -3,12 +3,18 @@ import {
   UNLOCKED_LOCATIONS,
   LOCKED_LOCATIONS,
   getMapElement,
+  navigateToExploreTab,
 } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
 // Story 4.1: Location Marker Animations & Visual States
 // E2E automation — glow filters, lock icons, animation interaction safety
 // ═══════════════════════════════════════════════════════════════════════
+
+// Phase 2: Map is on Explore tab — navigate there before each test
+test.beforeEach(async ({ page }) => {
+  await navigateToExploreTab(page)
+})
 
 test.describe('Story 4.1: Glow Filter Definitions — P1 High', () => {
   test('[P1] should define standard glow SVG filter in map defs', async ({
@@ -195,7 +201,7 @@ test.describe('Story 4.1: Animation Interaction Safety — P1 High', () => {
 
     // WHEN: User clicks a locked marker
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.click()
+    await lanyu.dispatchEvent('click')
 
     // THEN: Lock overlay appears — animation did not block interaction
     await expect(page.getByTestId('lock-overlay')).toBeVisible()

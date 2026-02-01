@@ -1,10 +1,51 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, fireEvent, cleanup } from '@testing-library/react'
+import { render, fireEvent, cleanup, waitFor, act } from '@testing-library/react'
+import { MotionGlobalConfig } from 'motion'
 import { App } from '../../src/App'
+
+// Skip motion animations so AnimatePresence exit/enter complete faster
+MotionGlobalConfig.skipAnimations = true
 
 afterEach(() => {
   cleanup()
 })
+
+// Helper: navigate to the Explore tab and wait for map to appear
+const navigateToExplore = async (container: HTMLElement) => {
+  const tabBar = container.querySelector('[data-testid="tab-bar"]')
+  const exploreBtn = tabBar?.querySelectorAll('button')[1]
+  if (exploreBtn) {
+    await act(async () => {
+      fireEvent.click(exploreBtn)
+      // Allow AnimatePresence mode="wait" exit lifecycle to complete
+      await new Promise((r) => setTimeout(r, 0))
+    })
+    await waitFor(() => {
+      expect(container.querySelector('[data-testid="taiwan-map"]')).not.toBeNull()
+    })
+  }
+}
+
+// Helper: navigate to any tab by index and wait for content change
+const navigateToTab = async (
+  container: HTMLElement,
+  tabIndex: number,
+  waitForText?: string
+) => {
+  const tabBar = container.querySelector('[data-testid="tab-bar"]')
+  const btn = tabBar?.querySelectorAll('button')[tabIndex]
+  if (btn) {
+    await act(async () => {
+      fireEvent.click(btn)
+      await new Promise((r) => setTimeout(r, 0))
+    })
+    if (waitForText) {
+      await waitFor(() => {
+        expect(container.textContent).toContain(waitForText)
+      })
+    }
+  }
+}
 
 // AnimatePresence exit animation keeps elements in DOM with opacity: 0.
 // This helper validates that an overlay is visually dismissed (either removed or in exit state).
@@ -34,20 +75,23 @@ vi.stubGlobal(
 )
 
 describe('App Component — Map Integration', () => {
-  it('should render the TaiwanMap SVG', () => {
+  it('should render the TaiwanMap SVG on explore tab', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const map = container.querySelector('[data-testid="taiwan-map"]')
     expect(map).not.toBeNull()
   })
 
-  it('should render all 10 location dots', () => {
+  it('should render all 10 location dots on explore tab', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const dots = container.querySelectorAll('[data-testid^="location-dot-"]')
     expect(dots.length).toBe(10)
   })
 
-  it('should update selectedLocationId when a location is clicked', () => {
+  it('should update selectedLocationId when a location is clicked', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     expect(tamsui?.getAttribute('filter')).toBe('url(#glow)')
 
@@ -62,8 +106,9 @@ describe('App Component — Map Integration', () => {
     expect(tagline?.textContent).toBe('好眠秘境 — 用耳朵旅行台灣')
   })
 
-  it('should deselect previous marker when selecting a new one', () => {
+  it('should deselect previous marker when selecting a new one', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     const alishan = container.querySelector('[data-testid="location-dot-alishan"]')
 
@@ -85,8 +130,9 @@ describe('App Component — Audio Integration', () => {
     mockAudio.play.mockResolvedValue(undefined)
   })
 
-  it('should show SoundscapePlayer when an unlocked location is clicked', () => {
+  it('should show SoundscapePlayer when an unlocked location is clicked', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     // Initially no player
     expect(container.querySelector('[data-testid="soundscape-player"]')).toBeNull()
 
@@ -97,8 +143,9 @@ describe('App Component — Audio Integration', () => {
     expect(container.querySelector('[data-testid="soundscape-player"]')).not.toBeNull()
   })
 
-  it('should NOT show SoundscapePlayer when a locked location is clicked', () => {
+  it('should NOT show SoundscapePlayer when a locked location is clicked', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     // Click locked location (lanyu)
     const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
     fireEvent.click(lanyu!)
@@ -106,8 +153,9 @@ describe('App Component — Audio Integration', () => {
     expect(container.querySelector('[data-testid="soundscape-player"]')).toBeNull()
   })
 
-  it('should call audio.play() when an unlocked location is clicked', () => {
+  it('should call audio.play() when an unlocked location is clicked', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     fireEvent.click(tamsui!)
 
@@ -115,8 +163,9 @@ describe('App Component — Audio Integration', () => {
     expect(mockAudio.src).toBe('/audio/tamsui.mp3')
   })
 
-  it('should display the selected location name in SoundscapePlayer', () => {
+  it('should display the selected location name in SoundscapePlayer', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     fireEvent.click(tamsui!)
 
@@ -124,8 +173,9 @@ describe('App Component — Audio Integration', () => {
     expect(player?.textContent).toContain('淡水河夕陽')
   })
 
-  it('should support pause and resume flow through SoundscapePlayer', () => {
+  it('should support pause and resume flow through SoundscapePlayer', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
 
     // Click unlocked location to start playback
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
@@ -146,8 +196,9 @@ describe('App Component — Audio Integration', () => {
     expect(mockAudio.play).toHaveBeenCalled()
   })
 
-  it('should switch audio when clicking a different unlocked location', () => {
+  it('should switch audio when clicking a different unlocked location', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
 
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     fireEvent.click(tamsui!)
@@ -158,8 +209,9 @@ describe('App Component — Audio Integration', () => {
     expect(mockAudio.src).toBe('/audio/alishan.mp3')
   })
 
-  it('should NOT pause audio when clicking a locked location after playing', () => {
+  it('should NOT pause audio when clicking a locked location after playing', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
 
     // Start playing unlocked location
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
@@ -183,8 +235,9 @@ describe('App Component — LocationDetail Integration', () => {
     mockAudio.play.mockResolvedValue(undefined)
   })
 
-  it('should show LocationDetail when an unlocked location is clicked', () => {
+  it('should show LocationDetail when an unlocked location is clicked', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     expect(container.querySelector('[data-testid="location-detail"]')).toBeNull()
 
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
@@ -193,16 +246,18 @@ describe('App Component — LocationDetail Integration', () => {
     expect(container.querySelector('[data-testid="location-detail"]')).not.toBeNull()
   })
 
-  it('should NOT show LocationDetail when a locked location is clicked', () => {
+  it('should NOT show LocationDetail when a locked location is clicked', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
     fireEvent.click(lanyu!)
 
     expect(container.querySelector('[data-testid="location-detail"]')).toBeNull()
   })
 
-  it('should display location name in LocationDetail panel', () => {
+  it('should display location name in LocationDetail panel', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     fireEvent.click(tamsui!)
 
@@ -210,8 +265,9 @@ describe('App Component — LocationDetail Integration', () => {
     expect(detail?.querySelector('h2')?.textContent).toBe('淡水河夕陽')
   })
 
-  it('should display scene photograph in LocationDetail panel', () => {
+  it('should display scene photograph in LocationDetail panel', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     fireEvent.click(tamsui!)
 
@@ -221,8 +277,9 @@ describe('App Component — LocationDetail Integration', () => {
     expect(img?.getAttribute('src')).toBe('/images/tamsui.jpg')
   })
 
-  it('should update LocationDetail when switching between unlocked locations', () => {
+  it('should update LocationDetail when switching between unlocked locations', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
 
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     fireEvent.click(tamsui!)
@@ -238,8 +295,9 @@ describe('App Component — LocationDetail Integration', () => {
     expect(latestDetail?.querySelector('img')?.getAttribute('src')).toBe('/images/alishan.jpg')
   })
 
-  it('should show both LocationDetail and SoundscapePlayer when unlocked location selected', () => {
+  it('should show both LocationDetail and SoundscapePlayer when unlocked location selected', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     fireEvent.click(tamsui!)
 
@@ -257,24 +315,27 @@ describe('App Component — LockOverlay Integration', () => {
     mockAudio.play.mockResolvedValue(undefined)
   })
 
-  it('should show LockOverlay when a locked location is clicked', () => {
+  it('should show LockOverlay when a locked location is clicked', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
     fireEvent.click(lanyu!)
 
     expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
   })
 
-  it('should NOT show LockOverlay when an unlocked location is clicked', () => {
+  it('should NOT show LockOverlay when an unlocked location is clicked', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
     fireEvent.click(tamsui!)
 
     expect(container.querySelector('[data-testid="lock-overlay"]')).toBeNull()
   })
 
-  it('should display locked location name in overlay', () => {
+  it('should display locked location name in overlay', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
     fireEvent.click(lanyu!)
 
@@ -282,8 +343,9 @@ describe('App Component — LockOverlay Integration', () => {
     expect(panel?.querySelector('h2')?.textContent).toBe('蘭嶼飛魚季')
   })
 
-  it('should display unlock condition in overlay', () => {
+  it('should display unlock condition in overlay', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
     fireEvent.click(lanyu!)
 
@@ -291,8 +353,9 @@ describe('App Component — LockOverlay Integration', () => {
     expect(panel?.textContent).toContain('連續好眠 14 天，解鎖這片海洋')
   })
 
-  it('should dismiss LockOverlay when close button is clicked', () => {
+  it('should dismiss LockOverlay when close button is clicked', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
     const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
     fireEvent.click(lanyu!)
 
@@ -304,8 +367,9 @@ describe('App Component — LockOverlay Integration', () => {
     expectOverlayDismissed(container)
   })
 
-  it('should keep audio playing when locked location overlay is shown', () => {
+  it('should keep audio playing when locked location overlay is shown', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
 
     // Play unlocked location first
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
@@ -321,8 +385,9 @@ describe('App Component — LockOverlay Integration', () => {
     expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
   })
 
-  it('should keep LocationDetail visible when locked location overlay is shown after unlocked selection', () => {
+  it('should keep LocationDetail visible when locked location overlay is shown after unlocked selection', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
 
     // Select unlocked location first
     const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
@@ -337,8 +402,9 @@ describe('App Component — LockOverlay Integration', () => {
     expect(container.querySelector('[data-testid="lock-overlay"]')).not.toBeNull()
   })
 
-  it('should clear LockOverlay when clicking an unlocked location', () => {
+  it('should clear LockOverlay when clicking an unlocked location', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
 
     // Show overlay
     const lanyu = container.querySelector('[data-testid="location-dot-lanyu"]')
@@ -366,8 +432,9 @@ describe('App Component — All 7 Locked Locations Verification', () => {
   ]
 
   lockedLocations.forEach(({ id, name, condition }) => {
-    it(`should show overlay with correct name and condition for ${id}`, () => {
+    it(`should show overlay with correct name and condition for ${id}`, async () => {
       const { container } = render(<App />)
+      await navigateToExplore(container)
       const dot = container.querySelector(`[data-testid="location-dot-${id}"]`)
       fireEvent.click(dot!)
 
@@ -379,8 +446,9 @@ describe('App Component — All 7 Locked Locations Verification', () => {
       expect(panel?.textContent).toContain(condition)
     })
 
-    it(`should dismiss overlay for ${id} when close is clicked`, () => {
+    it(`should dismiss overlay for ${id} when close is clicked`, async () => {
       const { container } = render(<App />)
+      await navigateToExplore(container)
       const dot = container.querySelector(`[data-testid="location-dot-${id}"]`)
       fireEvent.click(dot!)
 
@@ -393,8 +461,9 @@ describe('App Component — All 7 Locked Locations Verification', () => {
     })
   })
 
-  it('should use warm positive language without countdowns or punishment framing', () => {
+  it('should use warm positive language without countdowns or punishment framing', async () => {
     const { container } = render(<App />)
+    await navigateToExplore(container)
 
     lockedLocations.forEach(({ id, condition }) => {
       const dot = container.querySelector(`[data-testid="location-dot-${id}"]`)
@@ -418,5 +487,169 @@ describe('App Component — All 7 Locked Locations Verification', () => {
       const closeBtn = closeBtns[closeBtns.length - 1]
       fireEvent.click(closeBtn!)
     })
+  })
+})
+
+describe('App Component — Phase 2 Tab Navigation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAudio.src = ''
+    mockAudio.volume = 1
+    mockAudio.paused = true
+    mockAudio.play.mockResolvedValue(undefined)
+  })
+
+  it('should render TabBar when app loads (onboardingComplete = true)', () => {
+    const { container } = render(<App />)
+    expect(container.querySelector('[data-testid="tab-bar"]')).not.toBeNull()
+  })
+
+  it('should default to tonight tab', () => {
+    const { container } = render(<App />)
+    // Tonight tab should be active (amber), map should NOT be visible
+    expect(container.querySelector('[data-testid="taiwan-map"]')).toBeNull()
+    // Tonight placeholder should be visible
+    expect(container.textContent).toContain('今晚的處方')
+  })
+
+  it('should show explore content (map) when explore tab is clicked', async () => {
+    const { container } = render(<App />)
+    await navigateToExplore(container)
+    expect(container.querySelector('[data-testid="taiwan-map"]')).not.toBeNull()
+  })
+
+  it('should show tonight placeholder when tonight tab is active', () => {
+    const { container } = render(<App />)
+    expect(container.textContent).toContain('今晚的處方')
+    expect(container.textContent).toContain('Coming in Epic 6')
+  })
+
+  it('should show journey placeholder when journey tab is clicked', async () => {
+    const { container } = render(<App />)
+    await navigateToTab(container, 2, '我的旅程')
+    expect(container.textContent).toContain('我的旅程')
+    expect(container.textContent).toContain('Coming in Epic 7')
+  })
+
+  it('should switch between tabs correctly', async () => {
+    const { container } = render(<App />)
+
+    // Start on tonight
+    expect(container.textContent).toContain('今晚的處方')
+
+    // Switch to explore
+    await navigateToExplore(container)
+    expect(container.querySelector('[data-testid="taiwan-map"]')).not.toBeNull()
+
+    // Switch to journey
+    await navigateToTab(container, 2, '我的旅程')
+    expect(container.textContent).toContain('我的旅程')
+
+    // Back to tonight
+    await navigateToTab(container, 0, '今晚的處方')
+    expect(container.textContent).toContain('今晚的處方')
+  })
+
+  it('should hide map content when not on explore tab', () => {
+    const { container } = render(<App />)
+    // Default is tonight — map should not exist
+    expect(container.querySelector('[data-testid="taiwan-map"]')).toBeNull()
+  })
+
+  it('should have three tabs with correct labels', () => {
+    const { container } = render(<App />)
+    const tabBar = container.querySelector('[data-testid="tab-bar"]')
+    expect(tabBar?.textContent).toContain('今晚')
+    expect(tabBar?.textContent).toContain('探索')
+    expect(tabBar?.textContent).toContain('我的')
+  })
+})
+
+describe('App Component — SoundscapePlayer Positioning (AC#5)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAudio.src = ''
+    mockAudio.volume = 1
+    mockAudio.paused = true
+    mockAudio.play.mockResolvedValue(undefined)
+  })
+
+  it('[P1] should position SoundscapePlayer wrapper with bottom-16 and z-30 when TabBar visible', async () => {
+    const { container } = render(<App />)
+    await navigateToExplore(container)
+
+    // Click unlocked location to trigger SoundscapePlayer
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+
+    // Find the player wrapper (motion.div containing SoundscapePlayer)
+    const player = container.querySelector('[data-testid="soundscape-player"]')
+    expect(player).not.toBeNull()
+
+    const wrapper = player!.closest('.fixed') as HTMLElement
+    expect(wrapper).not.toBeNull()
+    expect(wrapper.className).toContain('bottom-16')
+    expect(wrapper.className).toContain('z-30')
+  })
+
+  it('[P1] should hide SoundscapePlayer when switching away from Explore tab', async () => {
+    const { container } = render(<App />)
+    await navigateToExplore(container)
+
+    // Start playing on Explore tab
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+    expect(container.querySelector('[data-testid="soundscape-player"]')).not.toBeNull()
+
+    // Switch to Tonight tab
+    await navigateToTab(container, 0, '今晚的處方')
+
+    // SoundscapePlayer should no longer be in DOM (conditioned on activeTab === 'explore')
+    await waitFor(() => {
+      expect(container.querySelector('[data-testid="soundscape-player"]')).toBeNull()
+    })
+  })
+
+  it('[P1] should restore SoundscapePlayer when returning to Explore tab after selection', async () => {
+    const { container } = render(<App />)
+    await navigateToExplore(container)
+
+    // Select location and start playing
+    const tamsui = container.querySelector('[data-testid="location-dot-tamsui"]')
+    fireEvent.click(tamsui!)
+    expect(container.querySelector('[data-testid="soundscape-player"]')).not.toBeNull()
+
+    // Switch away
+    await navigateToTab(container, 0, '今晚的處方')
+    await waitFor(() => {
+      expect(container.querySelector('[data-testid="soundscape-player"]')).toBeNull()
+    })
+
+    // Switch back to Explore
+    await navigateToExplore(container)
+
+    // Player should reappear (selectedLocationId is still set)
+    expect(container.querySelector('[data-testid="soundscape-player"]')).not.toBeNull()
+  })
+})
+
+describe('App Component — Product Story Info Icon', () => {
+  it('should show an info icon button in the header when onboardingComplete', () => {
+    const { container } = render(<App />)
+    const infoBtn = container.querySelector('[data-testid="product-story-btn"]')
+    expect(infoBtn).not.toBeNull()
+  })
+
+  it('should be inside the header element', () => {
+    const { container } = render(<App />)
+    const header = container.querySelector('header')
+    const infoBtn = header?.querySelector('[data-testid="product-story-btn"]')
+    expect(infoBtn).not.toBeNull()
+  })
+
+  it('[P2] should have aria-label for accessibility', () => {
+    const { container } = render(<App />)
+    const infoBtn = container.querySelector('[data-testid="product-story-btn"]')
+    expect(infoBtn?.getAttribute('aria-label')).toBe('Product Story')
   })
 })

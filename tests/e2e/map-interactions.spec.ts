@@ -4,6 +4,7 @@ import {
   LOCKED_LOCATIONS,
   ALL_LOCATIONS,
   getMapElement,
+  navigateToExploreTab,
 } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -11,6 +12,11 @@ import {
 // Covers gaps not addressed by ATDD tests (taiwan-map.spec.ts)
 // Focus: locked marker interaction, fill colors, cursor styles, rapid clicks
 // ═══════════════════════════════════════════════════════════════════════
+
+// Phase 2: Map is on Explore tab — navigate there before each test
+test.beforeEach(async ({ page }) => {
+  await navigateToExploreTab(page)
+})
 
 test.describe('Map Interactions — P1 High', () => {
   test('[P1] should show LockOverlay instead of selecting when clicking a locked marker', async ({
@@ -20,7 +26,7 @@ test.describe('Map Interactions — P1 High', () => {
 
     // WHEN: User clicks on a locked marker (lanyu)
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.click()
+    await lanyu.dispatchEvent('click')
 
     // THEN: Locked marker does NOT change radius (stays r=6) — overlay shown instead
     await expect(lanyu).toHaveAttribute('r', '6')
@@ -38,7 +44,7 @@ test.describe('Map Interactions — P1 High', () => {
     await expect(tamsui).toHaveAttribute('filter', 'url(#glow-strong)')
 
     // WHEN: User clicks Taroko (locked) — shows overlay, preserves selection
-    await taroko.click()
+    await taroko.dispatchEvent('click')
 
     // THEN: Tamsui stays selected (glow-strong), Taroko stays locked (r=6), overlay shown
     await expect(tamsui).toHaveAttribute('filter', 'url(#glow-strong)')

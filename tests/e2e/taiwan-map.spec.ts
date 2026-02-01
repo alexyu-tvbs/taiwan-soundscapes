@@ -4,6 +4,7 @@ import {
   LOCKED_LOCATIONS,
   ALL_LOCATIONS,
   getMapElement,
+  navigateToExploreTab,
 } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -11,6 +12,11 @@ import {
 // ATDD RED Phase — All tests expected to FAIL (implementation missing)
 // Test IDs aligned with test-design-epic-1.md
 // ═══════════════════════════════════════════════════════════════════════
+
+// Phase 2: Map is on Explore tab — navigate there before each test
+test.beforeEach(async ({ page }) => {
+  await navigateToExploreTab(page)
+})
 
 test.describe('Story 1.2: Taiwan Map — P0 Critical', () => {
   // 1.2-E2E-001: SVG Taiwan map renders prominently on dark background
@@ -239,12 +245,13 @@ test.describe('Story 1.2: Taiwan Map — P2 Medium', () => {
   }) => {
     // GIVEN: Fresh page navigation
 
-    // WHEN: Navigating to homepage
+    // WHEN: Navigating to homepage and switching to Explore tab
     const startTime = Date.now()
     await page.goto('/')
     await page.waitForLoadState('domcontentloaded')
+    await navigateToExploreTab(page)
 
-    // THEN: Map is visible within 2 seconds
+    // THEN: Map is visible within 2 seconds (includes tab switch)
     const map = page.getByTestId('taiwan-map')
     await expect(map).toBeVisible({ timeout: 2000 })
 

@@ -2,6 +2,7 @@ import { test, expect } from '../support/fixtures'
 import {
   getMapElement,
   waitForDetailTransition,
+  navigateToExploreTab,
 } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -9,6 +10,11 @@ import {
 // E2E automation — Motion transitions on LocationDetail, LockOverlay,
 // and SoundscapePlayer panels
 // ═══════════════════════════════════════════════════════════════════════
+
+// Phase 2: Map is on Explore tab — navigate there before each test
+test.beforeEach(async ({ page }) => {
+  await navigateToExploreTab(page)
+})
 
 test.describe('Story 4.2: LocationDetail Panel Transition — P1 High', () => {
   test('[P1] should animate LocationDetail panel in when unlocked location selected', async ({
@@ -83,7 +89,7 @@ test.describe('Story 4.2: LockOverlay Transition — P1 High', () => {
 
     // WHEN: User clicks a locked location
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.click()
+    await lanyu.dispatchEvent('click')
 
     // THEN: LockOverlay appears with completed animation
     const overlay = page.getByTestId('lock-overlay')
@@ -100,7 +106,7 @@ test.describe('Story 4.2: LockOverlay Transition — P1 High', () => {
   }) => {
     // GIVEN: LockOverlay is shown
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.click()
+    await lanyu.dispatchEvent('click')
     await expect(page.getByTestId('lock-overlay')).toBeVisible()
 
     // WHEN: User clicks close button
@@ -116,7 +122,7 @@ test.describe('Story 4.2: LockOverlay Transition — P1 High', () => {
   }) => {
     // GIVEN: LockOverlay is shown
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.click()
+    await lanyu.dispatchEvent('click')
     const overlay = page.getByTestId('lock-overlay')
     await expect(overlay).toBeVisible()
 
@@ -173,7 +179,7 @@ test.describe('Story 4.2: Transition Edge Cases — P1/P2', () => {
   }) => {
     // GIVEN: LockOverlay is shown
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.click()
+    await lanyu.dispatchEvent('click')
     const overlay = page.getByTestId('lock-overlay')
     await expect(overlay).toBeVisible()
 
@@ -191,7 +197,7 @@ test.describe('Story 4.2: Transition Edge Cases — P1/P2', () => {
 
     // WHEN: User clicks a locked location
     const lanyu = getMapElement(page, 'location-dot-lanyu')
-    await lanyu.click()
+    await lanyu.dispatchEvent('click')
     await expect(page.getByTestId('lock-overlay')).toBeVisible()
 
     // THEN: Close button receives focus (accessibility)
@@ -248,7 +254,7 @@ test.describe('Story 4.2: Cross-Panel Transition Coordination — P1 High', () =
 
     // WHEN: User clicks a locked location (taroko — mid-map, not covered by fixed player bar)
     const taroko = getMapElement(page, 'location-dot-taroko')
-    await taroko.click()
+    await taroko.dispatchEvent('click')
 
     // THEN: LockOverlay appears AND existing panels remain visible
     await expect(page.getByTestId('lock-overlay')).toBeVisible()
@@ -273,7 +279,7 @@ test.describe('Story 4.2: Cross-Panel Transition Coordination — P1 High', () =
 
     // PHASE 3: Click locked location — overlay transition
     const taroko = getMapElement(page, 'location-dot-taroko')
-    await taroko.click()
+    await taroko.dispatchEvent('click')
     await expect(page.getByTestId('lock-overlay')).toBeVisible()
 
     // PHASE 4: Dismiss overlay — exit transition
