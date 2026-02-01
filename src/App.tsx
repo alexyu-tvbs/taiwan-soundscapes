@@ -5,6 +5,7 @@ import { LocationDetail } from './components/LocationDetail'
 import { SoundscapePlayer } from './components/SoundscapePlayer'
 import { LockOverlay } from './components/LockOverlay'
 import { TabBar } from './components/TabBar'
+import { SleepAssessment } from './components/SleepAssessment'
 import { useAudioPlayer } from './hooks/useAudioPlayer'
 import { locations } from './data/locations'
 import type { Location, Tab, SleepType } from './types'
@@ -13,8 +14,8 @@ export const App = () => {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null)
   const [lockedLocation, setLockedLocation] = useState<Location | null>(null)
   const [activeTab, setActiveTab] = useState<Tab>('tonight')
-  const [onboardingComplete, setOnboardingComplete] = useState(true)
-  const [sleepType, setSleepType] = useState<SleepType | null>('difficulty')
+  const [onboardingComplete, setOnboardingComplete] = useState(false)
+  const [sleepType, setSleepType] = useState<SleepType | null>(null)
   const [showProductStory, setShowProductStory] = useState(false)
   const audioPlayer = useAudioPlayer()
 
@@ -34,9 +35,14 @@ export const App = () => {
     }
   }
 
-  // Phase 2 state — setters/values activated in upcoming stories
-  void setOnboardingComplete; void setSleepType; void sleepType // Story 5.2
+  void sleepType // read in Epic 6
   void showProductStory // Epic 8
+
+  const handleOnboardingComplete = (type: SleepType) => {
+    setOnboardingComplete(true)
+    setSleepType(type)
+    setActiveTab('tonight')
+  }
 
   const handleTabChange = (tab: Tab) => {
     if (activeTab === 'explore' && tab !== 'explore') {
@@ -44,6 +50,10 @@ export const App = () => {
       setLockedLocation(null)
     }
     setActiveTab(tab)
+  }
+
+  if (!onboardingComplete) {
+    return <SleepAssessment onComplete={handleOnboardingComplete} />
   }
 
   return (

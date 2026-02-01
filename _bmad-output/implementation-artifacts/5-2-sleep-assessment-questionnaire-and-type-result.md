@@ -1,6 +1,6 @@
 # Story 5.2: Sleep Assessment Questionnaire & Type Result
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -28,47 +28,47 @@ So that I understand my sleep challenge and receive a tailored plan.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create `data/sleep.ts` with all Phase 2 static data (AC: #4, #5, #6)
-  - [ ] 1.1 Create `src/data/sleep.ts`
-  - [ ] 1.2 Add `sleepQuestions: SleepQuestion[]` — 5 questions in Traditional Chinese:
+- [x] Task 1: Create `data/sleep.ts` with all Phase 2 static data (AC: #4, #5, #6)
+  - [x] 1.1 Create `src/data/sleep.ts`
+  - [x] 1.2 Add `sleepQuestions: SleepQuestion[]` — 5 questions in Traditional Chinese:
     - Q1: "你通常需要多久才能入睡？" (options: <15min, 15-30min, 30-60min, >60min)
     - Q2: "你半夜會醒來幾次？" (options: 幾乎不會, 1-2次, 3次以上)
     - Q3: "睡前你的腦袋通常在想什麼？" (options: 很快放空, 回想今天, 擔心明天, 各種想法停不下來)
     - Q4: "你早上醒來的感覺是？" (options: 精神飽滿, 還好但想賴床, 覺得沒睡夠, 比睡前更累)
     - Q5: "你覺得影響你睡眠最大的因素是？" (options: 環境(光線噪音), 身體不適, 心理壓力, 不規律作息)
-  - [ ] 1.3 Each option carries `weight: Partial<Record<SleepType, number>>` — weights bias toward specific sleep types
-  - [ ] 1.4 Add `sleepTypeInfos: Record<SleepType, SleepTypeInfo>` — 3 type definitions:
+  - [x] 1.3 Each option carries `weight: Partial<Record<SleepType, number>>` — weights bias toward specific sleep types
+  - [x] 1.4 Add `sleepTypeInfos: Record<SleepType, SleepTypeInfo>` — 3 type definitions:
     - `difficulty`: name "入睡困難型", description + approach
     - `light`: name "淺眠易醒型", description + approach
     - `anxious`: name "焦慮思緒型", description + approach
-  - [ ] 1.5 Add `prescriptions: Record<SleepType, Prescription>` — 3 variants with planName, breathing, soundscapeLocationId, coachTip
-  - [ ] 1.6 Add `journeyStats: JourneyStats` — hardcoded values: completedSessions=12, longestStreak=5, unlockedSoundscapes=3
-  - [ ] 1.7 Add `calculateSleepType(answers: SleepOption[]): SleepType` function — reduce over answers, sum weights per type, return highest
+  - [x] 1.5 Add `prescriptions: Record<SleepType, Prescription>` — 3 variants with planName, breathing, soundscapeLocationId, coachTip
+  - [x] 1.6 Add `journeyStats: JourneyStats` — hardcoded values: completedSessions=12, longestStreak=5, unlockedSoundscapes=3
+  - [x] 1.7 Add `calculateSleepType(answers: SleepOption[]): SleepType` function — reduce over answers, sum weights per type, return highest
 
-- [ ] Task 2: Create SleepAssessment component (AC: #1, #2, #3, #8)
-  - [ ] 2.1 Create `src/components/SleepAssessment.tsx` with `SleepAssessmentProps { onComplete: (sleepType: SleepType) => void }`
-  - [ ] 2.2 Internal state: `currentQuestionIndex` (number), `answers` (SleepOption[])
-  - [ ] 2.3 Render current question with progress: "第 {n} 題，共 5 題" or "{n} / 5"
-  - [ ] 2.4 Render option buttons — on select: store answer, auto-advance to next question
-  - [ ] 2.5 Back button (visible on question 2+): decrement `currentQuestionIndex`, preserve previous answers
-  - [ ] 2.6 Question transition: horizontal slide animation using `AnimatePresence`:
+- [x] Task 2: Create SleepAssessment component (AC: #1, #2, #3, #8)
+  - [x] 2.1 Create `src/components/SleepAssessment.tsx` with `SleepAssessmentProps { onComplete: (sleepType: SleepType) => void }`
+  - [x] 2.2 Internal state: `currentQuestionIndex` (number), `answers` (SleepOption[])
+  - [x] 2.3 Render current question with progress: "第 {n} 題，共 5 題" or "{n} / 5"
+  - [x] 2.4 Render option buttons — on select: store answer, auto-advance to next question
+  - [x] 2.5 Back button (visible on question 2+): decrement `currentQuestionIndex`, preserve previous answers
+  - [x] 2.6 Question transition: horizontal slide animation using `AnimatePresence`:
     - Forward: slide from right (`x: 100` → `x: 0`)
     - Backward: slide from left (`x: -100` → `x: 0`)
-  - [ ] 2.7 After question 5 answered: calculate sleep type via `calculateSleepType(answers)`
-  - [ ] 2.8 Show result screen: type name, description, approach, "開始我的計畫" button
+  - [x] 2.7 After question 5 answered: calculate sleep type via `calculateSleepType(answers)`
+  - [x] 2.8 Show result screen: type name, description, approach, "開始我的計畫" button
 
-- [ ] Task 3: Render SleepTypeResult internal view (AC: #6, #7)
-  - [ ] 3.1 Within SleepAssessment, after all 5 answers: display result view
-  - [ ] 3.2 Show: sleep type name (大字), description paragraph, approach summary
-  - [ ] 3.3 "開始我的計畫" button: calls `onComplete(calculatedSleepType)`
-  - [ ] 3.4 Style: centered layout, dark theme, amber accent on CTA button
+- [x] Task 3: Render SleepTypeResult internal view (AC: #6, #7)
+  - [x] 3.1 Within SleepAssessment, after all 5 answers: display result view
+  - [x] 3.2 Show: sleep type name (大字), description paragraph, approach summary
+  - [x] 3.3 "開始我的計畫" button: calls `onComplete(calculatedSleepType)`
+  - [x] 3.4 Style: centered layout, dark theme, amber accent on CTA button
 
-- [ ] Task 4: Integrate SleepAssessment into App.tsx (AC: #1, #7)
-  - [ ] 4.1 Change `onboardingComplete` default to `false`
-  - [ ] 4.2 Change `sleepType` default to `null`
-  - [ ] 4.3 Render `<SleepAssessment onComplete={handleOnboardingComplete} />` when `!onboardingComplete`
-  - [ ] 4.4 `handleOnboardingComplete(type: SleepType)`: set `onboardingComplete=true`, `sleepType=type`, `activeTab='tonight'`
-  - [ ] 4.5 When `!onboardingComplete`: do NOT render TabBar (FR23)
+- [x] Task 4: Integrate SleepAssessment into App.tsx (AC: #1, #7)
+  - [x] 4.1 Change `onboardingComplete` default to `false`
+  - [x] 4.2 Change `sleepType` default to `null`
+  - [x] 4.3 Render `<SleepAssessment onComplete={handleOnboardingComplete} />` when `!onboardingComplete`
+  - [x] 4.4 `handleOnboardingComplete(type: SleepType)`: set `onboardingComplete=true`, `sleepType=type`, `activeTab='tonight'`
+  - [x] 4.5 When `!onboardingComplete`: do NOT render TabBar (FR23)
 
 ## Dev Notes
 
@@ -246,8 +246,30 @@ src/
 
 ### Agent Model Used
 
+Claude Opus 4.5 (claude-opus-4-5-20251101)
+
 ### Debug Log References
+
+- No debug issues encountered.
 
 ### Completion Notes List
 
+- Task 1: Created `src/data/sleep.ts` with 5 questions (Traditional Chinese), weighted options, 3 sleep type definitions, 3 prescriptions, journey stats, and `calculateSleepType` function. 20 unit tests.
+- Task 2: Created `src/components/SleepAssessment.tsx` with internal state management (`currentQuestionIndex`, `answers`), progress indicator, option buttons with auto-advance, back navigation preserving answers, horizontal slide animation via `AnimatePresence`, and result screen. 19 unit tests.
+- Task 3: Result view integrated within SleepAssessment — type name in large text (h1 text-4xl), description, approach, amber CTA button. Centered dark theme layout. 4 additional style tests.
+- Task 4: Integrated into App.tsx — changed `onboardingComplete` default to `false`, `sleepType` to `null`, added `handleOnboardingComplete` callback, conditional SleepAssessment render, TabBar hidden during onboarding. Updated all 60+ existing App tests with `completeOnboarding` helper. 3 new onboarding integration tests.
+- All 8 acceptance criteria verified and satisfied.
+- All 227 unit tests pass. TypeScript and ESLint clean.
+
+### Change Log
+
+- 2026-02-01: Implemented Story 5.2 — Sleep Assessment Questionnaire & Type Result (all 4 tasks, 8 ACs)
+
 ### File List
+
+- `src/data/sleep.ts` — **Created** — Questions, type infos, prescriptions, journey stats, calculateSleepType
+- `src/components/SleepAssessment.tsx` — **Created** — Fullscreen questionnaire + result component
+- `src/App.tsx` — **Modified** — onboardingComplete=false, sleepType=null, SleepAssessment integration, handleOnboardingComplete
+- `tests/unit/sleep.test.ts` — **Created** — 20 tests for data/sleep.ts
+- `tests/unit/SleepAssessment.test.tsx` — **Created** — 19 tests for SleepAssessment component
+- `tests/unit/App.test.tsx` — **Modified** — Added completeOnboarding helper, updated all tests, added 3 onboarding flow tests
