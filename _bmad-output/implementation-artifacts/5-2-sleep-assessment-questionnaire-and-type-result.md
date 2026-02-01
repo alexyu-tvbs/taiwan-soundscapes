@@ -1,6 +1,6 @@
 # Story 5.2: Sleep Assessment Questionnaire & Type Result
 
-Status: review
+Status: done
 
 ## Story
 
@@ -264,6 +264,7 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 ### Change Log
 
 - 2026-02-01: Implemented Story 5.2 — Sleep Assessment Questionnaire & Type Result (all 4 tasks, 8 ACs)
+- 2026-02-01: Code Review — Fixed 6 issues (3M/3L): initial animation bug, empty array guard, weight integration tests, deduplicated test helper
 
 ### File List
 

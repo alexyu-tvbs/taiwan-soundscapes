@@ -111,6 +111,10 @@ export const journeyStats: JourneyStats = {
 }
 
 export const calculateSleepType = (answers: SleepOption[]): SleepType => {
+  if (answers.length === 0) {
+    return 'difficulty'
+  }
+
   const scores = answers.reduce(
     (acc, answer) => {
       Object.entries(answer.weight).forEach(([type, w]) => {

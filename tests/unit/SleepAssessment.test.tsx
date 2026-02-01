@@ -9,6 +9,16 @@ afterEach(() => {
   cleanup()
 })
 
+// Shared helper: answer all 5 questions with first option each time
+const answerAllQuestions = async (container: HTMLElement) => {
+  for (let i = 0; i < 5; i++) {
+    await waitFor(() => {
+      expect(container.querySelector('[data-testid="option-0"]')).not.toBeNull()
+    })
+    fireEvent.click(container.querySelector('[data-testid="option-0"]')!)
+  }
+}
+
 describe('SleepAssessment — Question Display (AC#2)', () => {
   it('should render the first question on initial display', () => {
     const { container } = render(<SleepAssessment onComplete={vi.fn()} />)
@@ -111,16 +121,6 @@ describe('SleepAssessment — Navigation (AC#2, AC#3)', () => {
 })
 
 describe('SleepAssessment — Result Screen (AC#6)', () => {
-  const answerAllQuestions = async (container: HTMLElement) => {
-    // Answer all 5 questions with first option each time
-    for (let i = 0; i < 5; i++) {
-      await waitFor(() => {
-        expect(container.querySelector('[data-testid="option-0"]')).not.toBeNull()
-      })
-      fireEvent.click(container.querySelector('[data-testid="option-0"]')!)
-    }
-  }
-
   it('should show result screen after answering all 5 questions', async () => {
     const { container } = render(<SleepAssessment onComplete={vi.fn()} />)
     await answerAllQuestions(container)
@@ -172,15 +172,6 @@ describe('SleepAssessment — Result Screen (AC#6)', () => {
 })
 
 describe('SleepAssessment — onComplete callback (AC#7)', () => {
-  const answerAllQuestions = async (container: HTMLElement) => {
-    for (let i = 0; i < 5; i++) {
-      await waitFor(() => {
-        expect(container.querySelector('[data-testid="option-0"]')).not.toBeNull()
-      })
-      fireEvent.click(container.querySelector('[data-testid="option-0"]')!)
-    }
-  }
-
   it('should call onComplete with calculated sleep type when CTA is clicked', async () => {
     const onComplete = vi.fn()
     const { container } = render(<SleepAssessment onComplete={onComplete} />)
@@ -208,15 +199,6 @@ describe('SleepAssessment — Fullscreen & No TabBar (AC#1)', () => {
 })
 
 describe('SleepAssessment — Result Style (Task 3.4)', () => {
-  const answerAllQuestions = async (container: HTMLElement) => {
-    for (let i = 0; i < 5; i++) {
-      await waitFor(() => {
-        expect(container.querySelector('[data-testid="option-0"]')).not.toBeNull()
-      })
-      fireEvent.click(container.querySelector('[data-testid="option-0"]')!)
-    }
-  }
-
   it('should have centered layout on result screen', async () => {
     const { container } = render(<SleepAssessment onComplete={vi.fn()} />)
     await answerAllQuestions(container)

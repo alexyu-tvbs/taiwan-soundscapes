@@ -66,7 +66,7 @@ development_status:
   # Epic 5: Sleep Assessment & App Navigation
   epic-5: in-progress
   5-1-tab-navigation-and-app-shell-restructure: done
-  5-2-sleep-assessment-questionnaire-and-type-result: review
+  5-2-sleep-assessment-questionnaire-and-type-result: done
   epic-5-retrospective: optional
 
   # Epic 6: Tonight Sleep Prescription Homepage

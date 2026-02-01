@@ -8,6 +8,10 @@ import {
 } from '../../src/data/sleep'
 import type { SleepType, SleepOption } from '../../src/types'
 
+// Helper to pick an option by index from a specific question
+const pick = (questionIndex: number, optionIndex: number) =>
+  sleepQuestions[questionIndex].options[optionIndex]
+
 describe('sleepQuestions', () => {
   it('should contain exactly 5 questions', () => {
     expect(sleepQuestions).toHaveLength(5)
@@ -166,5 +170,36 @@ describe('calculateSleepType', () => {
       { label: 'a', value: 'a', weight: { difficulty: 1, light: 1, anxious: 1 } },
     ]
     expect(calculateSleepType(answers)).toBe('difficulty')
+  })
+
+  it('should return difficulty for empty answers array', () => {
+    expect(calculateSleepType([])).toBe('difficulty')
+  })
+})
+
+describe('calculateSleepType — actual question weight integration', () => {
+  it('should return difficulty when selecting high-difficulty options from real questions', () => {
+    // Q1: >60min (difficulty:3), Q2: 幾乎不會 (difficulty:1), Q3: 很快放空 (light:1),
+    // Q4: 精神飽滿 (difficulty:1), Q5: 不規律作息 (difficulty:3)
+    // Expected: difficulty=8, light=1
+    const answers = [pick(0, 3), pick(1, 0), pick(2, 0), pick(3, 0), pick(4, 3)]
+    expect(calculateSleepType(answers)).toBe('difficulty')
+  })
+
+  it('should return light when selecting high-light options from real questions', () => {
+    // Q1: <15min (light:1), Q2: 3次以上 (light:3), Q3: 很快放空 (light:1),
+    // Q4: 還好但想賴床 (light:1), Q5: 環境 (light:2)
+    // Expected: light=8
+    const answers = [pick(0, 0), pick(1, 2), pick(2, 0), pick(3, 1), pick(4, 0)]
+    expect(calculateSleepType(answers)).toBe('light')
+  })
+
+  it('should return anxious when selecting high-anxious options from real questions', () => {
+    // Q1: 15-30min (difficulty:1, anxious:1), Q2: 幾乎不會 (difficulty:1),
+    // Q3: 各種想法停不下來 (anxious:3), Q4: 比睡前更累 (anxious:2, light:1),
+    // Q5: 心理壓力 (anxious:3)
+    // Expected: anxious=9, difficulty=2, light=1
+    const answers = [pick(0, 1), pick(1, 0), pick(2, 3), pick(3, 3), pick(4, 2)]
+    expect(calculateSleepType(answers)).toBe('anxious')
   })
 })

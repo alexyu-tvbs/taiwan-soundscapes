@@ -83,7 +83,7 @@ export const SleepAssessment = ({ onComplete }: SleepAssessmentProps) => {
           <motion.div
             key={currentQuestionIndex}
             custom={direction}
-            initial={{ x: direction > 0 ? 100 : -100, opacity: 0 }}
+            initial={direction !== 0 ? { x: direction > 0 ? 100 : -100, opacity: 0 } : false}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: direction > 0 ? -100 : 100, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeInOut' }}
