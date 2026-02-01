@@ -167,6 +167,57 @@ test.describe('Story 4.2: SoundscapePlayer Transition — P1 High', () => {
   })
 })
 
+test.describe('Story 4.2: Transition Edge Cases — P1/P2', () => {
+  test('[P1] should dismiss LockOverlay when Escape key is pressed', async ({
+    page,
+  }) => {
+    // GIVEN: LockOverlay is shown
+    const lanyu = getMapElement(page, 'location-dot-lanyu')
+    await lanyu.click()
+    const overlay = page.getByTestId('lock-overlay')
+    await expect(overlay).toBeVisible()
+
+    // WHEN: User presses Escape key
+    await page.keyboard.press('Escape')
+
+    // THEN: Overlay disappears with exit animation
+    await expect(overlay).toBeHidden()
+  })
+
+  test('[P2] should focus close button when LockOverlay opens', async ({
+    page,
+  }) => {
+    // GIVEN: Page is loaded
+
+    // WHEN: User clicks a locked location
+    const lanyu = getMapElement(page, 'location-dot-lanyu')
+    await lanyu.click()
+    await expect(page.getByTestId('lock-overlay')).toBeVisible()
+
+    // THEN: Close button receives focus (accessibility)
+    const closeBtn = page.getByTestId('lock-overlay-close')
+    await expect(closeBtn).toBeFocused()
+  })
+
+  test('[P2] should keep panel stable when same unlocked location clicked twice', async ({
+    page,
+  }) => {
+    // GIVEN: Tamsui is selected
+    const tamsui = getMapElement(page, 'location-dot-tamsui')
+    await tamsui.click({ force: true })
+    await expect(page.getByTestId('location-detail')).toBeVisible()
+    await expect(page.getByTestId('location-detail').locator('h2')).toContainText('淡水河夕陽')
+
+    // WHEN: User clicks tamsui again
+    await tamsui.click({ force: true })
+
+    // THEN: Panel remains visible with same content (no flicker or re-animation)
+    await expect(page.getByTestId('location-detail')).toBeVisible()
+    await expect(page.getByTestId('location-detail').locator('h2')).toContainText('淡水河夕陽')
+    await expect(page.getByTestId('soundscape-player')).toContainText('淡水河夕陽')
+  })
+})
+
 test.describe('Story 4.2: Cross-Panel Transition Coordination — P1 High', () => {
   test('[P1] should animate all panels simultaneously when selecting unlocked location', async ({
     page,

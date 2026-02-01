@@ -181,6 +181,56 @@ test.describe('Story 4.2: Location Switch Stability — P1 High', () => {
   })
 })
 
+test.describe('Story 4.2: Layout Stability — P1 High', () => {
+  test('[P1] should not shift map position when switching between unlocked locations', async ({
+    page,
+  }) => {
+    // GIVEN: Tamsui is selected, detail panel visible
+    const tamsui = getMapElement(page, 'location-dot-tamsui')
+    await tamsui.click({ force: true })
+    await expect(page.getByTestId('location-detail')).toBeVisible()
+
+    // Record map position after first selection
+    const map = page.getByTestId('taiwan-map')
+    const beforeBox = await map.boundingBox()
+    expect(beforeBox).not.toBeNull()
+
+    // WHEN: User switches to alishan
+    const alishan = getMapElement(page, 'location-dot-alishan')
+    await alishan.click({ force: true })
+    await waitForDetailTransition(page)
+
+    // THEN: Map position has not shifted (stable key prevents dual-panel during transition)
+    const afterBox = await map.boundingBox()
+    expect(afterBox).not.toBeNull()
+    expect(afterBox!.x).toBeCloseTo(beforeBox!.x, 0)
+    expect(afterBox!.width).toBeCloseTo(beforeBox!.width, 0)
+  })
+})
+
+test.describe('Story 4.2: Animation Quality — P2 Medium', () => {
+  test('[P2] should use GPU-compositable properties for panel animations (NFR3)', async ({
+    page,
+  }) => {
+    // GIVEN: Page is loaded
+
+    // WHEN: User clicks tamsui to trigger detail panel animation
+    const tamsui = getMapElement(page, 'location-dot-tamsui')
+    await tamsui.click({ force: true })
+    await expect(page.getByTestId('location-detail')).toBeVisible()
+
+    // THEN: Motion wrapper uses transform/opacity (GPU-accelerated, not layout-triggering)
+    const wrapper = page.getByTestId('location-detail').locator('..')
+    const style = await wrapper.evaluate((el) => el.getAttribute('style') ?? '')
+
+    // Motion applies inline styles — verify no layout-triggering properties
+    expect(style).not.toMatch(/\bleft\s*:/)
+    expect(style).not.toMatch(/\btop\s*:/)
+    expect(style).not.toMatch(/\bwidth\s*:/)
+    expect(style).not.toMatch(/\bheight\s*:/)
+  })
+})
+
 test.describe('Story 4.2: Rapid Switch Stability — P2 Medium', () => {
   test('[P2] should converge to correct state after rapid unlocked-locked-unlocked switching', async ({
     page,
