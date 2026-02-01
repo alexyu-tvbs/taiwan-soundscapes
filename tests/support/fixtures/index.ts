@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test'
-import { navigateToExploreTab } from '../helpers/test-utils'
+import { completeOnboarding, navigateToExploreTab } from '../helpers/test-utils'
 
 /**
  * Extended test fixtures for taiwan-soundscapes.
@@ -19,6 +19,7 @@ export const test = base.extend<TestFixtures>({
   appPage: [async ({ page }, use) => {
     await page.goto('/')
     await page.waitForLoadState('networkidle')
+    await completeOnboarding(page)
     await use()
   }, { auto: true }],
 

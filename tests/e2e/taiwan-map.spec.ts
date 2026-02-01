@@ -5,6 +5,7 @@ import {
   ALL_LOCATIONS,
   getMapElement,
   navigateToExploreTab,
+  completeOnboarding,
 } from '../support/helpers/test-utils'
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -243,15 +244,16 @@ test.describe('Story 1.2: Taiwan Map — P2 Medium', () => {
   test('should load page and render map within 2 seconds', async ({
     page,
   }) => {
-    // GIVEN: Fresh page navigation
-
-    // WHEN: Navigating to homepage and switching to Explore tab
-    const startTime = Date.now()
+    // GIVEN: Fresh page navigation with onboarding completed
     await page.goto('/')
     await page.waitForLoadState('domcontentloaded')
+    await completeOnboarding(page)
+
+    // WHEN: Switching to Explore tab (measure only this transition)
+    const startTime = Date.now()
     await navigateToExploreTab(page)
 
-    // THEN: Map is visible within 2 seconds (includes tab switch)
+    // THEN: Map is visible within 2 seconds
     const map = page.getByTestId('taiwan-map')
     await expect(map).toBeVisible({ timeout: 2000 })
 

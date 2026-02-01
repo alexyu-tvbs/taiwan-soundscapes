@@ -1,5 +1,32 @@
 import { expect, type Page, type Locator } from '@playwright/test'
 
+/**
+ * Complete the sleep assessment onboarding flow.
+ * Answers all 5 questions (first option each) and clicks the CTA button.
+ * After this, the app transitions to the main view with TabBar visible.
+ */
+// Unique substring from each question to verify correct question is rendered.
+// Used to wait through AnimatePresence mode="wait" exit/enter transitions.
+const QUESTION_MARKERS = ['多久才能入睡', '醒來幾次', '腦袋通常在想', '醒來的感覺', '最大的因素']
+
+export async function completeOnboarding(page: Page): Promise<void> {
+  for (let i = 0; i < 5; i++) {
+    // Wait for this specific question's text (confirms enter animation complete)
+    await expect(page.getByText(QUESTION_MARKERS[i])).toBeVisible()
+
+    // Click first option
+    await page.getByTestId('option-0').click()
+  }
+
+  // Wait for result screen and click CTA
+  const ctaButton = page.getByTestId('start-plan-btn')
+  await expect(ctaButton).toBeVisible()
+  await ctaButton.click()
+
+  // Wait for TabBar to confirm transition to main app
+  await expect(page.getByTestId('tab-bar')).toBeVisible()
+}
+
 /** Location IDs matching src/data/locations.ts */
 export const UNLOCKED_LOCATIONS = ['tamsui', 'alishan', 'keelung'] as const
 export const LOCKED_LOCATIONS = [
