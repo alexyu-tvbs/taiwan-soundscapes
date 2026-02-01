@@ -11,7 +11,7 @@ inputDocuments:
   - _bmad-output/planning-artifacts/architecture.md
 phase1Status: complete
 phase1CompletedAt: '2026-01-30'
-phase2Status: in-progress
+phase2Status: complete
 ---
 
 # taiwan-soundscapes - Epic Breakdown
@@ -38,14 +38,14 @@ FR9: User can see a scene photograph associated with the currently playing locat
 FR10: User can switch between unlocked locations, stopping the previous soundscape and starting the new one
 FR11: User can see a lock indicator on locations that are not yet unlocked
 FR12: User can view the specific unlock condition for each locked location (e.g., "連續好眠 14 天")
-FR13: User can see unlock conditions presented in warm, positive language (no countdowns, no punishment framing)
+FR13: User can see unlock conditions presented in encouraging language using a positive-achievement pattern (e.g., "[positive action] to unlock [reward]"), with no countdown timers or punishment framing
 FR14: System displays 3 unlocked locations with full audio and imagery: 淡水河夕陽, 阿里山雲海, 基隆港浪
 FR15: System displays 7 locked locations with names and unlock prompts: 蘭嶼飛魚季, 太魯閣溪流, 日月潭晨曦, 墾丁星空, 合歡山銀河, 台東稻浪, 玉山頂風聲
 FR16: Each unlocked location has a unique audio source and scene photograph
 FR17: System presents a dark-themed interface as the default visual style
 FR18: Unlocked location markers display a glow animation effect
 FR19: Locked location markers display a dimmed/muted visual state with lock icon
-FR20: User can see a smooth visual transition when selecting a location
+FR20: User can see an animated visual transition (300-500ms duration, no frame drops below 30fps) when selecting a location
 FR21: User can navigate between three tabs: Tonight (今晚), Explore (探索), My Journey (我的)
 FR22: Tab bar is persistent and visible across all three views with active state indicator
 FR23: Tab bar is hidden during the onboarding questionnaire flow
@@ -78,8 +78,8 @@ FR46: User can return to the main app from the Product Story page
 NFR1: Map page loads and renders within 2 seconds on standard broadband connection
 NFR2: Audio playback begins within 500ms of clicking an unlocked location
 NFR3: SVG map interactions (hover, click) respond at 60fps with no visible lag
-NFR4: Switching between locations transitions smoothly without audio glitching or visual stutter
-NFR5: Scene photographs load within 1 second of location selection (acceptable to lazy-load)
+NFR4: Switching between locations completes audio crossfade within 500ms and visual transition within 300-500ms with no dropped frames
+NFR5: Scene photographs load within 1 second of location selection
 NFR6: All functional requirements (FR1-FR46) pass manual verification in Chrome (latest) as the primary demo browser
 NFR7: All functional requirements (FR1-FR46) pass manual verification in Safari (latest) as secondary browser
 
