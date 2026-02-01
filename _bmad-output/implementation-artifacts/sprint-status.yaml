@@ -62,3 +62,25 @@ development_status:
   4-1-location-marker-animations-and-visual-states: done
   4-2-transition-polish-and-performance-validation: review
   epic-4-retrospective: optional
+
+  # Epic 5: Sleep Assessment & App Navigation
+  epic-5: in-progress
+  5-1-tab-navigation-and-app-shell-restructure: ready-for-dev
+  5-2-sleep-assessment-questionnaire-and-type-result: ready-for-dev
+  epic-5-retrospective: optional
+
+  # Epic 6: Tonight Sleep Prescription Homepage
+  epic-6: in-progress
+  6-1-tonight-sleep-prescription-homepage: ready-for-dev
+  epic-6-retrospective: optional
+
+  # Epic 7: My Journey & Collection Progress
+  epic-7: in-progress
+  7-1-my-journey-achievement-page: ready-for-dev
+  7-2-map-collection-progress-and-unlock-hints: ready-for-dev
+  epic-7-retrospective: optional
+
+  # Epic 8: Product Story
+  epic-8: in-progress
+  8-1-product-story-page: ready-for-dev
+  epic-8-retrospective: optional
