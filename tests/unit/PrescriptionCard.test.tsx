@@ -32,10 +32,11 @@ describe('PrescriptionCard', () => {
       expect(card?.className).not.toContain('cursor-pointer')
     })
 
-    it('should display breathing icon', () => {
+    it('should display breathing icon 🫁', () => {
       const { container } = render(<PrescriptionCard {...breathingProps} />)
       const icon = container.querySelector('[data-testid="card-icon"]')
       expect(icon).not.toBeNull()
+      expect(icon?.textContent).toBe('🫁')
     })
   })
 
@@ -90,10 +91,52 @@ describe('PrescriptionCard', () => {
       expect(tapFn).toHaveBeenCalledOnce()
     })
 
-    it('should display soundscape icon', () => {
+    it('should display soundscape icon 🎵', () => {
       const { container } = render(<PrescriptionCard {...soundscapeProps} />)
       const icon = container.querySelector('[data-testid="card-icon"]')
       expect(icon).not.toBeNull()
+      expect(icon?.textContent).toBe('🎵')
+    })
+
+    it('should have role="button" and tabIndex for keyboard accessibility', () => {
+      const { container } = render(<PrescriptionCard {...soundscapeProps} />)
+      const card = container.querySelector('[data-testid="prescription-card"]')
+      expect(card?.getAttribute('role')).toBe('button')
+      expect(card?.getAttribute('tabindex')).toBe('0')
+    })
+
+    it('should trigger onTap on Enter key press', () => {
+      const tapFn = vi.fn()
+      const { container } = render(
+        <PrescriptionCard {...soundscapeProps} onTap={tapFn} />
+      )
+      const card = container.querySelector('[data-testid="prescription-card"]')
+      fireEvent.keyDown(card!, { key: 'Enter' })
+      expect(tapFn).toHaveBeenCalledOnce()
+    })
+
+    it('should trigger onTap on Space key press', () => {
+      const tapFn = vi.fn()
+      const { container } = render(
+        <PrescriptionCard {...soundscapeProps} onTap={tapFn} />
+      )
+      const card = container.querySelector('[data-testid="prescription-card"]')
+      fireEvent.keyDown(card!, { key: ' ' })
+      expect(tapFn).toHaveBeenCalledOnce()
+    })
+
+    it('should NOT have role="button" on non-tappable cards', () => {
+      const { container } = render(
+        <PrescriptionCard
+          type="breathing"
+          title="4-7-8 呼吸法"
+          subtitle="3 分鐘"
+          detail="江醫師引導"
+        />
+      )
+      const card = container.querySelector('[data-testid="prescription-card"]')
+      expect(card?.getAttribute('role')).toBeNull()
+      expect(card?.getAttribute('tabindex')).toBeNull()
     })
   })
 })

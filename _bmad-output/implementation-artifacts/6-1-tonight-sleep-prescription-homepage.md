@@ -1,6 +1,6 @@
 # Story 6.1: Tonight Sleep Prescription Homepage
 
-Status: review
+Status: done
 
 ## Story
 
@@ -194,8 +194,27 @@ No issues encountered during implementation.
 - Task 3: Integrated `TonightPage` into App.tsx replacing the "Coming in Epic 6" placeholder. Added `handleNavigateToLocation` that executes `setActiveTab('explore')`, `setSelectedLocationId(locationId)`, and `audioPlayer.play(loc.audioPath)`. Updated 8 existing tests referencing old placeholder. 4 new integration tests for cross-tab navigation. All 259 tests passing.
 - All anti-patterns respected: TonightPage does NOT import useAudioPlayer, does NOT directly control audio, delegates via callback to App.tsx.
 
+### Senior Developer Review (AI)
+
+**Reviewer:** Amelia (Dev Agent) — 2026-02-02
+**Outcome:** Approved with fixes applied
+
+**Issues Found:** 4 MEDIUM, 3 LOW
+
+**MEDIUM — Fixed:**
+- M1: File List missing 3 E2E test files → Added to File List
+- M2: AC #3 interpretation — AC says "tapping shows a static info overlay" but breathing card has no tap behavior. Dev Notes explicitly state "NO interactive behavior." Decision: current interpretation accepted (display-only = no action). If a static info overlay is desired, it should be added as a separate story.
+- M3: PrescriptionCard tappable div lacked keyboard accessibility (no role="button", tabIndex, onKeyDown) → Fixed with role="button", tabIndex={0}, Enter/Space key handlers
+- M4: PrescriptionCard icon tests didn't verify content (🫁 vs 🎵) → Added content assertions + keyboard accessibility tests
+
+**LOW — Noted (not blocking):**
+- L1: handleNavigateToLocation doesn't defensively clear lockedLocation (safe due to flow constraints)
+- L2: Soundscape card subtitle hardcoded "點擊前往聆聽" vs AC example description
+- L3: Progress bar lacks ARIA attributes (role="progressbar", aria-value*)
+
 ### Change Log
 
+- 2026-02-02: Code review — fixed keyboard accessibility on PrescriptionCard, added icon content test assertions, updated File List
 - 2026-02-01: Implemented Story 6.1 — TonightPage, PrescriptionCard, App.tsx integration with cross-tab navigation
 
 ### File List
@@ -209,3 +228,6 @@ No issues encountered during implementation.
 **Modified:**
 - `src/App.tsx` — Imported TonightPage, added handleNavigateToLocation, replaced Tonight placeholder
 - `tests/unit/App.test.tsx` — Updated 8 existing tests, added 4 new integration tests for cross-tab navigation
+- `tests/e2e/tonight-page.spec.ts` — 7 E2E tests for TonightPage (2 P0 + 5 P1)
+- `tests/e2e/sleep-assessment.spec.ts` — Updated P0 CTA transition test to verify TonightPage appears
+- `tests/e2e/tab-navigation.spec.ts` — Updated tab content assertions to use TonightPage instead of placeholder

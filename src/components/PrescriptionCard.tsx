@@ -20,6 +20,7 @@ export const PrescriptionCard = ({
       data-testid="prescription-card"
       className={`bg-slate-800 rounded-xl p-4 border border-slate-700${isTappable ? ' cursor-pointer hover:bg-slate-700/50 transition-colors' : ''}`}
       onClick={onTap}
+      {...(isTappable ? { role: 'button', tabIndex: 0, onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onTap?.() } } } : {})}
     >
       <div className="flex items-center gap-3">
         <span data-testid="card-icon" className="text-2xl">
