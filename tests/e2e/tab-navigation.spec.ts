@@ -29,8 +29,8 @@ test.describe('Tab Navigation — P0 Critical', () => {
   test('[P0] should switch between all three tabs showing correct content', async ({
     page,
   }) => {
-    // GIVEN: App loads on Tonight tab
-    await expect(page.getByText('今晚的處方')).toBeVisible()
+    // GIVEN: App loads on Tonight tab (TonightPage with prescription content)
+    await expect(page.getByTestId('tonight-page')).toBeVisible()
 
     const tabBar = page.getByTestId('tab-bar')
 
@@ -50,8 +50,8 @@ test.describe('Tab Navigation — P0 Critical', () => {
     // WHEN: User taps Tonight tab
     await tabBar.getByText('今晚').click()
 
-    // THEN: Tonight placeholder is visible
-    await expect(page.getByText('今晚的處方')).toBeVisible()
+    // THEN: TonightPage is visible again
+    await expect(page.getByTestId('tonight-page')).toBeVisible()
   })
 })
 
@@ -71,13 +71,15 @@ test.describe('Tab Navigation — P1 High', () => {
     await expect(dots).toHaveCount(10)
   })
 
-  test('[P1] should show Tonight placeholder with "Coming in Epic 6"', async ({
+  test('[P1] should show TonightPage with prescription content on Tonight tab', async ({
     page,
   }) => {
-    // GIVEN: App loads on Tonight tab (default)
+    // GIVEN: App loads on Tonight tab (default after onboarding)
 
-    // THEN: Tonight placeholder content is visible
-    await expect(page.getByText('今晚的處方 — Coming in Epic 6')).toBeVisible()
+    // THEN: TonightPage content is visible (progress bar + prescription cards)
+    await expect(page.getByTestId('tonight-page')).toBeVisible()
+    await expect(page.getByTestId('progress-bar')).toBeVisible()
+    await expect(page.getByTestId('prescription-card')).toHaveCount(2)
   })
 
   test('[P1] should show Journey placeholder with "Coming in Epic 7"', async ({
@@ -149,7 +151,7 @@ test.describe('Tab Navigation — P1 High', () => {
 
     // WHEN: User switches to Tonight tab
     await tabBar.getByText('今晚').click()
-    await expect(page.getByText('今晚的處方')).toBeVisible()
+    await expect(page.getByTestId('tonight-page')).toBeVisible()
 
     // THEN: SoundscapePlayer is no longer visible
     await expect(page.getByTestId('soundscape-player')).not.toBeVisible()

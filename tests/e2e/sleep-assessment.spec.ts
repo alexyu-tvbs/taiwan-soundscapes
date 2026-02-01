@@ -72,8 +72,8 @@ test.describe('Sleep Assessment — P0 Critical', () => {
     // THEN: SleepAssessment is no longer visible
     await expect(page.getByTestId('sleep-assessment')).not.toBeVisible()
 
-    // THEN: Tonight tab content is visible (default active tab)
-    await expect(page.getByText('今晚的處方')).toBeVisible()
+    // THEN: TonightPage content is visible (default active tab)
+    await expect(page.getByTestId('tonight-page')).toBeVisible()
   })
 })
 
