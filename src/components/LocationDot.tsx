@@ -23,7 +23,6 @@ export const LocationDot = ({ location, isSelected, onClick }: LocationDotProps)
           initial={false}
           animate={{
             opacity: [0.7, 1, 0.7],
-            r: isSelected ? [8, 10, 8] : [6, 7.5, 6],
           }}
           transition={{
             duration: 2.5,
@@ -42,7 +41,7 @@ export const LocationDot = ({ location, isSelected, onClick }: LocationDotProps)
           aria-label={location.name}
           whileHover={{ scale: 1.2 }}
           className="cursor-pointer"
-          style={{ pointerEvents: 'auto', transformBox: 'fill-box', transformOrigin: 'center' }}
+          style={{ pointerEvents: 'auto', transformBox: 'fill-box', transformOrigin: 'center', willChange: 'opacity' }}
         >
           <title>{location.name}</title>
         </motion.circle>

@@ -18,14 +18,14 @@ export const TaiwanMap = ({ locations, selectedLocationId, onSelect }: TaiwanMap
     >
       <defs>
         <filter id="glow">
-          <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+          <feGaussianBlur stdDeviation="2" result="coloredBlur" />
           <feMerge>
             <feMergeNode in="coloredBlur" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
         <filter id="glow-strong">
-          <feGaussianBlur stdDeviation="5" result="coloredBlur" />
+          <feGaussianBlur stdDeviation="4" result="coloredBlur" />
           <feMerge>
             <feMergeNode in="coloredBlur" />
             <feMergeNode in="SourceGraphic" />
