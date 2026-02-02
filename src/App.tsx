@@ -8,8 +8,10 @@ import { TabBar } from './components/TabBar'
 import { SleepAssessment } from './components/SleepAssessment'
 import { TonightPage } from './components/TonightPage'
 import { MyJourneyPage } from './components/MyJourneyPage'
+import { CollectionProgress } from './components/CollectionProgress'
 import { useAudioPlayer } from './hooks/useAudioPlayer'
 import { locations } from './data/locations'
+import { prescriptions } from './data/sleep'
 import type { Location, Tab, SleepType } from './types'
 
 export const App = () => {
@@ -99,7 +101,21 @@ export const App = () => {
             />
           )}
           {activeTab === 'explore' && (
-            <main className="flex-1 flex items-center justify-center gap-8 px-8">
+            <main className="flex-1 flex flex-col items-center justify-center px-8">
+              <CollectionProgress
+                unlockedCount={locations.filter((l) => l.status === 'unlocked').length}
+                totalCount={locations.length}
+                hintText={sleepType ? (() => {
+                  const planName = prescriptions[sleepType].planName
+                  const hintLocations: Record<SleepType, string> = {
+                    difficulty: '台東稻浪',
+                    light: '日月潭晨曦',
+                    anxious: '蘭嶼飛魚季',
+                  }
+                  return `完成「${planName}」即可解鎖：${hintLocations[sleepType]}`
+                })() : ''}
+              />
+              <div className="flex items-center justify-center gap-8 w-full">
               <TaiwanMap
                 locations={locations}
                 selectedLocationId={selectedLocationId}
@@ -121,6 +137,7 @@ export const App = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
+              </div>
             </main>
           )}
           {activeTab === 'journey' && sleepType && (

@@ -920,3 +920,75 @@ describe('App Component — TonightPage Integration (Story 6.1)', () => {
     })
   })
 })
+
+describe('App Component — CollectionProgress Integration (Story 7.2)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockAudio.src = ''
+    mockAudio.volume = 1
+    mockAudio.paused = true
+    mockAudio.play.mockResolvedValue(undefined)
+  })
+
+  it('should render CollectionProgress on Explore tab after onboarding (AC #1)', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+    await navigateToExplore(container)
+    expect(container.querySelector('[data-testid="collection-progress"]')).not.toBeNull()
+  })
+
+  it('should display correct collection count "已收集 3/10 個台灣聲景" (AC #1, FR41)', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+    await navigateToExplore(container)
+    const progress = container.querySelector('[data-testid="collection-progress"]')
+    expect(progress?.textContent).toContain('已收集 3/10 個台灣聲景')
+  })
+
+  it('should display hint text that varies by sleep type (AC #2, FR42)', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+    await navigateToExplore(container)
+    const hint = container.querySelector('[data-testid="collection-hint"]')
+    expect(hint).not.toBeNull()
+    // The hint should contain a plan name and a locked location name
+    expect(hint?.textContent).toContain('完成「')
+    expect(hint?.textContent).toContain('」即可解鎖：')
+  })
+
+  it('should NOT render CollectionProgress on Tonight tab', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+    // Default is tonight tab
+    expect(container.querySelector('[data-testid="collection-progress"]')).toBeNull()
+  })
+
+  it('should NOT render CollectionProgress on Journey tab', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+    await navigateToTab(container, 2, '我的旅程')
+    expect(container.querySelector('[data-testid="collection-progress"]')).toBeNull()
+  })
+
+  it('should render CollectionProgress above the map area', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+    await navigateToExplore(container)
+    const progress = container.querySelector('[data-testid="collection-progress"]')
+    const map = container.querySelector('[data-testid="taiwan-map"]')
+    expect(progress).not.toBeNull()
+    expect(map).not.toBeNull()
+    // progress should come before map in DOM order
+    const all = container.querySelectorAll('[data-testid="collection-progress"], [data-testid="taiwan-map"]')
+    expect(all[0]?.getAttribute('data-testid')).toBe('collection-progress')
+    expect(all[1]?.getAttribute('data-testid')).toBe('taiwan-map')
+  })
+
+  it('should show progress dots matching total location count', async () => {
+    const { container } = render(<App />)
+    await completeOnboarding(container)
+    await navigateToExplore(container)
+    const dots = container.querySelectorAll('[data-testid="progress-dot"]')
+    expect(dots.length).toBe(10)
+  })
+})
