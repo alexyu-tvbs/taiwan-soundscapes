@@ -82,7 +82,7 @@ test.describe('Tab Navigation — P1 High', () => {
     await expect(page.getByTestId('prescription-card')).toHaveCount(2)
   })
 
-  test('[P1] should show Journey placeholder with "Coming in Epic 7"', async ({
+  test('[P1] should show MyJourneyPage when navigating to Journey tab', async ({
     page,
   }) => {
     // GIVEN: App is loaded
@@ -91,8 +91,9 @@ test.describe('Tab Navigation — P1 High', () => {
     const tabBar = page.getByTestId('tab-bar')
     await tabBar.getByText('我的').click()
 
-    // THEN: Journey placeholder content is visible
-    await expect(page.getByText('我的旅程 — Coming in Epic 7')).toBeVisible()
+    // THEN: MyJourneyPage is visible with achievement stats
+    await expect(page.getByTestId('my-journey-page')).toBeVisible()
+    await expect(page.getByTestId('stats-section')).toBeVisible()
   })
 
   test('[P1] should visually distinguish active tab with amber styling', async ({

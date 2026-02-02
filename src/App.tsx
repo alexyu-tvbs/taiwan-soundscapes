@@ -7,6 +7,7 @@ import { LockOverlay } from './components/LockOverlay'
 import { TabBar } from './components/TabBar'
 import { SleepAssessment } from './components/SleepAssessment'
 import { TonightPage } from './components/TonightPage'
+import { MyJourneyPage } from './components/MyJourneyPage'
 import { useAudioPlayer } from './hooks/useAudioPlayer'
 import { locations } from './data/locations'
 import type { Location, Tab, SleepType } from './types'
@@ -36,7 +37,7 @@ export const App = () => {
     }
   }
 
-  void showProductStory // Epic 8
+  void showProductStory // consumed by ProductStory overlay (Epic 8)
 
   const handleNavigateToLocation = (locationId: string) => {
     setActiveTab('explore')
@@ -122,12 +123,11 @@ export const App = () => {
               </AnimatePresence>
             </main>
           )}
-          {activeTab === 'journey' && (
-            <main className="flex-1 flex items-center justify-center px-8">
-              <div className="text-center text-slate-400">
-                <p className="text-lg">我的旅程 — Coming in Epic 7</p>
-              </div>
-            </main>
+          {activeTab === 'journey' && sleepType && (
+            <MyJourneyPage
+              sleepType={sleepType}
+              onOpenProductStory={() => setShowProductStory(true)}
+            />
           )}
         </motion.div>
       </AnimatePresence>

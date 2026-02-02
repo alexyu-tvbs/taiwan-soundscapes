@@ -583,12 +583,12 @@ describe('App Component — Phase 2 Tab Navigation', () => {
     expect(container.querySelector('[data-testid="progress-bar"]')).not.toBeNull()
   })
 
-  it('should show journey placeholder when journey tab is clicked', async () => {
+  it('should show MyJourneyPage when journey tab is clicked', async () => {
     const { container } = render(<App />)
     await completeOnboarding(container)
     await navigateToTab(container, 2, '我的旅程')
     expect(container.textContent).toContain('我的旅程')
-    expect(container.textContent).toContain('Coming in Epic 7')
+    expect(container.querySelector('[data-testid="my-journey-page"]')).not.toBeNull()
   })
 
   it('should switch between tabs correctly', async () => {

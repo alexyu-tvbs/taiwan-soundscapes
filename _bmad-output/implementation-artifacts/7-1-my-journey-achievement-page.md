@@ -1,6 +1,6 @@
 # Story 7.1: My Journey Achievement Page
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -20,24 +20,24 @@ So that I feel motivated by my progress and want to continue.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create MyJourneyPage component (AC: #1, #2, #3, #4)
-  - [ ] 1.1 Create `src/components/MyJourneyPage.tsx`
-  - [ ] 1.2 Props: `MyJourneyPageProps { sleepType: SleepType; onOpenProductStory: () => void }`
-  - [ ] 1.3 Load `journeyStats` from `data/sleep.ts`
-  - [ ] 1.4 Load `prescriptions[sleepType]` from `data/sleep.ts` for plan progress data
-  - [ ] 1.5 Stats section: 3-column grid showing:
+- [x] Task 1: Create MyJourneyPage component (AC: #1, #2, #3, #4)
+  - [x] 1.1 Create `src/components/MyJourneyPage.tsx`
+  - [x] 1.2 Props: `MyJourneyPageProps { sleepType: SleepType; onOpenProductStory: () => void }`
+  - [x] 1.3 Load `journeyStats` from `data/sleep.ts`
+  - [x] 1.4 Load `prescriptions[sleepType]` from `data/sleep.ts` for plan progress data
+  - [x] 1.5 Stats section: 3-column grid showing:
     - 已完成 {completedSessions} 次 (completed sessions)
     - 最長連續 {longestStreak} 天 (longest streak)
     - 已解鎖 {unlockedSoundscapes} 個聲景 (unlocked soundscapes)
-  - [ ] 1.6 Each stat: large number + label below, amber-400 accent on numbers
-  - [ ] 1.7 Reinforcement message section: `journeyStats.reinforcementMessage` in a styled card with warm tone (e.g., soft amber/gold background tint)
-  - [ ] 1.8 Plan progress section: reuse same progress bar pattern as TonightPage — plan name, current day / total days, percentage bar
-  - [ ] 1.9 Product Story link: "了解更多產品故事 →" button/link, calls `onOpenProductStory()`
-  - [ ] 1.10 Layout: vertical stack, scrollable, centered max-width, dark theme
+  - [x] 1.6 Each stat: large number + label below, amber-400 accent on numbers
+  - [x] 1.7 Reinforcement message section: `journeyStats.reinforcementMessage` in a styled card with warm tone (e.g., soft amber/gold background tint)
+  - [x] 1.8 Plan progress section: reuse same progress bar pattern as TonightPage — plan name, current day / total days, percentage bar
+  - [x] 1.9 Product Story link: "了解更多產品故事 →" button/link, calls `onOpenProductStory()`
+  - [x] 1.10 Layout: vertical stack, scrollable, centered max-width, dark theme
 
-- [ ] Task 2: Integrate MyJourneyPage into App.tsx (AC: #1)
-  - [ ] 2.1 Replace My Journey placeholder with `<MyJourneyPage sleepType={sleepType!} onOpenProductStory={() => setShowProductStory(true)} />`
-  - [ ] 2.2 Verify tab switching to My Journey shows the component correctly
+- [x] Task 2: Integrate MyJourneyPage into App.tsx (AC: #1)
+  - [x] 2.1 Replace My Journey placeholder with `<MyJourneyPage sleepType={sleepType!} onOpenProductStory={() => setShowProductStory(true)} />`
+  - [x] 2.2 Verify tab switching to My Journey shows the component correctly
 
 ## Dev Notes
 
@@ -154,8 +154,36 @@ src/
 
 ### Agent Model Used
 
+Claude Opus 4.5 (claude-opus-4-5-20251101)
+
 ### Debug Log References
+
+- Unit test: happy-dom requires manual `cleanup()` in `afterEach` — auto-cleanup not working
+- Tab label for journey tab is "我的" not "旅程" — fixed in E2E tests
 
 ### Completion Notes List
 
+- Created `MyJourneyPage` component with stats grid (3-column), reinforcement message card, plan progress bar, and product story link
+- Stats use amber-400 accent, reinforcement card uses amber-400/10 background tint for warm tone
+- Progress bar duplicates TonightPage markup pattern (3 lines JSX — no extraction per Dev Notes guidance)
+- Integrated into App.tsx replacing "Coming in Epic 7" placeholder
+- `onOpenProductStory` wired to `setShowProductStory(true)` — overlay renders in Story 8.1
+- Updated existing unit test (App.test.tsx) and E2E test (tab-navigation.spec.ts) that referenced old placeholder text
+- 13 new unit tests covering all ACs + sleep type variations
+- 6 new E2E tests covering tab navigation, stats display, reinforcement message, progress bar, product story link, and tab switching
+- All 276 unit tests pass, all E2E tests pass (3 pre-existing flaky failures in lock-overlay/scene-photography unrelated to this story)
+
 ### File List
+
+| File | Action |
+|------|--------|
+| `src/components/MyJourneyPage.tsx` | **Created** |
+| `src/App.tsx` | **Modified** — import + replace journey placeholder |
+| `tests/unit/MyJourneyPage.test.tsx` | **Created** — 13 unit tests |
+| `tests/e2e/my-journey-page.spec.ts` | **Created** — 6 E2E tests |
+| `tests/unit/App.test.tsx` | **Modified** — updated journey tab test |
+| `tests/e2e/tab-navigation.spec.ts` | **Modified** — updated journey tab E2E test |
+
+### Change Log
+
+- 2026-02-02: Implemented Story 7.1 — MyJourneyPage achievement stats, reinforcement message, plan progress bar, product story link. Full test coverage added.
