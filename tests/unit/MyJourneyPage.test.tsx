@@ -106,10 +106,31 @@ describe('MyJourneyPage', () => {
     })
   })
 
+  it('[P2] renders the page heading', () => {
+    render(<MyJourneyPage {...defaultProps} />)
+    expect(screen.getByText('我的旅程')).toBeInTheDocument()
+  })
+
   describe('different sleep types', () => {
     it('shows correct prescription for light sleep type', () => {
       render(<MyJourneyPage sleepType="light" onOpenProductStory={vi.fn()} />)
       expect(screen.getByText(prescriptions.light.planName)).toBeInTheDocument()
+    })
+
+    it('[P2] shows correct progress for light sleep type', () => {
+      render(<MyJourneyPage sleepType="light" onOpenProductStory={vi.fn()} />)
+      const prescription = prescriptions.light
+      const expectedPercent = Math.round(
+        (prescription.currentDay / prescription.totalDays) * 100
+      )
+      expect(
+        screen.getByText(
+          `第 ${prescription.currentDay} 天 / 共 ${prescription.totalDays} 天`
+        )
+      ).toBeInTheDocument()
+      expect(screen.getByTestId('journey-progress-fill')).toHaveStyle({
+        width: `${expectedPercent}%`,
+      })
     })
 
     it('shows correct prescription for anxious sleep type', () => {
@@ -117,6 +138,22 @@ describe('MyJourneyPage', () => {
       expect(
         screen.getByText(prescriptions.anxious.planName)
       ).toBeInTheDocument()
+    })
+
+    it('[P2] shows correct progress for anxious sleep type', () => {
+      render(<MyJourneyPage sleepType="anxious" onOpenProductStory={vi.fn()} />)
+      const prescription = prescriptions.anxious
+      const expectedPercent = Math.round(
+        (prescription.currentDay / prescription.totalDays) * 100
+      )
+      expect(
+        screen.getByText(
+          `第 ${prescription.currentDay} 天 / 共 ${prescription.totalDays} 天`
+        )
+      ).toBeInTheDocument()
+      expect(screen.getByTestId('journey-progress-fill')).toHaveStyle({
+        width: `${expectedPercent}%`,
+      })
     })
   })
 })
