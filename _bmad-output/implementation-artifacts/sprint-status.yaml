@@ -81,6 +81,6 @@ development_status:
   epic-7-retrospective: optional
 
   # Epic 8: Product Story
-  epic-8: in-progress
-  8-1-product-story-page: review
+  epic-8: done
+  8-1-product-story-page: done
   epic-8-retrospective: optional

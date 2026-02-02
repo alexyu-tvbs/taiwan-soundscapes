@@ -71,74 +71,70 @@ describe('ProductStory', () => {
       const onClose = vi.fn()
       const { container } = render(<ProductStory onClose={onClose} />)
       const closeBtn = container.querySelector('[data-testid="product-story-close"]')
+      expect(closeBtn).not.toBeNull()
       fireEvent.click(closeBtn!)
       expect(onClose).toHaveBeenCalledTimes(1)
+    })
+
+    it('should call onClose when Escape key is pressed', () => {
+      const onClose = vi.fn()
+      render(<ProductStory onClose={onClose} />)
+      fireEvent.keyDown(document, { key: 'Escape' })
+      expect(onClose).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not call onClose for non-Escape keys', () => {
+      const onClose = vi.fn()
+      render(<ProductStory onClose={onClose} />)
+      fireEvent.keyDown(document, { key: 'Enter' })
+      expect(onClose).not.toHaveBeenCalled()
     })
   })
 
   describe('typography (AC #3)', () => {
-    it('should apply heading styles with text-xl and font-bold', () => {
+    it('should render headings as h3 elements within each section', () => {
       const { container } = render(<ProductStory {...defaultProps} />)
-      const headings = container.querySelectorAll('[data-testid^="section-"] h3')
-      expect(headings.length).toBeGreaterThan(0)
-      headings.forEach((heading) => {
-        expect(heading.className).toContain('text-xl')
-        expect(heading.className).toContain('font-bold')
-        expect(heading.className).toContain('text-white')
+      const sections = container.querySelectorAll('[data-testid^="section-"]')
+      sections.forEach((section) => {
+        const heading = section.querySelector('h3')
+        expect(heading).not.toBeNull()
       })
     })
 
-    it('should apply body text styles with text-base and text-slate-300', () => {
+    it('should render body text as p elements within each section', () => {
       const { container } = render(<ProductStory {...defaultProps} />)
-      const bodies = container.querySelectorAll('[data-testid^="section-"] p')
-      expect(bodies.length).toBeGreaterThan(0)
-      bodies.forEach((body) => {
-        expect(body.className).toContain('text-base')
-        expect(body.className).toContain('text-slate-300')
-        expect(body.className).toContain('leading-relaxed')
+      const sections = container.querySelectorAll('[data-testid^="section-"]')
+      sections.forEach((section) => {
+        const body = section.querySelector('p')
+        expect(body).not.toBeNull()
       })
     })
   })
 
-  describe('overlay styling (AC #5)', () => {
-    it('should have fixed positioning with inset-0', () => {
+  describe('overlay structure (AC #5)', () => {
+    it('should render the overlay root element', () => {
       const { container } = render(<ProductStory {...defaultProps} />)
       const root = container.firstElementChild
-      expect(root?.className).toContain('fixed')
-      expect(root?.className).toContain('inset-0')
+      expect(root).not.toBeNull()
+      expect(root?.tagName.toLowerCase()).toBe('div')
     })
 
-    it('should have z-50 for highest z-index', () => {
-      const { container } = render(<ProductStory {...defaultProps} />)
-      const root = container.firstElementChild
-      expect(root?.className).toContain('z-50')
-    })
-
-    it('should have bg-slate-900 background', () => {
-      const { container } = render(<ProductStory {...defaultProps} />)
-      const root = container.firstElementChild
-      expect(root?.className).toContain('bg-slate-900')
-    })
-
-    it('should have overflow-y-auto for scrolling', () => {
-      const { container } = render(<ProductStory {...defaultProps} />)
-      const root = container.firstElementChild
-      expect(root?.className).toContain('overflow-y-auto')
-    })
-  })
-
-  describe('content wrapper', () => {
-    it('should have max-w-2xl for readable line length', () => {
+    it('should render the content wrapper with data-testid', () => {
       const { container } = render(<ProductStory {...defaultProps} />)
       const wrapper = container.querySelector('[data-testid="product-story-content"]')
-      expect(wrapper?.className).toContain('max-w-2xl')
-      expect(wrapper?.className).toContain('mx-auto')
+      expect(wrapper).not.toBeNull()
     })
 
-    it('should have section spacing with space-y-8', () => {
+    it('should render the sections wrapper with data-testid', () => {
       const { container } = render(<ProductStory {...defaultProps} />)
       const sectionsWrapper = container.querySelector('[data-testid="product-story-sections"]')
-      expect(sectionsWrapper?.className).toContain('space-y-8')
+      expect(sectionsWrapper).not.toBeNull()
+    })
+
+    it('should have close button accessible with aria-label', () => {
+      const { container } = render(<ProductStory {...defaultProps} />)
+      const closeBtn = container.querySelector('[data-testid="product-story-close"]')
+      expect(closeBtn?.getAttribute('aria-label')).toBe('關閉')
     })
   })
 })

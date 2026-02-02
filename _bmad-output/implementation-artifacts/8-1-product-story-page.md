@@ -1,6 +1,6 @@
 # Story 8.1: Product Story Page
 
-Status: review
+Status: done
 
 ## Story
 
@@ -210,6 +210,7 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 ### Change Log
 
 - 2026-02-02: Implemented Story 8.1 — ProductStory overlay component with 6 content sections, fullscreen overlay styling, Motion animations, and App.tsx integration
+- 2026-02-02: Code Review fixes — Added Escape key handler for overlay dismissal, increased close button tap target with p-2 padding, refactored unit tests to use data-testid/structural assertions instead of fragile className checks, added E2E test file to File List
 
 ### File List
 
@@ -218,3 +219,4 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 | `src/components/ProductStory.tsx` | Created |
 | `src/App.tsx` | Modified (added import, AnimatePresence + ProductStory render, removed void placeholder) |
 | `tests/unit/ProductStory.test.tsx` | Created (20 tests) |
+| `tests/e2e/product-story.spec.ts` | Created (7 E2E tests) |
