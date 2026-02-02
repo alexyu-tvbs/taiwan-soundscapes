@@ -1,6 +1,6 @@
 # Story 7.2: Map Collection Progress & Unlock Hints
 
-Status: review
+Status: done
 
 ## Story
 
@@ -135,9 +135,12 @@ No issues encountered during implementation.
 |------|--------|
 | `src/components/CollectionProgress.tsx` | Created |
 | `src/App.tsx` | Modified |
+| `src/data/sleep.ts` | Modified |
 | `tests/unit/CollectionProgress.test.tsx` | Created |
 | `tests/unit/App.test.tsx` | Modified |
+| `tests/e2e/collection-progress.spec.ts` | Created |
 
 ## Change Log
 
 - 2026-02-02: Implemented Story 7.2 — CollectionProgress component with collection count, progress dots, and sleep-type-specific unlock hints. Integrated into Explore tab above the map. 17 tests added.
+- 2026-02-02: Code Review fixes — Extracted inline IIFE hintText computation to pre-render variable (M1). Moved hintLocations data from App.tsx to data/sleep.ts per Architecture Decision 10 (M2). Updated File List to include E2E test and modified sleep.ts (M3).

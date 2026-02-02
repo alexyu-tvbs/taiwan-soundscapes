@@ -110,6 +110,12 @@ export const journeyStats: JourneyStats = {
   reinforcementMessage: '你連續 3 天在 11 點前開始準備睡覺，這是很棒的習慣！',
 }
 
+export const hintLocations: Record<SleepType, string> = {
+  difficulty: '台東稻浪',
+  light: '日月潭晨曦',
+  anxious: '蘭嶼飛魚季',
+}
+
 export const calculateSleepType = (answers: SleepOption[]): SleepType => {
   if (answers.length === 0) {
     return 'difficulty'

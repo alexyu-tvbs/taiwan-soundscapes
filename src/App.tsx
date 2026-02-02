@@ -11,7 +11,7 @@ import { MyJourneyPage } from './components/MyJourneyPage'
 import { CollectionProgress } from './components/CollectionProgress'
 import { useAudioPlayer } from './hooks/useAudioPlayer'
 import { locations } from './data/locations'
-import { prescriptions } from './data/sleep'
+import { prescriptions, hintLocations } from './data/sleep'
 import type { Location, Tab, SleepType } from './types'
 
 export const App = () => {
@@ -25,6 +25,11 @@ export const App = () => {
 
   const selectedLocation = locations.find((l) => l.id === selectedLocationId) ?? null
   const isUnlockedSelection = selectedLocation?.status === 'unlocked'
+  const unlockedCount = locations.filter((l) => l.status === 'unlocked').length
+  const totalCount = locations.length
+  const collectionHintText = sleepType
+    ? `完成「${prescriptions[sleepType].planName}」即可解鎖：${hintLocations[sleepType]}`
+    : ''
 
   const handleSelect = (id: string) => {
     const loc = locations.find((l) => l.id === id)
@@ -103,17 +108,9 @@ export const App = () => {
           {activeTab === 'explore' && (
             <main className="flex-1 flex flex-col items-center justify-center px-8">
               <CollectionProgress
-                unlockedCount={locations.filter((l) => l.status === 'unlocked').length}
-                totalCount={locations.length}
-                hintText={sleepType ? (() => {
-                  const planName = prescriptions[sleepType].planName
-                  const hintLocations: Record<SleepType, string> = {
-                    difficulty: '台東稻浪',
-                    light: '日月潭晨曦',
-                    anxious: '蘭嶼飛魚季',
-                  }
-                  return `完成「${planName}」即可解鎖：${hintLocations[sleepType]}`
-                })() : ''}
+                unlockedCount={unlockedCount}
+                totalCount={totalCount}
+                hintText={collectionHintText}
               />
               <div className="flex items-center justify-center gap-8 w-full">
               <TaiwanMap

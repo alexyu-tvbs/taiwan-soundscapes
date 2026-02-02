@@ -75,9 +75,9 @@ development_status:
   epic-6-retrospective: optional
 
   # Epic 7: My Journey & Collection Progress
-  epic-7: in-progress
+  epic-7: done
   7-1-my-journey-achievement-page: done
-  7-2-map-collection-progress-and-unlock-hints: review
+  7-2-map-collection-progress-and-unlock-hints: done
   epic-7-retrospective: optional
 
   # Epic 8: Product Story
