@@ -107,7 +107,7 @@ export const journeyStats: JourneyStats = {
   completedSessions: 12,
   longestStreak: 5,
   unlockedSoundscapes: 3,
-  reinforcementMessage: '你已經累積了不少好眠夜晚，繼續保持！',
+  reinforcementMessage: '你連續 3 天在 11 點前開始準備睡覺，這是很棒的習慣！',
 }
 
 export const calculateSleepType = (answers: SleepOption[]): SleepType => {

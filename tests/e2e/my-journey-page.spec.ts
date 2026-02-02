@@ -68,11 +68,12 @@ test.describe('My Journey Page — P1 High', () => {
     // GIVEN: User is on My Journey tab
     await navigateToJourneyTab(page)
 
-    // THEN: Reinforcement message card is visible with text content
+    // THEN: Reinforcement message card is visible with behavior-specific content
     const messageCard = page.getByTestId('reinforcement-message')
     await expect(messageCard).toBeVisible()
-    const messageText = await messageCard.textContent()
-    expect(messageText!.length).toBeGreaterThan(5)
+    // AC #3: message must highlight a recent behavior pattern, not just generic encouragement
+    await expect(messageCard).toContainText('連續')
+    await expect(messageCard).toContainText('習慣')
   })
 
   test('[P1] should display plan progress consistent with Tonight tab (AC #4)', async ({

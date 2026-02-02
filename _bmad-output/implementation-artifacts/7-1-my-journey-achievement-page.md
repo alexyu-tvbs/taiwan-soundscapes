@@ -1,6 +1,6 @@
 # Story 7.1: My Journey Achievement Page
 
-Status: review
+Status: done
 
 ## Story
 
@@ -183,7 +183,29 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 | `tests/e2e/my-journey-page.spec.ts` | **Created** — 6 E2E tests |
 | `tests/unit/App.test.tsx` | **Modified** — updated journey tab test |
 | `tests/e2e/tab-navigation.spec.ts` | **Modified** — updated journey tab E2E test |
+| `src/data/sleep.ts` | **Modified** — CR fix: reinforcement message updated to match AC #3 |
+
+### Senior Developer Review (AI)
+
+**Reviewer:** Amelia (Dev Agent) — Code Review Workflow
+**Date:** 2026-02-02
+**Outcome:** Approved (after fixes)
+
+**Issues Found:** 1 High, 2 Medium, 4 Low
+**Issues Fixed:** 3 (all HIGH + MEDIUM)
+
+**Fixes Applied:**
+1. **[H1] AC #3 reinforcement message** — Updated `data/sleep.ts` `journeyStats.reinforcementMessage` from generic encouragement to behavior-specific message matching story Dev Notes: "你連續 3 天在 11 點前開始準備睡覺，這是很棒的習慣！"
+2. **[M1] Unit test circular validation** — Rewrote `MyJourneyPage.test.tsx` to use hardcoded expected values ('12', '5', '3', plan names, day counts) instead of importing source data. Tests now catch data regressions.
+3. **[M2] E2E test AC #3 too weak** — Strengthened `my-journey-page.spec.ts` AC #3 test to validate behavior-pattern keywords ('連續', '習慣') instead of only checking string length > 5.
+
+**Remaining LOW items (not fixed — acceptable for prototype):**
+- L1: Progress bar missing ARIA progressbar role (consistent with TonightPage)
+- L2: Stats label spacing ("已完成 次") slightly awkward in Chinese
+- L3: Inconsistent `[P2]` test name prefixes
+- L4: No data-testid on progress section wrapper
 
 ### Change Log
 
 - 2026-02-02: Implemented Story 7.1 — MyJourneyPage achievement stats, reinforcement message, plan progress bar, product story link. Full test coverage added.
+- 2026-02-02: Code review fixes — H1: reinforcement message updated to behavior-specific per AC #3; M1: unit tests use hardcoded values; M2: E2E test strengthened for AC #3.
