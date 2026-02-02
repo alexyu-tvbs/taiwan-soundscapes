@@ -9,6 +9,7 @@ import { SleepAssessment } from './components/SleepAssessment'
 import { TonightPage } from './components/TonightPage'
 import { MyJourneyPage } from './components/MyJourneyPage'
 import { CollectionProgress } from './components/CollectionProgress'
+import { ProductStory } from './components/ProductStory'
 import { useAudioPlayer } from './hooks/useAudioPlayer'
 import { locations } from './data/locations'
 import { prescriptions, hintLocations } from './data/sleep'
@@ -43,8 +44,6 @@ export const App = () => {
       setLockedLocation(loc)
     }
   }
-
-  void showProductStory // consumed by ProductStory overlay (Epic 8)
 
   const handleNavigateToLocation = (locationId: string) => {
     setActiveTab('explore')
@@ -177,6 +176,11 @@ export const App = () => {
       {onboardingComplete && (
         <TabBar activeTab={activeTab} onTabChange={handleTabChange} />
       )}
+      <AnimatePresence>
+        {showProductStory && (
+          <ProductStory onClose={() => setShowProductStory(false)} />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

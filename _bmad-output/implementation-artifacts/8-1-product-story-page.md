@@ -1,6 +1,6 @@
 # Story 8.1: Product Story Page
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -22,24 +22,24 @@ So that I understand the depth of product thinking behind this prototype.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create ProductStory component (AC: #2, #3)
-  - [ ] 1.1 Create `src/components/ProductStory.tsx`
-  - [ ] 1.2 Props: `ProductStoryProps { onClose: () => void }`
-  - [ ] 1.3 Content sections (Traditional Chinese) — 6 sections with headings + body text:
+- [x] Task 1: Create ProductStory component (AC: #2, #3)
+  - [x] 1.1 Create `src/components/ProductStory.tsx`
+  - [x] 1.2 Props: `ProductStoryProps { onClose: () => void }`
+  - [x] 1.3 Content sections (Traditional Chinese) — 6 sections with headings + body text:
     - **產品願景 (Product Vision):** "好眠秘境" transforms sleep improvement from a medical chore into a cultural journey. Users don't just "fix" their sleep — they explore Taiwan's most beautiful soundscapes as rewards for building better sleep habits.
     - **市場競爭分析 (Competitive Landscape):** White noise apps (Calm, Headspace) provide generic sounds. We differentiate with culturally-rooted Taiwan soundscapes, gamified collection mechanics, and a personalized sleep coaching system. No competitor combines all three.
     - **目標用戶 (Target Audience):** Young professionals (25-40) in Taiwan's urban centers experiencing stress-related sleep difficulties. They value self-improvement, appreciate local culture, and respond to gamification.
     - **設計哲學 (Design Philosophy):** Dark-first interface mirrors the nighttime use context. Warm amber accents invite interaction without harsh stimulation. Minimal controls reduce cognitive load before sleep.
     - **差異化護城河 (Differentiation Moat):** Taiwan-exclusive soundscapes create geographic and cultural uniqueness that global competitors cannot replicate. The sleep-to-unlock mechanic creates a behavioral flywheel: better sleep → more soundscapes → more motivation → better sleep.
     - **產品路線圖 (Product Roadmap):** Phase 1: Sound map prototype (done). Phase 2: Sleep coach concept (current). Phase 3: Real sleep tracking integration. Phase 4: Social features and community challenges.
-  - [ ] 1.4 Close button: "✕" or "關閉" at top-right, calls `onClose()`
-  - [ ] 1.5 Typography: headings `text-xl font-bold text-white`, body `text-base text-slate-300 leading-relaxed`, minimum 16px equivalent
-  - [ ] 1.6 Section spacing: `space-y-8` between sections, visual dividers optional
+  - [x] 1.4 Close button: "✕" or "關閉" at top-right, calls `onClose()`
+  - [x] 1.5 Typography: headings `text-xl font-bold text-white`, body `text-base text-slate-300 leading-relaxed`, minimum 16px equivalent
+  - [x] 1.6 Section spacing: `space-y-8` between sections, visual dividers optional
 
-- [ ] Task 2: Style ProductStory as fullscreen overlay (AC: #1, #4, #5)
-  - [ ] 2.1 Root element: `fixed inset-0 z-50 bg-slate-900 overflow-y-auto`
-  - [ ] 2.2 Content wrapper: `max-w-2xl mx-auto px-6 py-8` for readable line length
-  - [ ] 2.3 Entry animation: slide up from bottom using Motion
+- [x] Task 2: Style ProductStory as fullscreen overlay (AC: #1, #4, #5)
+  - [x] 2.1 Root element: `fixed inset-0 z-50 bg-slate-900 overflow-y-auto`
+  - [x] 2.2 Content wrapper: `max-w-2xl mx-auto px-6 py-8` for readable line length
+  - [x] 2.3 Entry animation: slide up from bottom using Motion
     ```tsx
     <motion.div
       initial={{ y: '100%' }}
@@ -48,14 +48,14 @@ So that I understand the depth of product thinking behind this prototype.
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
     >
     ```
-  - [ ] 2.4 Wrap in `<AnimatePresence>` in App.tsx for exit animation
+  - [x] 2.4 Wrap in `<AnimatePresence>` in App.tsx for exit animation
 
-- [ ] Task 3: Integrate ProductStory into App.tsx (AC: #1, #4, #5)
-  - [ ] 3.1 Render `<AnimatePresence>{showProductStory && <ProductStory onClose={() => setShowProductStory(false)} />}</AnimatePresence>`
-  - [ ] 3.2 Place AFTER all tab content, z-50 ensures it's above TabBar (z-40) and SoundscapePlayer (z-30)
-  - [ ] 3.3 Verify info icon in header (added in Story 5.1) triggers `setShowProductStory(true)`
-  - [ ] 3.4 Verify MyJourneyPage link (from Story 7.1) triggers `setShowProductStory(true)`
-  - [ ] 3.5 Verify closing overlay preserves tab state (activeTab, audio playback unaffected)
+- [x] Task 3: Integrate ProductStory into App.tsx (AC: #1, #4, #5)
+  - [x] 3.1 Render `<AnimatePresence>{showProductStory && <ProductStory onClose={() => setShowProductStory(false)} />}</AnimatePresence>`
+  - [x] 3.2 Place AFTER all tab content, z-50 ensures it's above TabBar (z-40) and SoundscapePlayer (z-30)
+  - [x] 3.3 Verify info icon in header (added in Story 5.1) triggers `setShowProductStory(true)`
+  - [x] 3.4 Verify MyJourneyPage link (from Story 7.1) triggers `setShowProductStory(true)`
+  - [x] 3.5 Verify closing overlay preserves tab state (activeTab, audio playback unaffected)
 
 ## Dev Notes
 
@@ -187,8 +187,34 @@ src/
 
 ### Agent Model Used
 
+Claude Opus 4.5 (claude-opus-4-5-20251101)
+
 ### Debug Log References
+
+- All 316 unit tests pass (17 test files)
+- TypeScript compilation: 0 errors
+- ESLint: 0 errors
 
 ### Completion Notes List
 
+- Created ProductStory.tsx with 6 Traditional Chinese content sections (產品願景, 市場競爭分析, 目標用戶, 設計哲學, 差異化護城河, 產品路線圖)
+- Implemented fullscreen overlay with `fixed inset-0 z-50 bg-slate-900 overflow-y-auto`
+- Added Motion slide-up/slide-down animation with spring physics (damping: 25, stiffness: 200)
+- Integrated into App.tsx with AnimatePresence wrapper after TabBar
+- Removed `void showProductStory` placeholder — state now consumed by ProductStory render
+- Verified two entry points: header info icon (Story 5.1) and MyJourneyPage link (Story 7.1)
+- Close button dismisses overlay without affecting activeTab or audio playback state
+- 20 new unit tests covering content sections, close button, typography, overlay styling, and content wrapper
+- All 316 unit tests pass with 0 regressions
+
+### Change Log
+
+- 2026-02-02: Implemented Story 8.1 — ProductStory overlay component with 6 content sections, fullscreen overlay styling, Motion animations, and App.tsx integration
+
 ### File List
+
+| File | Action |
+|------|--------|
+| `src/components/ProductStory.tsx` | Created |
+| `src/App.tsx` | Modified (added import, AnimatePresence + ProductStory render, removed void placeholder) |
+| `tests/unit/ProductStory.test.tsx` | Created (20 tests) |
